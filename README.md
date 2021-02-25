@@ -4,12 +4,12 @@ _**This is web-application for pet owners and their pets, as well as pet expert.
 pet owners can find a lot of useful information from posts written by pet expert. In addition, pet owners
 can ask any question in the online chat and expert will answer it.**_
 
-##_Roles._
+## _Roles._
 * ### Pet owner - a user who can read posts and ask for online help.
 * ### Pet expert - a user who can write posts and provide online help.
 * ### Moderator - a user who solves controversial issues.
 
-##_Use cases._
+## _Use cases._
 
 * **User registration.** User must specify their role in registration form. And after that, 
    user should fill in all fields.
