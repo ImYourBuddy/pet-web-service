@@ -1,11 +1,13 @@
 package com.imyourbuddy.petwebapp.controller;
 
+import com.imyourbuddy.petwebapp.dto.request.EditUserRequest;
+import com.imyourbuddy.petwebapp.dto.response.UserResponse;
+import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.PetExpert;
 import com.imyourbuddy.petwebapp.service.PetExpertService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +29,10 @@ public class PetExpertController {
     public List<PetExpert> getAll() {
         return service.getAll();
     }
+
+    @PostMapping("/add")
+    public PetExpert add(@RequestBody PetExpert expert) {
+        return service.save(expert);
+    }
+
 }

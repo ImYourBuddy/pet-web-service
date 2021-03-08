@@ -10,13 +10,13 @@ import javax.persistence.*;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    private long id;
 
-    public String title;
+    private String title;
 
-    public  String description;
+    private  String description;
 
-    public String text;
+    private String text;
 
-    public long author;
+    private long author;
 }

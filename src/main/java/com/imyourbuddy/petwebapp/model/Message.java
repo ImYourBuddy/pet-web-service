@@ -16,7 +16,7 @@ public class Message {
     @Column(name = "chat_id")
     private long chatId;
 
-    private long from;
+    private long sender;
 
     @Column
     private Date timestamp;

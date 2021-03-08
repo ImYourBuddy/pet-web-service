@@ -1,7 +1,6 @@
 package com.imyourbuddy.petwebapp.repository;
 
 import com.imyourbuddy.petwebapp.model.Message;
-import com.imyourbuddy.petwebapp.model.Moderator;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

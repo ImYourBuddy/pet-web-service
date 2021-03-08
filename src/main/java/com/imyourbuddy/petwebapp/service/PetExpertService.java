@@ -23,4 +23,8 @@ public class PetExpertService {
     public List<PetExpert> getAll() {
         return repository.findAll();
     }
+
+    public PetExpert save(PetExpert expert) {
+        return repository.save(expert);
+    }
 }
