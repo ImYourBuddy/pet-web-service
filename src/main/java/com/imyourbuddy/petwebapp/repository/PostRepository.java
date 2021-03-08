@@ -1,13 +1,13 @@
 package com.imyourbuddy.petwebapp.repository;
 
-import com.imyourbuddy.petwebapp.model.Message;
+import com.imyourbuddy.petwebapp.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repository interface for {@link Message} class
+ * Repository interface for {@link Post} class
  */
 
 @Repository
-public interface MessageRepository extends JpaRepository<Message, Long> {
+public interface PostRepository extends JpaRepository<Post, Long> {
 }

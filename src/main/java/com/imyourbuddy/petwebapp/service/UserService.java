@@ -6,8 +6,10 @@ import com.imyourbuddy.petwebapp.dto.request.LoginRequest;
 import com.imyourbuddy.petwebapp.dto.response.JwtResponse;
 import com.imyourbuddy.petwebapp.dto.response.MessageResponse;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.Pet;
 import com.imyourbuddy.petwebapp.model.Role;
 import com.imyourbuddy.petwebapp.model.User;
+import com.imyourbuddy.petwebapp.repository.PetRepository;
 import com.imyourbuddy.petwebapp.repository.RoleRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
 import com.imyourbuddy.petwebapp.security.jwt.JwtUtils;
@@ -29,6 +31,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PetRepository petRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -36,12 +39,13 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+                       AuthenticationManager authenticationManager, JwtUtils jwtUtils, PetRepository petRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
+        this.petRepository = petRepository;
     }
 
     public ResponseEntity<JwtResponse> authenticate(LoginRequest loginRequest) {
@@ -130,12 +134,54 @@ public class UserService {
             foundUser.setLastName(userRequest.getLastName());
         }
         if (userRequest.getPassword() != null) {
-            foundUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));;
+            foundUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            ;
         }
         UserResponse userResponse = UserResponse.fromUser(foundUser);
         userRepository.save(foundUser);
 
         return userResponse;
+    }
+
+    public Pet addPet(long id, Pet pet) throws ResourceNotFoundException {
+        User foundUser = getById(id);
+        Role role_owner = roleRepository.findByName("ROLE_OWNER");
+        List<Role> roles = foundUser.getRoles();
+        roles.add(role_owner);
+        foundUser.setRoles(roles);
+        pet.setOwner(id);
+        userRepository.save(foundUser);
+        petRepository.save(pet);
+
+        return pet;
+    }
+
+    public List<Pet> getAllPetsById(long ownerId) throws ResourceNotFoundException {
+        getById(ownerId);
+        List<Pet> pets = petRepository.findByOwner(ownerId);
+        if (pets.size() == 0) {
+            throw new ResourceNotFoundException("User with id = " + ownerId + " don't have pets.");
+        }
+        return pets;
+    }
+
+    public Pet deletePet(long ownerId, long petId) throws ResourceNotFoundException {
+        List<Pet> allPetsById = getAllPetsById(ownerId);
+        Pet pet = petRepository.findById(petId);
+        if (pet == null) {
+            throw new ResourceNotFoundException("Pet with id = " + petId + " not found.");
+        }
+        allPetsById.remove(pet);
+        petRepository.delete(pet);
+        if (allPetsById.size() == 0) {
+            User owner = getById(ownerId);
+            List<Role> roles = owner.getRoles();
+            Role role_owner = roleRepository.findByName("ROLE_OWNER");
+            roles.remove(role_owner);
+            owner.setRoles(roles);
+            userRepository.save(owner);
+        }
+        return pet;
     }
 
 }
