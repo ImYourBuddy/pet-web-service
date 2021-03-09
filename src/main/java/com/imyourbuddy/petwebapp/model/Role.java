@@ -3,7 +3,8 @@ package com.imyourbuddy.petwebapp.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "roles")
@@ -13,6 +14,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank
+    @Pattern(regexp = "ROLE_[A-Z]+")
     private String name;
 
     @Override

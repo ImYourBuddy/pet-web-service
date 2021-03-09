@@ -37,7 +37,7 @@ public class AdminController {
     @PutMapping("/ban")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
     public ResponseEntity<User> banUserById(@RequestBody BanRequest request) throws ResourceNotFoundException {
-        User user = userService.banUserById(request.getId(), request.isBanned());
+        User user = userService.banUserById(request.getUserId(), request.isBanned());
         return ResponseEntity.ok().body(user);
     }
 

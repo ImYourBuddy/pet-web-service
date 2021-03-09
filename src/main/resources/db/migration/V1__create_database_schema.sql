@@ -14,8 +14,8 @@ insert into public.roles (name) values ('ROLE_READER');
 CREATE TABLE public.user
 (
     id bigserial NOT NULL,
-    username character varying(100) NOT NULL UNIQUE,
-    password character varying(255) NOT NULL,
+    username character varying(20) NOT NULL UNIQUE,
+    password character varying(40) NOT NULL,
     first_name character varying(30) NOT NULL,
     last_name character varying(30),
     created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
@@ -51,6 +51,7 @@ CREATE TABLE public.pet_expert
     qualification character varying(255) NOT NULL,
     online_help boolean NOT NULL,
     user_id bigint NOT NULL,
+    deleted boolean NOT NULL,
     PRIMARY KEY (id)
 );
 ALTER TABLE public.pet_expert
@@ -82,10 +83,11 @@ ALTER TABLE public.pet
 CREATE TABLE public.post
 (
     id bigserial NOT NULL,
-    title character varying(20) NOT NULL,
-    description character varying(40),
+    title character varying(50) NOT NULL,
+    description character varying(255),
     text text NOT NULL,
     author bigint NOT NULL,
+    deleted boolean NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -101,6 +103,7 @@ CREATE TABLE public.chat
     id bigserial NOT NULL,
     owner_id bigint NOT NULL,
     expert_id bigint NOT NULL,
+    deleted boolean NOT NULL,
     PRIMARY KEY (id)
 );
 ALTER TABLE public.chat
@@ -123,6 +126,7 @@ CREATE TABLE public.message
     sender bigint NOT NULL,
     timestamp timestamp with time zone NOT NULL,
     text text NOT NULL,
+    deleted boolean NOT NULL,
     PRIMARY KEY (id)
 );
 
