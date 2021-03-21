@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../services/user/user.service';
 import {PostService} from '../../services/post-service/post.service';
+import {AdminService} from '../../services/admin-service/admin.service';
+import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 
 @Component({
   selector: 'app-board-moderator',
@@ -9,18 +11,30 @@ import {PostService} from '../../services/post-service/post.service';
 })
 export class BoardModeratorComponent implements OnInit {
   posts: any;
+  experts: any;
 
   isSuccessful = false;
   errorMessage = '';
+  hidePosts = true;
+  hideExpertRequest = true;
 
-  constructor(private postService: PostService) {
+  constructor(private postService: PostService, private adminService: AdminService, private token: TokenStorageService) {
   }
 
   ngOnInit(): void {
-    this.postService.getAllModer()
+    this.postService.getAllForModer()
       .subscribe(
         data => {
           this.posts = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
+    this.adminService.getExpertRequest()
+      .subscribe(
+        data => {
+          this.experts = data;
           console.log(data);
         },
         error => {
@@ -56,6 +70,20 @@ export class BoardModeratorComponent implements OnInit {
 
   deletePost(id: bigint) {
     this.postService.deletePostByModer(id).subscribe
+    (
+      data => {
+        console.log(data);
+        this.isSuccessful = true;
+      },
+      err => {
+        this.errorMessage = err.error.message;
+      }
+    );
+  }
+
+  confirmExpert(expertId: bigint) {
+    const userId = this.token.getUser().id;
+    this.adminService.confirmExpert(userId, expertId).subscribe
     (
       data => {
         console.log(data);

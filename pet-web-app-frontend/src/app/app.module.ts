@@ -18,6 +18,7 @@ import {authInterceptorProviders} from './helpers/auth.interceptor';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 import { AddPostComponent } from './components/add-post/add-post.component';
 import { EditPostComponent } from './components/edit-post/edit-post.component';
+import {AddExpertComponent} from './components/add-expert/add-expert.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { EditPostComponent } from './components/edit-post/edit-post.component';
     PostsListComponent,
     UserLoginComponent,
     AddUserComponent,
+    AddExpertComponent,
     ReadPostComponent,
     ProfileComponent,
     BoardAdminComponent,

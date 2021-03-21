@@ -9,18 +9,21 @@ import {AdminService} from '../../services/admin-service/admin.service';
 })
 export class BoardAdminComponent implements OnInit {
   users: any;
-  testInit: string;
 
   isSuccessful = false;
   errorMessage = '';
+  hideUsers = true;
 
   constructor(private adminService: AdminService) {
   }
 
   ngOnInit(): void {
     this.getAllUsers();
-    this.testInit = 'works';
   }
+
+  // onSubmit(): void {
+  //   this.addModer();
+  // }
 
   getAllUsers() {
     this.adminService.getUsers()

@@ -18,7 +18,7 @@ export class PostService {
     return this.http.get(`${baseUrl}/all`);
   }
 
-  getAllModer() {
+  getAllForModer() {
     return this.http.get(baseUrl + '/all-moder');
   }
 

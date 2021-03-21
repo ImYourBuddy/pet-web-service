@@ -11,14 +11,6 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getModeratorBoard(): Observable<any> {
-    return this.http.get('http://localhost:8080/api/test/' + 'mod', { responseType: 'text' });
-  }
-
-  getAdminBoard(): Observable<any> {
-    return this.http.get('http://localhost:8080/api/test/' + 'admin', { responseType: 'text' });
-  }
-
   updateProfile(id: bigint, firstName: string, lastName: string) {
     return this.http.patch(API_URL + '/edit/' + id, {
       firstName,

@@ -11,6 +11,7 @@ import {ProfileComponent} from './components/profile/profile.component';
 import {EditProfileComponent} from './components/edit-profile/edit-profile.component';
 import {AddPostComponent} from './components/add-post/add-post.component';
 import {EditPostComponent} from './components/edit-post/edit-post.component';
+import {AddExpertComponent} from './components/add-expert/add-expert.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'posts', pathMatch: 'full' },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'posts/:id/edit', component: EditPostComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'profile/edit', component: EditProfileComponent },
+  { path: 'profile/become-expert', component: AddExpertComponent },
   { path: 'moderator', component: BoardModeratorComponent },
   { path: 'admin', component: BoardAdminComponent },
   { path: 'expert', component: BoardExpertComponent },

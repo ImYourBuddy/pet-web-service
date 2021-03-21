@@ -11,12 +11,14 @@ export class ProfileComponent implements OnInit {
 
   currentUser: any;
   roles: string[] = [];
+  hideBecomeExpert: boolean;
 
   constructor(private userService: UserService, private token: TokenStorageService) { }
 
   ngOnInit(): void {
     // tslint:disable-next-line:no-unused-expression
     const id = this.token.getUser().id;
+    this.roles = this.token.getUser().roles;
     this.userService.getUser(id)
       .subscribe(
         data => {
