@@ -1,0 +1,39 @@
+<div class="list"
+     *ngFor="let post of posts;"
+>
+  <div class="list-group-item">
+    <a class="post-title" routerLink="/posts/{{ post.id }}">
+      {{ post.title}}
+    </a>
+    <div class="post-description">
+      {{post.description}}
+    </div>
+    <div class="info">
+      <p class="author">
+      </p>
+      <p class="date">
+        {{post.createdDate | date:'longDate'}}
+      </p>
+      <p class="author">
+        {{post.author}}
+      </p>
+      <div *ngIf="post.deleted">
+        <p class="deleted">Deleted</p>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" (click)="restorePost(post.id)">
+            Restore
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary btn-block" routerLink="/posts/{{ post.id }}/edit">Edit post</button>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary btn-block" (click)="removeFromPublicAccess(post.id)">Remove from public access</button>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary btn-block" (click)="deletePost(post.id)">Delete post</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<form class="submit-form" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      required
+      [(ngModel)]="post.title"
+      name="title"
+    />
+  </div>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <input
+      type="text"
+      class="form-control"
+      id="description"
+      required
+      [(ngModel)]="post.description"
+      name="description"
+    />
+  </div>
+  <div class="form-group">
+    <label for="text">Text</label>
+    <input
+      type="text"
+      class="form-control"
+      id="text"
+      required
+      [(ngModel)]="post.text"
+      name="text"
+    />
+  </div>
+<!--  <div class="form-group">-->
+<!--    <label for="author">author</label>-->
+<!--    <input-->
+<!--      type="number"-->
+<!--      class="form-control"-->
+<!--      id="author"-->
+<!--      required-->
+<!--      [(ngModel)]="post.author"-->
+<!--      name="author"-->
+<!--    />-->
+<!--  </div>-->
+  <div class="form-group">
+    <button class="btn btn-primary btn-block">Add post</button>
+  </div>
+  <div class="alert alert-success" *ngIf="isSuccessful">
+    Your post was successfully added!
+  </div>
+</form>

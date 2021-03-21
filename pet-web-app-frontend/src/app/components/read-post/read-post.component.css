@@ -1,0 +1,16 @@
+.post-info {
+  max-width: 900px;
+  margin: auto;
+}
+
+.post-title {
+  font-size: x-large;
+}
+
+.post-description {
+  font-style: italic;
+}
+
+.post-text {
+  text-align: justify ;
+}

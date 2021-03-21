@@ -1,0 +1,44 @@
+<form class="submit-form" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      required
+      [(ngModel)]="currentPost.title"
+      name="title"
+      [value]="currentPost.title"
+    />
+  </div>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <input
+      type="text"
+      class="form-control"
+      id="description"
+      required
+      [(ngModel)]="currentPost.description"
+      name="description"
+      [value]="currentPost.description"
+    />
+  </div>
+  <div class="form-group">
+    <label for="text">Text</label>
+    <input
+      type="text"
+      class="form-control"
+      id="text"
+      required
+      [(ngModel)]="currentPost.text"
+      name="text"
+      [value]="currentPost.text"
+    />
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary btn-block">Add post</button>
+  </div>
+  <div class="alert alert-success" *ngIf="isSuccessful">
+    Your post was successfully edited!
+  </div>
+</form>
