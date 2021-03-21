@@ -28,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     @Query(value = "SELECT * FROM post p ORDER BY p.deleted DESC, p.created_date DESC", nativeQuery = true)
-    public List<Post> findAllModer();
+    public List<Post> findAllForModer();
 
     @Modifying
     @Transactional

@@ -71,8 +71,8 @@ public class PostController {
 
     @GetMapping("/all-moder")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public List<Post> getAllModer() {
-        return service.getAllModer();
+    public List<Post> getAllForModer() {
+        return service.getAllForModer();
     }
 
     @DeleteMapping("/moder/{id}")

@@ -9,6 +9,7 @@ import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Pet;
 import com.imyourbuddy.petwebapp.model.Role;
 import com.imyourbuddy.petwebapp.model.User;
+import com.imyourbuddy.petwebapp.model.projection.ExpertRequestProjection;
 import com.imyourbuddy.petwebapp.repository.PetRepository;
 import com.imyourbuddy.petwebapp.repository.RoleRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
@@ -62,9 +63,6 @@ public class UserService {
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getFirstName(),
-                userDetails.getLastName(),
                 roles));
     }
 
@@ -200,4 +198,7 @@ public class UserService {
         return pet;
     }
 
+    public List<ExpertRequestProjection> getExpertRequest() {
+        return userRepository.getExpertRequest();
+    }
 }

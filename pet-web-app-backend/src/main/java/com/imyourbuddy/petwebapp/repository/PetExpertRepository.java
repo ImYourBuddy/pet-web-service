@@ -2,7 +2,11 @@ package com.imyourbuddy.petwebapp.repository;
 
 import com.imyourbuddy.petwebapp.model.PetExpert;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Repository interface for {@link PetExpert} class
@@ -10,4 +14,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PetExpertRepository extends JpaRepository<PetExpert, Long> {
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE public.pet_expert pe SET pe.confrimed = true WHERE pe.id =:id", nativeQuery = true)
+    public void confirmExpert(@Param("id") long id);
 }

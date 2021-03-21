@@ -34,7 +34,6 @@ public class PetExpertController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('READER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public PetExpert add(@RequestBody @Valid PetExpert expert) throws ResourceNotFoundException {
         return service.save(expert);
     }

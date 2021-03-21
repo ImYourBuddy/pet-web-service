@@ -83,8 +83,8 @@ public class PostService {
         return post;
     }
 
-    public List<Post> getAllModer() {
-        return postRepository.findAllModer();
+    public List<Post> getAllForModer() {
+        return postRepository.findAllForModer();
     }
 
     public Post deletePostByModer(long id) throws ResourceNotFoundException {

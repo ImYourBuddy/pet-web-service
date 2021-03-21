@@ -27,4 +27,6 @@ public class PetExpert{
     private long userId;
 
     private boolean deleted;
+
+    private boolean confirmed;
 }
