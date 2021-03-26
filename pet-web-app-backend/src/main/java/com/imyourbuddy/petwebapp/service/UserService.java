@@ -111,47 +111,18 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + "not found."));
     }
 
-    public User findByLoginAndPassword(String login, String password) throws ResourceNotFoundException {
-        User userEntity = getByLogin(login);
-        if (passwordEncoder.matches(password, userEntity.getPassword())) {
-            return userEntity;
-        }
-        return null;
-    }
-
-    public User addModerById(long id) throws ResourceNotFoundException {
-        User user = getById(id);
-        Role roleModerator = roleRepository.findByName("ROLE_MODERATOR");
-        List<Role> roles = user.getRoles();
-        roles.add(roleModerator);
-        userRepository.save(user);
-        return user;
-    }
-
     public User deleteUserById(long id) throws ResourceNotFoundException {
         User user = getById(id);
         userRepository.deleteUserById(id);
         return user;
     }
 
-    public User banUserById(long id, boolean banned) throws ResourceNotFoundException {
-        User user = getById(id);
-        userRepository.banUserById(id, banned);
-        return user;
-    }
-
     public UserResponse editProfile(long id, EditUserRequest userRequest) throws ResourceNotFoundException {
         User foundUser = getById(id);
-        if (userRequest.getFirstName() != null) {
-            foundUser.setFirstName(userRequest.getFirstName());
-        }
-        if (userRequest.getLastName() != null) {
-            foundUser.setLastName(userRequest.getLastName());
-        }
-        if (userRequest.getPassword() != null) {
-            foundUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-            ;
-        }
+
+        foundUser.setFirstName(userRequest.getFirstName());
+        foundUser.setLastName(userRequest.getLastName());
+        foundUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         UserResponse userResponse = UserResponse.fromUser(foundUser);
         userRepository.save(foundUser);
 
@@ -198,7 +169,10 @@ public class UserService {
         return pet;
     }
 
-    public List<ExpertRequestProjection> getExpertRequest() {
-        return userRepository.getExpertRequest();
+    public List<User> getAllUserSummaries(long id) {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> !(user.getId() == id))
+                .collect(Collectors.toList());
     }
 }

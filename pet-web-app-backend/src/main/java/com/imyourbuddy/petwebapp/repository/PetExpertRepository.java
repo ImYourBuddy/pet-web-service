@@ -16,6 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PetExpertRepository extends JpaRepository<PetExpert, Long> {
     @Modifying
     @Transactional
-    @Query(value = "UPDATE public.pet_expert pe SET pe.confrimed = true WHERE pe.id =:id", nativeQuery = true)
-    public void confirmExpert(@Param("id") long id);
+    @Query(value = "UPDATE public.pet_expert  SET confirmed = true WHERE id =:id", nativeQuery = true)
+    void confirmExpert(@Param("id") long id);
 }

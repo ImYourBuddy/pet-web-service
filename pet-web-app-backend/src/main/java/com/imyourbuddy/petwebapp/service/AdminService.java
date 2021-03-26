@@ -27,15 +27,13 @@ public class AdminService {
         this.roleRepository = roleRepository;
     }
 
-    public void confirmExpert(long userId, long expertId) throws ResourceNotFoundException {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + userId + " not found"));
-        expertRepository.findById(expertId)
-                .orElseThrow(() -> new ResourceNotFoundException("Expert with id = " + expertId + " not found"));
-        Role role_expert = roleRepository.findByName("ROLE_EXPERT");
+    public User addModerById(long id) throws ResourceNotFoundException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + " not found"));
+        Role roleModerator = roleRepository.findByName("ROLE_MODERATOR");
         List<Role> roles = user.getRoles();
-        roles.add(role_expert);
+        roles.add(roleModerator);
         userRepository.save(user);
-        expertRepository.confirmExpert(expertId);
+        return user;
     }
 }

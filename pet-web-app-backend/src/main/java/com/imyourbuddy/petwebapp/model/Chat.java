@@ -1,5 +1,6 @@
 package com.imyourbuddy.petwebapp.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,15 +16,16 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "owner_id")
+    @Column(name = "user_id")
     @Min(value = 1)
-    private long ownerId;
+    private long userId;
 
     @Column(name = "expert_id")
     @Min(value = 1)
     private long expertId;
 
-    private boolean deleted;
-
-
+    public Chat(long userId, long expertId) {
+        this.userId = userId;
+        this.expertId = expertId;
+    }
 }

@@ -52,7 +52,8 @@ CREATE TABLE public.pet_expert
     qualification character varying(255) NOT NULL,
     online_help boolean NOT NULL,
     user_id bigint NOT NULL,
-    deleted boolean NOT NULL,
+    deleted boolean NOT NULL DEFAULT false,
+    confirmed boolean NOT NULL DEFAULT false,
     PRIMARY KEY (id)
 );
 ALTER TABLE public.pet_expert
@@ -103,19 +104,18 @@ ALTER TABLE public.post
 CREATE TABLE public.chat
 (
     id bigserial NOT NULL,
-    owner_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     expert_id bigint NOT NULL,
-    deleted boolean NOT NULL,
     PRIMARY KEY (id)
 );
 ALTER TABLE public.chat
-    ADD CONSTRAINT owner_fk FOREIGN KEY (owner_id)
+    ADD CONSTRAINT sender_fk FOREIGN KEY (user_id)
         REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
     NOT VALID;
 ALTER TABLE public.chat
-    ADD CONSTRAINT expert_fk FOREIGN KEY (expert_id)
+    ADD CONSTRAINT recipient_fk FOREIGN KEY (expert_id)
         REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
@@ -126,9 +126,8 @@ CREATE TABLE public.message
     id bigserial NOT NULL,
     chat_id bigint NOT NULL,
     sender bigint NOT NULL,
-    timestamp timestamp with time zone NOT NULL,
     text text NOT NULL,
-    deleted boolean NOT NULL,
+    timestamp timestamp with time zone NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -139,9 +138,5 @@ ALTER TABLE public.message
         ON DELETE RESTRICT
     NOT VALID;
 
-ALTER TABLE public.message
-    ADD CONSTRAINT sender_fk FOREIGN KEY (sender)
-        REFERENCES public.user (id)
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
-    NOT VALID;
+
+

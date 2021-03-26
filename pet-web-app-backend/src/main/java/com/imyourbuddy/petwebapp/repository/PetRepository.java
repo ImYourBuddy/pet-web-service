@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface PetRepository extends JpaRepository<Pet, Long> {
 
-    public List<Pet> findByOwner(long ownerId);
+    List<Pet> findByOwner(long ownerId);
 
-    public Pet findById(long id);
+    Pet findById(long id);
 }

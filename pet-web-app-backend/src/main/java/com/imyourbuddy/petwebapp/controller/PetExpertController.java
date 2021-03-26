@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/pet-expert")
+@CrossOrigin(origins = "*")
 public class PetExpertController {
     private final PetExpertService service;
 
@@ -27,13 +28,13 @@ public class PetExpertController {
         this.service = service;
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     @PreAuthorize("hasRole('READER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public List<PetExpert> getAll() {
         return service.getAll();
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public PetExpert add(@RequestBody @Valid PetExpert expert) throws ResourceNotFoundException {
         return service.save(expert);
     }

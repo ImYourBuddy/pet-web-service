@@ -26,7 +26,7 @@ public class PostController {
         this.service = service;
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public List<PostProjection> getAll() {
         return service.getAll();
     }
@@ -37,20 +37,20 @@ public class PostController {
         return ResponseEntity.ok().body(post);
     }
 
-    @GetMapping("/all/{author}")
+    @GetMapping("/author/{author}")
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public List<Post> getPostByAuthor(@PathVariable(name = "author") long author) throws ResourceNotFoundException {
         return service.getPostByAuthor(author);
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<Post> addNew(@RequestBody Post post) {
         Post newPost = service.save(post);
         return ResponseEntity.ok().body(newPost);
     }
 
-    @PatchMapping("/edit/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<Post> editPost(@PathVariable(name = "id") long id,@RequestBody Post post) throws ResourceNotFoundException {
         Post newPost = service.edit(id, post);
@@ -58,7 +58,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public Post deletePost(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
         return service.delete(id);
     }
@@ -69,7 +69,7 @@ public class PostController {
         return service.restore(id);
     }
 
-    @GetMapping("/all-moder")
+    @GetMapping("/moder")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public List<Post> getAllForModer() {
         return service.getAllForModer();

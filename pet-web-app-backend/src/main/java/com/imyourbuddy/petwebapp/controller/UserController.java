@@ -5,10 +5,12 @@ import com.imyourbuddy.petwebapp.dto.response.UserResponse;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Pet;
 import com.imyourbuddy.petwebapp.model.User;
+import com.imyourbuddy.petwebapp.security.jwt.UserDetailsImpl;
 import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,7 +29,7 @@ public class UserController {
 
 
 
-    @PatchMapping("/edit/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserResponse> editProfile(@PathVariable(name = "id") long id,
                                                     @RequestBody EditUserRequest request) throws ResourceNotFoundException {
         UserResponse userResponse = userService.editProfile(id, request);
@@ -47,17 +49,23 @@ public class UserController {
         return ResponseEntity.ok().body(addedPet);
     }
 
-    @GetMapping("/pets/{id}")
+    @GetMapping("/{id}/pets")
     @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public List<Pet> getAllPetsById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
         return userService.getAllPetsById(id);
     }
 
-    @DeleteMapping("/delete-pet/{id}")
+    @DeleteMapping("/{ownerId}/pets/{petId}")
     @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public ResponseEntity<Pet> deletePet(@PathVariable(name = "id") long id, @RequestBody Pet pet) throws ResourceNotFoundException {
-        Pet deletedPet = userService.deletePet(id, pet.getId());
+    public ResponseEntity<Pet> deletePet(@PathVariable(name = "ownerId") long ownerId,
+                                         @PathVariable(name = "petId") long petId) throws ResourceNotFoundException {
+        Pet deletedPet = userService.deletePet(ownerId, petId);
         return ResponseEntity.ok().body(deletedPet);
+    }
+
+    @GetMapping("/summaries")
+    public List<User> getAllUserSummaries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.getAllUserSummaries(userDetails.getId());
     }
 
 

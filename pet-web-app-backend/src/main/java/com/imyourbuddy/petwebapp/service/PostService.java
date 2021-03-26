@@ -51,15 +51,11 @@ public class PostService {
     public Post edit(long id, Post updatedPost) throws ResourceNotFoundException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
-        if (updatedPost.getTitle() != null) {
-            post.setTitle(updatedPost.getTitle());
-        }
-        if (updatedPost.getDescription() != null) {
-            post.setDescription(updatedPost.getDescription());
-        }
-        if (updatedPost.getText() != null) {
-            post.setText(updatedPost.getText());
-        }
+
+        post.setTitle(updatedPost.getTitle());
+        post.setDescription(updatedPost.getDescription());
+        post.setText(updatedPost.getText());
+
         return postRepository.save(post);
     }
 
@@ -79,7 +75,7 @@ public class PostService {
     public Post restore(long id) throws ResourceNotFoundException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
-        postRepository.unDelete(id);
+        postRepository.restore(id);
         return post;
     }
 

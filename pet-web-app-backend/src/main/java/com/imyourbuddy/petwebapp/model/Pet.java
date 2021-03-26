@@ -26,8 +26,6 @@ public class Pet {
     private long id;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank
-    @Size(min = 3)
     private Species species;
 
     @NotBlank
@@ -39,8 +37,6 @@ public class Pet {
     private String breed;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank
-    @Size(min = 4, max = 30)
     private Gender gender;
 
     private Date birthdate;

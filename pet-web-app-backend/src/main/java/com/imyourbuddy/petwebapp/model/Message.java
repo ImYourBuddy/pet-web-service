@@ -17,20 +17,20 @@ public class Message {
 
     @Column(name = "chat_id")
     @NotBlank
-    @Min(value = 1)
     private long chatId;
 
     @NotBlank
     @Min(value = 1)
     private long sender;
 
-    @Column
-    private Date timestamp;
-
     @NotBlank
     private String text;
 
-    private boolean deleted;
+    @Column
+    private Date timestamp;
+
+
+
 
 
 }

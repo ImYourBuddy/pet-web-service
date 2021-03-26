@@ -21,23 +21,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "p.created_date as \"createdDate\", p.deleted FROM post p INNER JOIN pet_expert pe ON p.author = pe.id\n" +
             "INNER JOIN public.user u ON pe.user_id = u.id\n" +
             "ORDER BY p.created_date DESC", nativeQuery = true)
-    public List<PostProjection> findAllInOrderByDate();
+    List<PostProjection> findAllInOrderByDate();
 
     @Query(value = "SELECT * FROM post p WHERE p.author =:author ORDER BY p.deleted DESC, p.created_date DESC", nativeQuery = true)
-    public List<Post> findAllByAuthor(@Param(value = "author") long author);
+    List<Post> findAllByAuthor(@Param(value = "author") long author);
 
 
     @Query(value = "SELECT * FROM post p ORDER BY p.deleted DESC, p.created_date DESC", nativeQuery = true)
-    public List<Post> findAllForModer();
+    List<Post> findAllForModer();
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE post p SET deleted = true WHERE p.id =:id", nativeQuery = true)
-    public void delete(@Param("id") long id);
+    void delete(@Param("id") long id);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE post p SET deleted = false WHERE p.id =:id", nativeQuery = true)
-    public void unDelete(@Param("id") long id);
+    void restore(@Param("id") long id);
 
 }
