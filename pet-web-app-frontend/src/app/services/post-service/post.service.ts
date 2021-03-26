@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
-const baseUrl = 'http://localhost:8080/rest/post';
+const API_URL = 'http://localhost:8080/rest/post';
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
@@ -15,19 +15,19 @@ export class PostService {
   }
 
   getAll() {
-    return this.http.get(`${baseUrl}/all`);
+    return this.http.get(API_URL);
   }
 
   getAllForModer() {
-    return this.http.get(baseUrl + '/all-moder');
+    return this.http.get(API_URL + '/moder');
   }
 
   get(id) {
-    return this.http.get(`${baseUrl}/${id}`);
+    return this.http.get(API_URL + '/' + id);
   }
 
   add(title: string, description: string, text: string, author: bigint) {
-    return this.http.post(baseUrl + '/add', {
+    return this.http.post(API_URL, {
       title,
       description,
       text,
@@ -36,11 +36,11 @@ export class PostService {
   }
 
   getByAuthor(id) {
-    return this.http.get(`${baseUrl}/all/${id}`);
+    return this.http.get(API_URL + '/author/' + id);
   }
 
   editPost(id: bigint, title: string, description: string, text: string) {
-    return this.http.patch(`${baseUrl}/edit/${id}`, {
+    return this.http.put(API_URL + '/' + id , {
       title,
       description,
       text
@@ -48,14 +48,14 @@ export class PostService {
   }
 
   deletePost(id: bigint) {
-    return this.http.delete(`${baseUrl}/${id}`);
+    return this.http.delete(API_URL + '/' + id);
   }
 
   deletePostByModer(id: bigint) {
-    return this.http.delete(baseUrl + '/moder/' + id);
+    return this.http.delete(API_URL + '/moder/' + id);
   }
 
   restore(id: bigint) {
-    return this.http.patch(`${baseUrl}/${id}`, {});
+    return this.http.patch(API_URL + '/' + id, {});
   }
 }

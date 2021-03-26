@@ -12,6 +12,9 @@ import {EditProfileComponent} from './components/edit-profile/edit-profile.compo
 import {AddPostComponent} from './components/add-post/add-post.component';
 import {EditPostComponent} from './components/edit-post/edit-post.component';
 import {AddExpertComponent} from './components/add-expert/add-expert.component';
+import {AddPetComponent} from './components/add-pet/add-pet.component';
+import {ChatComponent} from './components/chat/chat.component';
+import {ExpertsListComponent} from './components/experts-list/experts-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'posts', pathMatch: 'full' },
@@ -23,10 +26,13 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'profile/edit', component: EditProfileComponent },
   { path: 'profile/become-expert', component: AddExpertComponent },
+  { path: 'add-pet', component: AddPetComponent },
   { path: 'moderator', component: BoardModeratorComponent },
   { path: 'admin', component: BoardAdminComponent },
   { path: 'expert', component: BoardExpertComponent },
-  { path: 'add-post', component: AddPostComponent }
+  { path: 'add-post', component: AddPostComponent },
+  { path: 'chat', component: ChatComponent },
+  { path: 'experts', component: ExpertsListComponent}
 ];
 
 @NgModule({

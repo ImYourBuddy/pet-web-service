@@ -1,0 +1,61 @@
+
+<form class="submit-form" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="species">Species</label>
+    <input
+      type="text"
+      class="form-control"
+      id="species"
+      required
+      [(ngModel)]="pet.species"
+      name="species"
+    />
+  </div>
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      required
+      [(ngModel)]="pet.name"
+      name="name"
+    />
+  </div>
+  <div class="form-group">
+    <label for="breed">Breed</label>
+    <input
+      type="text"
+      class="form-control"
+      id="breed"
+      required
+      [(ngModel)]="pet.breed"
+      name="breed"
+    />
+  </div>
+  <div class="form-group">
+    <label for="gender">Gender</label>
+    <input
+      type="text"
+      class="form-control"
+      id="gender"
+      required
+      [(ngModel)]="pet.gender"
+      name="gender"
+    />
+  </div>
+  <div class="form-group">
+    <label for="birthdate">Birthdate</label>
+    <input
+      type="date"
+      class="form-control"
+      id="birthdate"
+      required
+      [(ngModel)]="pet.birthdate"
+      name="birthdate"
+    />
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary btn-block">Add post</button>
+  </div>
+</form>

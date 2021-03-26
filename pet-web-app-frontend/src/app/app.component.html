@@ -5,13 +5,13 @@
         <li class="nav-item" *ngIf="showAdminBoard">
           <a class="nav-link" routerLink="admin">Admin Board</a>
         </li>
-        <li class="nav-item" *ngIf="showModeratorBoard">
+        <li class="nav-item" *ngIf="showModeratorBoard || showAdminBoard">
           <a class="nav-link" routerLink="moderator">Moderator Board</a>
         </li>
-        <li class="nav-item" *ngIf="showExpertBoard">
+        <li class="nav-item" *ngIf="showExpertBoard || showModeratorBoard || showAdminBoard">
           <a class="nav-link" routerLink="expert">Expert Board</a>
         </li>
-        <li class="nav-item" *ngIf="showExpertBoard">
+        <li class="nav-item" *ngIf="showExpertBoard || showModeratorBoard || showAdminBoard">
           <a class="nav-link" routerLink="add-post">Add new post</a>
         </li>
       </ul>
@@ -26,6 +26,9 @@
       </ul>
 
       <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
+        <li class="nav-item">
+          <a routerLink="experts" class="nav-link">Experts</a>
+        </li>
         <li class="nav-item">
           <a href="/profile" class="nav-link" routerLink="profile">Profile</a>
         </li>

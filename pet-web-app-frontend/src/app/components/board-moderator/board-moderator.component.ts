@@ -3,6 +3,7 @@ import {UserService} from '../../services/user/user.service';
 import {PostService} from '../../services/post-service/post.service';
 import {AdminService} from '../../services/admin-service/admin.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {ModerService} from '../../services/moder-service/moder.service';
 
 @Component({
   selector: 'app-board-moderator',
@@ -18,7 +19,8 @@ export class BoardModeratorComponent implements OnInit {
   hidePosts = true;
   hideExpertRequest = true;
 
-  constructor(private postService: PostService, private adminService: AdminService, private token: TokenStorageService) {
+  constructor(private postService: PostService, private adminService: AdminService,
+              private moderService: ModerService, private token: TokenStorageService) {
   }
 
   ngOnInit(): void {
@@ -31,7 +33,7 @@ export class BoardModeratorComponent implements OnInit {
         error => {
           console.log(error);
         });
-    this.adminService.getExpertRequest()
+    this.moderService.getExpertRequest()
       .subscribe(
         data => {
           this.experts = data;
@@ -81,9 +83,8 @@ export class BoardModeratorComponent implements OnInit {
     );
   }
 
-  confirmExpert(expertId: bigint) {
-    const userId = this.token.getUser().id;
-    this.adminService.confirmExpert(userId, expertId).subscribe
+  confirmExpert(userId: bigint, expertId: bigint) {
+    this.moderService.confirmExpert(userId, expertId).subscribe
     (
       data => {
         console.log(data);

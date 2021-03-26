@@ -15,23 +15,11 @@ export class AdminService {
   }
 
   getUsers() {
-    return this.http.get(API_URL + '/all');
+    return this.http.get(API_URL + '/users');
   }
 
   addModer(id: bigint) {
-    return this.http.post(API_URL + '/add-moder', {
-      id
-    }, httpOptions);
-  }
-
-  getExpertRequest() {
-    return this.http.get(API_URL + '/experts');
-  }
-
-  confirmExpert(userId: bigint, expertId: bigint) {
-    return this.http.patch(API_URL + '/confirm-expert', {
-      userId,
-      expertId
-    }, httpOptions);
+    return this.http.post(API_URL + '/users/' + id + '/add-moder', {},
+     httpOptions);
   }
 }

@@ -15,11 +15,15 @@ export class ExpertService {
   constructor(private http: HttpClient) { }
 
   requestExpert(qualification: string, onlineHelp: boolean, userId: bigint) {
-    return this.http.post(API_URL + '/add', {
+    return this.http.post(API_URL, {
       qualification,
       onlineHelp,
       userId
     }, httpOptions);
+  }
+
+  getAllExperts() {
+    return this.http.get(API_URL);
   }
 
 }

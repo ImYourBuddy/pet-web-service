@@ -13,6 +13,9 @@
     {{ currentUser.lastName }}
   </p>
   <p>
+    <button class="btn btn-primary btn-block" routerLink="/add-pet">
+      Add pet
+    </button>
     <button class="btn btn-primary btn-block" routerLink="/profile/edit">
      Edit
     </button>
@@ -20,6 +23,23 @@
       I want to become an expert
     </button>
   </p>
+  <div class="pets" *ngFor="let pet of pets">
+    <p>
+      <strong>Name: {{pet.name}}</strong>
+    </p>
+    <p>
+      Specie: {{pet.species}}
+    </p>
+    <p>
+      Breed: {{pet.breed}}
+    </p>
+    <p>
+      Gender: {{pet.gender}}
+    </p>
+    <p>
+      Birthdate: {{pet.birthdate | date:'longDate'}}
+    </p>
+  </div>
 </div>
 
 <ng-template #loggedOut>

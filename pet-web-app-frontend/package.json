@@ -7,7 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "install": "npm install",
+    "cashe": "npm cache clean --force"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +42,10 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.1.5"
+    "typescript": "~4.1.5",
+    "sockjs": "^0.3.21",
+    "sockjs-client": "^1.5.0",
+    "recoil-persist": "^2.5.0",
+    "@stomp/stompjs": "^6.1.0"
   }
 }

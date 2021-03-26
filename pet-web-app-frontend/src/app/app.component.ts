@@ -8,7 +8,7 @@ import {TokenStorageService} from './services/token-storage/token-storage.servic
 })
 export class AppComponent {
   title = 'pet-web-app-frontend';
-  private roles: string[] = [];
+  private roles: any[] = [];
   isLoggedIn = false;
   showAdminBoard = false;
   showModeratorBoard = false;

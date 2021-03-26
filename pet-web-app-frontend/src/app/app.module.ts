@@ -19,6 +19,9 @@ import { EditProfileComponent } from './components/edit-profile/edit-profile.com
 import { AddPostComponent } from './components/add-post/add-post.component';
 import { EditPostComponent } from './components/edit-post/edit-post.component';
 import {AddExpertComponent} from './components/add-expert/add-expert.component';
+import {AddPetComponent} from './components/add-pet/add-pet.component';
+import {ChatComponent} from './components/chat/chat.component';
+import {ExpertsListComponent} from './components/experts-list/experts-list.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,7 @@ import {AddExpertComponent} from './components/add-expert/add-expert.component';
     UserLoginComponent,
     AddUserComponent,
     AddExpertComponent,
+    AddPetComponent,
     ReadPostComponent,
     ProfileComponent,
     BoardAdminComponent,
@@ -34,7 +38,9 @@ import {AddExpertComponent} from './components/add-expert/add-expert.component';
     BoardExpertComponent,
     EditProfileComponent,
     AddPostComponent,
-    EditPostComponent
+    EditPostComponent,
+    ChatComponent,
+    ExpertsListComponent
   ],
   imports: [
     BrowserModule,

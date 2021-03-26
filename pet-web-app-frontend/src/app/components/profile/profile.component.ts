@@ -12,6 +12,7 @@ export class ProfileComponent implements OnInit {
   currentUser: any;
   roles: string[] = [];
   hideBecomeExpert: boolean;
+  pets: any;
 
   constructor(private userService: UserService, private token: TokenStorageService) { }
 
@@ -28,6 +29,16 @@ export class ProfileComponent implements OnInit {
         error => {
           console.log(error);
         });
+    this.userService.getPets(id)
+      .subscribe(
+        data => {
+          this.pets = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
   }
+
 
 }
