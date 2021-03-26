@@ -1,0 +1,22 @@
+<div class="list"
+     *ngFor="let post of posts;"
+>
+  <div class="list-group-item">
+    <a class="post-title" routerLink="/posts/{{ post.id }}">
+      {{ post.title}}
+    </a>
+    <div class="post-description">
+      {{post.description}}
+    </div>
+    <div class="info">
+      <p class="author">
+      </p>
+      <p class="date">
+        {{post.createdDate | date:'longDate'}}
+      </p>
+      <p class="author">
+        {{post.author}}
+      </p>
+    </div>
+  </div>
+</div>

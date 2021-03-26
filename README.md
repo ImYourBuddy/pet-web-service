@@ -1,6 +1,6 @@
 # Pet web-service
 
-_**This is web-application for pet owners and their pets or for people who want a pet, as well as for pet expert. 
+_**This is web-application for pet owners and their pets or for people who want to have a pet, as well as for pet expert. 
 In this web-app, users can find a lot of useful information from posts written by pet expert. In addition, pet owners
 can ask any question in the online chat and expert will answer it.**_
 
@@ -41,7 +41,7 @@ no more.
   complaint about it.
   
   
-* **Pet expert** can add a new post that will be visible to all users. He or she should specify the topic, 
+* **Pet expert** can add a new post that will be visible to all users. He or she should specify the title, 
   small description, for whom this post is intended, and the main text of the post.
   
   

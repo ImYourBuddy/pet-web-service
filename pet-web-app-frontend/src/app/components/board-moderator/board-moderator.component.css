@@ -1,0 +1,12 @@
+.btn {
+  width: 250px;
+}
+
+.manage-button {
+  margin: 50px;
+}
+
+.deleted {
+  color: darkred;
+  font-size: 17px;
+}
