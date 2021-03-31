@@ -3,7 +3,7 @@ package com.imyourbuddy.petwebapp.service;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Role;
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.ExpertRequestProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
 import com.imyourbuddy.petwebapp.repository.PetExpertRepository;
 import com.imyourbuddy.petwebapp.repository.RoleRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
@@ -32,7 +32,7 @@ public class ModeratorService {
         return user;
     }
 
-    public List<ExpertRequestProjection> getExpertRequest() {
+    public List<PetExpertRequestProjection> getExpertRequest() {
         return userRepository.getExpertRequest();
     }
 

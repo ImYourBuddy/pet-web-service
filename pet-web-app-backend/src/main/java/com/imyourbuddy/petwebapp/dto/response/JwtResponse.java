@@ -13,7 +13,6 @@ public class JwtResponse {
 
     public JwtResponse(String token,
                        Long id,
-
                        List<String> roles) {
         this.token = token;
         this.id = id;

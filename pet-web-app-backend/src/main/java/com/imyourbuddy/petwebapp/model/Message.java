@@ -16,10 +16,8 @@ public class Message {
     private long id;
 
     @Column(name = "chat_id")
-    @NotBlank
     private long chatId;
 
-    @NotBlank
     @Min(value = 1)
     private long sender;
 

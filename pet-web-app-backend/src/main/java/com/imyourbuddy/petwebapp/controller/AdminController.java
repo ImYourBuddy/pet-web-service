@@ -1,11 +1,8 @@
 package com.imyourbuddy.petwebapp.controller;
 
-import com.imyourbuddy.petwebapp.dto.request.BanRequest;
-import com.imyourbuddy.petwebapp.dto.request.ExpertRequest;
 import com.imyourbuddy.petwebapp.dto.response.UserResponse;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.ExpertRequestProjection;
 import com.imyourbuddy.petwebapp.service.AdminService;
 import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

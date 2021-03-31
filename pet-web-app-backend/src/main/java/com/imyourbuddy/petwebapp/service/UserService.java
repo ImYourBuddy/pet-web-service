@@ -9,7 +9,6 @@ import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Pet;
 import com.imyourbuddy.petwebapp.model.Role;
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.ExpertRequestProjection;
 import com.imyourbuddy.petwebapp.repository.PetRepository;
 import com.imyourbuddy.petwebapp.repository.RoleRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;

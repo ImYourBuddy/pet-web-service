@@ -1,7 +1,7 @@
 package com.imyourbuddy.petwebapp.repository;
 
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.ExpertRequestProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.ColumnResult;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.SqlResultSetMapping;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +33,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "pe.qualification, pe.online_help as help\n" +
             "from public.user u INNER JOIN pet_expert pe ON u.id = pe.user_id\n" +
             "where pe.confirmed = false", nativeQuery = true)
-    List<ExpertRequestProjection> getExpertRequest();
+    List<PetExpertRequestProjection> getExpertRequest();
 
 }

@@ -17,7 +17,8 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    List<Message> findAllByChatId(long chatId);
+    @Query(value = "select * from message where chat_id =:chatId order by timestamp", nativeQuery = true)
+    List<Message> findAllByChatId(@Param("chatId") long chatId);
 
     List<Message> findAllBySender(long sender);
 }

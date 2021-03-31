@@ -1,40 +1,36 @@
 package com.imyourbuddy.petwebapp.controller;
 
-import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.Chat;
 import com.imyourbuddy.petwebapp.model.Message;
+import com.imyourbuddy.petwebapp.model.projection.ChatProjection;
 import com.imyourbuddy.petwebapp.service.ChatService;
 import com.imyourbuddy.petwebapp.service.MessageService;
-import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
+import java.util.List;
 
 @RestController
+@RequestMapping("/rest")
 public class ChatController {
-    private final ChatService chatService;
     private final MessageService messageService;
-    private final UserService userService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final ChatService chatService;
+
 
     @Autowired
-    public ChatController(ChatService chatService, MessageService messageService, UserService userService, SimpMessagingTemplate messagingTemplate) {
-        this.chatService = chatService;
+    public ChatController(MessageService messageService, ChatService chatService) {
         this.messageService = messageService;
-        this.userService = userService;
-        this.messagingTemplate = messagingTemplate;
+        this.chatService = chatService;
     }
 
-    @MessageMapping("/chat/{to}")
-    public void sendMessage(@DestinationVariable long to,@Payload Message message) throws ResourceNotFoundException {
-        userService.getById(to);
-        long chatId = chatService.getChatId(message.getSender(), to);
-        message.setChatId(chatId);
-        messagingTemplate.convertAndSend("/topic/messages/" + to, message);
+    @GetMapping("/message/{senderId}/{recipientId}")
+    public List<Message> getAll(@PathVariable(name = "senderId") long senderId,
+                                @PathVariable(name = "recipientId") long recipientId) {
+        return messageService.findChatMessages(senderId, recipientId);
     }
 
+    @GetMapping("/chat/{id}")
+    public List<ChatProjection> getAllChats(@PathVariable(name = "id") long id){
+        return chatService.getAllChatByUser(id);
+    }
 }

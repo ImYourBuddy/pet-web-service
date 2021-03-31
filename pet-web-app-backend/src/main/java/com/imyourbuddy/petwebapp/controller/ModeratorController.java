@@ -4,7 +4,7 @@ import com.imyourbuddy.petwebapp.dto.request.BanRequest;
 import com.imyourbuddy.petwebapp.dto.request.ExpertRequest;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.ExpertRequestProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
 import com.imyourbuddy.petwebapp.service.ModeratorService;
 import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class ModeratorController {
 
     @GetMapping("/experts")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public List<ExpertRequestProjection> getExpertRequest() {
+    public List<PetExpertRequestProjection> getExpertRequest() {
         return moderatorService.getExpertRequest();
     }
 

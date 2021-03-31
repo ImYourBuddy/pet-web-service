@@ -1,12 +1,16 @@
 package com.imyourbuddy.petwebapp.repository;
 
 import com.imyourbuddy.petwebapp.model.PetExpert;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Repository interface for {@link PetExpert} class
@@ -18,4 +22,8 @@ public interface PetExpertRepository extends JpaRepository<PetExpert, Long> {
     @Transactional
     @Query(value = "UPDATE public.pet_expert  SET confirmed = true WHERE id =:id", nativeQuery = true)
     void confirmExpert(@Param("id") long id);
+
+    @Query(value = "SELECT pe.user_id as userId, u.first_name || ' ' || u.last_name as name, pe.qualification, pe.online_help as help\n" +
+            "FROM pet_expert pe INNER JOIN public.user u ON pe.user_id = u.id", nativeQuery = true)
+    public List<PetExpertProjection> findAllExperts();
 }

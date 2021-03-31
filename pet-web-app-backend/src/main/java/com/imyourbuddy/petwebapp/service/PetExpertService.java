@@ -2,6 +2,8 @@ package com.imyourbuddy.petwebapp.service;
 
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.PetExpert;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
 import com.imyourbuddy.petwebapp.repository.PetExpertRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,8 @@ public class PetExpertService {
         this.userRepository = userRepository;
     }
 
-    public List<PetExpert> getAll() {
-        return petExpertRepository.findAll();
+    public List<PetExpertProjection> getAll() {
+        return petExpertRepository.findAllExperts();
     }
 
     public PetExpert save(PetExpert expert) throws ResourceNotFoundException {

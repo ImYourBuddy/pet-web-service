@@ -30,10 +30,14 @@ public class MessageService {
     }
 
     public List<Message> findChatMessages(long userId, long expertId) {
-        long chatId = chatService.getChatId(userId, expertId);
+        long chatId = chatService.getChatId(userId, expertId, false);
 
         List<Message> messages = repository.findAllByChatId(chatId);
 
         return messages;
+    }
+
+    public List<Message> getAll() {
+        return repository.findAll();
     }
 }
