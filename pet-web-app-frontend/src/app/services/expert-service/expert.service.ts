@@ -26,4 +26,9 @@ export class ExpertService {
     return this.http.get(API_URL);
   }
 
+
+  findMessages(senderId, recipientId) {
+    return this.http.get('http://localhost:8080/rest/message/' + senderId + '/' + recipientId);
+  }
+
 }

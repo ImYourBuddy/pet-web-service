@@ -1,0 +1,22 @@
+<div class="list"
+     *ngFor="let chat of chats;"
+>
+  <div class="list-group-item">
+    <div class="post-description">
+      <div *ngIf="chat.user == userId; else anotherUser">
+        {{chat.expertName}}
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" routerLink="/chat/{{chat.expert}}">Enter the chat</button>
+        </div>
+      </div>
+      <ng-template #anotherUser>
+        <div *ngIf="chat.expert == userId">
+         Chat with user {{chat.userName}}
+          <div class="form-group">
+            <button class="btn btn-primary btn-block" routerLink="/chat/{{chat.user}}">Enter the chat</button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

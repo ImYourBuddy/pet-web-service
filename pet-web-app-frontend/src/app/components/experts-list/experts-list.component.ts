@@ -8,6 +8,7 @@ import {ExpertService} from '../../services/expert-service/expert.service';
 })
 export class ExpertsListComponent {
   experts: any;
+  messages: any;
   constructor(private expertService: ExpertService) {
   }
 
@@ -27,5 +28,4 @@ export class ExpertsListComponent {
           console.log(error);
         });
   }
-
 }

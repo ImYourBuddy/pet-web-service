@@ -22,6 +22,7 @@ import {AddExpertComponent} from './components/add-expert/add-expert.component';
 import {AddPetComponent} from './components/add-pet/add-pet.component';
 import {ChatComponent} from './components/chat/chat.component';
 import {ExpertsListComponent} from './components/experts-list/experts-list.component';
+import {ChatListComponent} from './components/chat-lists/chat-list.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import {ExpertsListComponent} from './components/experts-list/experts-list.compo
     AddPostComponent,
     EditPostComponent,
     ChatComponent,
-    ExpertsListComponent
+    ExpertsListComponent,
+    ChatListComponent
   ],
   imports: [
     BrowserModule,

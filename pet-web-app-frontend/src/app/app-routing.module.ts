@@ -15,6 +15,7 @@ import {AddExpertComponent} from './components/add-expert/add-expert.component';
 import {AddPetComponent} from './components/add-pet/add-pet.component';
 import {ChatComponent} from './components/chat/chat.component';
 import {ExpertsListComponent} from './components/experts-list/experts-list.component';
+import {ChatListComponent} from './components/chat-lists/chat-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'posts', pathMatch: 'full' },
@@ -31,7 +32,8 @@ const routes: Routes = [
   { path: 'admin', component: BoardAdminComponent },
   { path: 'expert', component: BoardExpertComponent },
   { path: 'add-post', component: AddPostComponent },
-  { path: 'chat', component: ChatComponent },
+  { path: 'chat/:id', component: ChatComponent },
+  { path: 'chat', component: ChatListComponent },
   { path: 'experts', component: ExpertsListComponent}
 ];
 
