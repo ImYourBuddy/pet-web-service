@@ -26,6 +26,8 @@ public class PetExpert{
     @Min(value = 1)
     private long userId;
 
+    private long reputation;
+
     private boolean deleted;
 
     private boolean confirmed;

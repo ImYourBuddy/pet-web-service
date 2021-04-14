@@ -30,7 +30,14 @@ public class ModeratorController {
     @PostMapping("/ban")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
     public ResponseEntity<User> banUserById(@RequestBody BanRequest request) throws ResourceNotFoundException {
-        User user = moderatorService.banUserById(request.getUserId(), request.isBanned());
+        User user = moderatorService.banUserById(request);
+        return ResponseEntity.ok().body(user);
+    }
+
+    @DeleteMapping ("/ban/{userId}")
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
+    public ResponseEntity<User> unbanUserById(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+        User user = moderatorService.unbanUserById(userId);
         return ResponseEntity.ok().body(user);
     }
 
@@ -44,5 +51,17 @@ public class ModeratorController {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
     public void confirmExpert(@RequestBody ExpertRequest expert) throws ResourceNotFoundException {
         moderatorService.confirmExpert(expert.getUserId(), expert.getExpertId());
+    }
+
+    @DeleteMapping("/experts/{expertId}")
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
+    public void rejectExpert(@PathVariable(name = "expertId") long expertId) throws ResourceNotFoundException {
+        moderatorService.rejectExpert(expertId);
+    }
+
+    @DeleteMapping("/experts/delete/{userId}")
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
+    public void deleteModer(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+        moderatorService.deleteExpert(userId);
     }
 }

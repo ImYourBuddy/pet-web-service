@@ -36,4 +36,14 @@ public class AdminService {
         userRepository.save(user);
         return user;
     }
+
+    public User removeModerById(long id) throws ResourceNotFoundException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + " not found"));
+        Role roleModerator = roleRepository.findByName("ROLE_MODERATOR");
+        List<Role> roles = user.getRoles();
+        roles.remove(roleModerator);
+        userRepository.save(user);
+        return user;
+    }
 }

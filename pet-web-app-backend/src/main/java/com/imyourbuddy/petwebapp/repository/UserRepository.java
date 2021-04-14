@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE public.user u SET u.banned =:banned WHERE u.id =:id", nativeQuery = true)
+    @Query(value = "UPDATE public.user SET banned =:banned WHERE id =:id", nativeQuery = true)
     void banUserById(@Param("id") long id, @Param("banned") boolean banned);
 
     @Query(value = "select pe.id, pe.user_id as user, u.username, u.first_name || ' '|| u.last_name as name, " +

@@ -1,8 +1,11 @@
 package com.imyourbuddy.petwebapp.controller;
 
 import com.imyourbuddy.petwebapp.dto.request.MessageRequest;
+import com.imyourbuddy.petwebapp.dto.response.NotificationMessage;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Message;
+import com.imyourbuddy.petwebapp.model.MessageStatus;
+import com.imyourbuddy.petwebapp.model.User;
 import com.imyourbuddy.petwebapp.service.ChatService;
 import com.imyourbuddy.petwebapp.service.MessageService;
 import com.imyourbuddy.petwebapp.service.UserService;
@@ -46,7 +49,12 @@ public class WebSocketController {
         System.out.println(message.getText());
         System.out.println(message.getTimestamp());
         message.setChatId(chatId);
+        message.setStatus(MessageStatus.RECEIVED);
         messageService.save(message);
-        this.messagingTemplate.convertAndSend("/chat/" + to, message);
+        User user = userService.getById(message.getSender());
+        String senderName = user.getFirstName() + " " + user.getLastName();
+        NotificationMessage notificationMessage = new NotificationMessage(message.getChatId(), message.getSender(),
+                senderName, message.getText(), message.getTimestamp());
+        this.messagingTemplate.convertAndSend("/chat/" + to, notificationMessage);
     }
 }

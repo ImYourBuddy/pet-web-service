@@ -17,9 +17,8 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query(value = "SELECT p.id, p.title, p.description, p.text, u.first_name || ' ' || u.last_name as author, " +
-            "p.created_date as \"createdDate\", p.deleted FROM post p INNER JOIN pet_expert pe ON p.author = pe.id\n" +
-            "INNER JOIN public.user u ON pe.user_id = u.id\n" +
+    @Query(value = "SELECT p.id, p.title, p.description, p.text, u.first_name || ' ' || u.last_name as author,\n" +
+            "p.rating, p.created_date as createdDate, p.deleted FROM post p INNER JOIN public.user u ON p.author = u.id\n" +
             "ORDER BY p.created_date DESC", nativeQuery = true)
     List<PostProjection> findAllInOrderByDate();
 
@@ -40,4 +39,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "UPDATE post p SET deleted = false WHERE p.id =:id", nativeQuery = true)
     void restore(@Param("id") long id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE post p SET rating = rating + 1 WHERE p.id =:id", nativeQuery = true)
+    void increaseRating(@Param("id") long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE post p SET rating = rating - 1 WHERE p.id =:id", nativeQuery = true)
+    void decreaseRating(@Param("id") long id);
 }

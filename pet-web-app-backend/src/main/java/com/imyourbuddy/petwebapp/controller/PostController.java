@@ -1,6 +1,7 @@
 package com.imyourbuddy.petwebapp.controller;
 
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.Mark;
 import com.imyourbuddy.petwebapp.model.Post;
 import com.imyourbuddy.petwebapp.model.projection.PostProjection;
 import com.imyourbuddy.petwebapp.service.PostService;
@@ -81,6 +82,22 @@ public class PostController {
         Post post = service.deletePostByModer(id);
         return ResponseEntity.ok().body(post);
     }
+
+    @PostMapping("/rate")
+    @PreAuthorize("hasRole('READER')")
+    public void ratePost(@RequestBody Mark mark) throws ResourceNotFoundException {
+        service.ratePost(mark);
+    }
+
+    @GetMapping("/rate/{postId}/{userId}")
+    @PreAuthorize("hasRole('READER')")
+    public Mark checkMark(@PathVariable(name = "postId") long postId,
+                          @PathVariable(name = "userId") long userId) {
+        return service.checkMark(postId, userId);
+    }
+
+
+
 
 
 }

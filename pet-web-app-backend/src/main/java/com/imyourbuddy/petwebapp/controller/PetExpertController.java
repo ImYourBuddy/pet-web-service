@@ -40,6 +40,19 @@ public class PetExpertController {
         return service.getAll();
     }
 
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('READER')")
+    public PetExpert getByUserId(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+        return service.getByUserId(userId);
+    }
+
+    @PutMapping()
+    @PreAuthorize("hasRole('EXPERT')")
+    public PetExpert edit(@RequestBody PetExpert updatedExpert) throws ResourceNotFoundException {
+        return service.edit(updatedExpert);
+    }
+
+
     @PostMapping()
     public PetExpert add(@RequestBody @Valid PetExpert expert) throws ResourceNotFoundException {
         return service.save(expert);

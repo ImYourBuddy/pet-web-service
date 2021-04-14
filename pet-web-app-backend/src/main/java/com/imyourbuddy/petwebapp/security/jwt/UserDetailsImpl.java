@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
+@Data
 public class UserDetailsImpl implements UserDetails {
 
     private Long id;
@@ -28,18 +28,22 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
+    private boolean banned;
+
     public UserDetailsImpl(Long id,
                            String username,
                            String password,
                            String firstName,
                            String lastName,
-                           Collection<? extends GrantedAuthority> authorities) {
+                           Collection<? extends GrantedAuthority> authorities,
+                           boolean banned) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.authorities = authorities;
+        this.banned = banned;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -53,7 +57,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
-                authorities);
+                authorities,
+                user.isBanned());
     }
 
     @Override

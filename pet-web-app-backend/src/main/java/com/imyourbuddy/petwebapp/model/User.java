@@ -21,10 +21,11 @@ public class User {
     private long id;
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 50)
     private String username;
 
     @NotBlank
+    @Size(min = 5, max = 100)
     private String password;
 
     @Column(name = "first_name")

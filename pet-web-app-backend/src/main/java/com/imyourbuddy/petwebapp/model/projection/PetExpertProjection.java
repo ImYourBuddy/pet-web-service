@@ -5,4 +5,5 @@ public interface PetExpertProjection {
     String getName();
     String getQualification();
     boolean getHelp();
+    long getReputation();
 }

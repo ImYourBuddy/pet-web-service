@@ -1,6 +1,6 @@
 package com.imyourbuddy.petwebapp.controller;
 
-import com.imyourbuddy.petwebapp.model.Chat;
+import com.imyourbuddy.petwebapp.dto.response.ChatResponse;
 import com.imyourbuddy.petwebapp.model.Message;
 import com.imyourbuddy.petwebapp.model.projection.ChatProjection;
 import com.imyourbuddy.petwebapp.service.ChatService;
@@ -30,7 +30,24 @@ public class ChatController {
     }
 
     @GetMapping("/chat/{id}")
-    public List<ChatProjection> getAllChats(@PathVariable(name = "id") long id){
-        return chatService.getAllChatByUser(id);
+    public List<ChatResponse> getAllChats(@PathVariable(name = "id") long id){
+        return chatService.getChatsWithNewMessages(id);
+    }
+
+    @GetMapping("/message/new/{userId}")
+    public boolean haveNewMessages(@PathVariable(name = "userId") long userId) {
+        return messageService.haveNewMessages(userId);
+    }
+
+    @GetMapping("/message/new/{userId}/{expertId}")
+    public boolean haveNewMessagesInChat(@PathVariable(name = "userId") long userId,
+                                         @PathVariable(name = "expertId") long expertId) {
+        return messageService.haveNewMessagesInChat(userId, expertId);
+    }
+
+    @PatchMapping("/message/delivered/{userId}/{expertId}")
+    public void markAsDelivered(@PathVariable(name = "userId") long userId,
+                                         @PathVariable(name = "expertId") long expertId) {
+        messageService.markAsDelivered(userId, expertId);
     }
 }

@@ -1,34 +1,37 @@
-CREATE TABLE public.roles
+CREATE TABLE public.role
 (
-    id serial NOT NULL,
+    id   serial                NOT NULL,
     name character varying(30) NOT NULL UNIQUE,
     PRIMARY KEY (id)
 );
 
-insert into public.roles (name) values ('ROLE_ADMINISTRATOR');
-insert into public.roles (name) values ('ROLE_MODERATOR');
-insert into public.roles (name) values ('ROLE_EXPERT');
-insert into public.roles (name) values ('ROLE_OWNER');
-insert into public.roles (name) values ('ROLE_READER');
+insert into public.role (name)
+values ('ROLE_ADMINISTRATOR');
+insert into public.role (name)
+values ('ROLE_MODERATOR');
+insert into public.role (name)
+values ('ROLE_EXPERT');
+insert into public.role (name)
+values ('ROLE_OWNER');
+insert into public.role (name)
+values ('ROLE_READER');
 
 CREATE TABLE public.user
 (
-    id bigserial NOT NULL,
-    username character varying(20) NOT NULL UNIQUE,
-    password character varying(255) NOT NULL,
-    first_name character varying(30) NOT NULL,
-    last_name character varying(30),
-    created timestamp,
-    banned boolean DEFAULT false,
-    deleted boolean DEFAULT false,
+    id         bigserial              NOT NULL,
+    username   character varying(50)  NOT NULL UNIQUE,
+    password   character varying(100) NOT NULL,
+    first_name character varying(30)  NOT NULL,
+    last_name  character varying(30),
+    created    timestamp,
+    banned     boolean DEFAULT false,
+    deleted    boolean DEFAULT false,
     PRIMARY KEY (id)
 );
 
-
-
 CREATE TABLE public.user_roles
 (
-    user_id bigint NOT NULL,
+    user_id bigint  NOT NULL,
     role_id integer NOT NULL,
     PRIMARY KEY (user_id, role_id)
 );
@@ -37,23 +40,24 @@ ALTER TABLE public.user_roles
         REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
 ALTER TABLE public.user_roles
     ADD CONSTRAINT role_fk FOREIGN KEY (role_id)
-        REFERENCES public.roles (id)
+        REFERENCES public.role (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
 
 
 CREATE TABLE public.pet_expert
 (
-    id bigserial NOT NULL,
+    id            bigserial              NOT NULL,
     qualification character varying(255) NOT NULL,
-    online_help boolean NOT NULL,
-    user_id bigint NOT NULL,
-    deleted boolean NOT NULL DEFAULT false,
-    confirmed boolean NOT NULL DEFAULT false,
+    online_help   boolean                NOT NULL,
+    user_id       bigint                 NOT NULL,
+    reputation    bigint                 NOT NULL,
+    deleted       boolean                NOT NULL DEFAULT false,
+    confirmed     boolean                NOT NULL DEFAULT false,
     PRIMARY KEY (id)
 );
 ALTER TABLE public.pet_expert
@@ -61,17 +65,17 @@ ALTER TABLE public.pet_expert
         REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
 
 CREATE TABLE public.pet
 (
-    id bigserial NOT NULL,
-    species character varying(10) NOT NULL,
-    name character varying(50),
-    breed character varying(20),
-    gender character varying(6),
+    id        bigserial             NOT NULL,
+    species   character varying(10) NOT NULL,
+    name      character varying(50),
+    breed     character varying(20),
+    gender    character varying(6),
     birthdate timestamp,
-    owner bigint NOT NULL,
+    owner     bigint                NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -84,28 +88,65 @@ ALTER TABLE public.pet
 
 CREATE TABLE public.post
 (
-    id bigserial NOT NULL,
-    title character varying(50) NOT NULL,
-    description character varying(255),
-    text text NOT NULL,
-    author bigint NOT NULL,
+    id           bigserial              NOT NULL,
+    title        character varying(255) NOT NULL,
+    description  character varying(255),
+    text         text                   NOT NULL,
+    author       bigint                 NOT NULL,
     created_date timestamp,
-    deleted boolean NOT NULL,
+    rating       bigint                 NOT NULL,
+    deleted      boolean                NOT NULL,
     PRIMARY KEY (id)
 );
 
 ALTER TABLE public.post
     ADD CONSTRAINT author_fk FOREIGN KEY (author)
-        REFERENCES public.pet_expert (id)
+        REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
+
+CREATE TABLE public.mark
+(
+    post_id bigint,
+    user_id bigint,
+    liked boolean NOT NULL,
+    PRIMARY KEY (post_id, user_id)
+);
+
+ALTER TABLE public.mark
+    ADD CONSTRAINT user_fk FOREIGN KEY (user_id)
+        REFERENCES public.user (id)
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+        NOT VALID;
+
+ALTER TABLE public.mark
+    ADD CONSTRAINT post_fk FOREIGN KEY (post_id)
+        REFERENCES public.post (id)
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+        NOT VALID;
+
+CREATE TABLE public.ban
+(
+    id          bigserial         NOT NULL,
+    user_id     bigint            NOT NULL,
+    description character varying NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
+ALTER TABLE public.ban
+    ADD CONSTRAINT user_fk FOREIGN KEY (user_id)
+        REFERENCES public.user (id)
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+        NOT VALID;
 
 CREATE TABLE public.chat
 (
-    id bigserial NOT NULL,
-    user_id bigint NOT NULL,
-    expert_id bigint NOT NULL,
+    id        bigserial NOT NULL,
+    user_id   bigint    NOT NULL,
+    expert_id bigint    NOT NULL,
     PRIMARY KEY (id)
 );
 ALTER TABLE public.chat
@@ -113,21 +154,22 @@ ALTER TABLE public.chat
         REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
 ALTER TABLE public.chat
     ADD CONSTRAINT recipient_fk FOREIGN KEY (expert_id)
         REFERENCES public.user (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
 
 CREATE TABLE public.message
 (
-    id bigserial NOT NULL,
-    chat_id bigint NOT NULL,
-    sender bigint NOT NULL,
-    text text NOT NULL,
+    id        bigserial                NOT NULL,
+    chat_id   bigint                   NOT NULL,
+    sender    bigint                   NOT NULL,
+    text      text                     NOT NULL,
     timestamp timestamp with time zone NOT NULL,
+    status    character varying        NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -136,7 +178,7 @@ ALTER TABLE public.message
         REFERENCES public.chat (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
-    NOT VALID;
+        NOT VALID;
 
 
 

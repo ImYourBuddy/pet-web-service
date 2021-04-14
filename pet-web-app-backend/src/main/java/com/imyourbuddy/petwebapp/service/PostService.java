@@ -1,8 +1,11 @@
 package com.imyourbuddy.petwebapp.service;
 
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.Mark;
 import com.imyourbuddy.petwebapp.model.Post;
 import com.imyourbuddy.petwebapp.model.projection.PostProjection;
+import com.imyourbuddy.petwebapp.repository.MarkRepository;
+import com.imyourbuddy.petwebapp.repository.PetExpertRepository;
 import com.imyourbuddy.petwebapp.repository.PostRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +24,16 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final MarkRepository markRepository;
+    private final PetExpertRepository petExpertRepository;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, MarkRepository markRepository,
+                       PetExpertRepository petExpertRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.markRepository = markRepository;
+        this.petExpertRepository = petExpertRepository;
     }
 
     public List<PostProjection> getAll() {
@@ -86,8 +94,29 @@ public class PostService {
     public Post deletePostByModer(long id) throws ResourceNotFoundException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
+        List<Mark> marks = markRepository.findByPostId(id);
+        marks.forEach(markRepository::delete);
         postRepository.delete(post);
         return post;
+    }
+
+    public void ratePost(Mark mark) throws ResourceNotFoundException {
+        userRepository.findById(mark.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + mark.getUserId() + " not found"));
+        Post post = postRepository.findById(mark.getPostId())
+                .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + mark.getPostId() + " not found"));
+        markRepository.save(mark);
+        if (mark.isLiked()) {
+            petExpertRepository.increaseReputation(post.getAuthor());
+            postRepository.increaseRating(mark.getPostId());
+        } else {
+            petExpertRepository.decreaseReputation(post.getAuthor());
+            postRepository.decreaseRating(mark.getPostId());
+        }
+    }
+
+    public Mark checkMark(long postId, long userId) {
+        return markRepository.findByPostIdAndUserId(postId, userId);
     }
 
 }

@@ -19,7 +19,7 @@ public class Post {
     private long id;
 
     @NotBlank
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 255)
     private String title;
 
     @NotBlank
@@ -34,6 +34,8 @@ public class Post {
 
     @Column(name = "created_date")
     private Date createdDate;
+
+    private long rating;
 
     private boolean deleted;
 

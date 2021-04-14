@@ -63,10 +63,27 @@ public class UserController {
         return ResponseEntity.ok().body(deletedPet);
     }
 
+    @GetMapping("/{ownerId}/pets/{petId}")
+    @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Pet> getPet(@PathVariable(name = "ownerId") long ownerId,
+                                         @PathVariable(name = "petId") long petId) throws ResourceNotFoundException {
+        Pet pet = userService.getPetById(ownerId, petId);
+        return ResponseEntity.ok().body(pet);
+    }
+
+    @PutMapping("/{ownerId}/pets/{petId}")
+    @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Pet> editPet(@PathVariable(name = "ownerId") long ownerId,
+                                      @PathVariable(name = "petId") long petId, @RequestBody Pet updatedPet) throws ResourceNotFoundException {
+        Pet pet = userService.editPet(ownerId, petId, updatedPet);
+        return ResponseEntity.ok().body(pet);
+    }
+
     @GetMapping("/summaries")
     public List<User> getAllUserSummaries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.getAllUserSummaries(userDetails.getId());
     }
+
 
 
 }

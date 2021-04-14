@@ -1,6 +1,8 @@
 package com.imyourbuddy.petwebapp.service;
 
 import com.imyourbuddy.petwebapp.model.Post;
+import com.imyourbuddy.petwebapp.repository.MarkRepository;
+import com.imyourbuddy.petwebapp.repository.PetExpertRepository;
 import com.imyourbuddy.petwebapp.repository.PostRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,12 +19,17 @@ class PostServiceTest {
     private PostService postService;
     private PostRepository postRepository;
     private UserRepository userRepository;
+    private PetExpertRepository petExpertRepository;
+    private MarkRepository markRepository;
 
     @BeforeEach
     public void setUp() {
         postRepository = Mockito.mock(PostRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
-        postService = new PostService(postRepository, userRepository);
+        markRepository = Mockito.mock(MarkRepository.class);
+        petExpertRepository = Mockito.mock(PetExpertRepository.class);
+
+        postService = new PostService(postRepository, userRepository, markRepository, petExpertRepository);
     }
 
     @Test

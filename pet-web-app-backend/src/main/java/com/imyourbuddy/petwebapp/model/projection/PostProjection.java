@@ -8,6 +8,7 @@ public interface PostProjection {
     String getDescription();
     String getText();
     String getAuthor();
+    long getRating();
     Date getCreatedDate();
     boolean getDeleted();
 }

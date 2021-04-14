@@ -1,37 +1,30 @@
 package com.imyourbuddy.petwebapp.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 
 @Entity
 @Table
 @Data
-public class Message {
+@NoArgsConstructor
+public class Ban {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "chat_id")
-    private long chatId;
-
+    @Column(name = "user_id")
     @Min(value = 1)
-    private long sender;
+    private long userId;
 
     @NotBlank
-    private String text;
+    private String description;
 
-    @Column
-    private Date timestamp;
-
-    @Enumerated(EnumType.STRING)
-    private MessageStatus status;
-
-
-
-
-
+    public Ban(@Min(value = 1) long userId, @NotBlank String description) {
+        this.userId = userId;
+        this.description = description;
+    }
 }

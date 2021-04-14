@@ -12,15 +12,7 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private List<String> roles;
-
-    public User toUser() {
-        User user = new User();
-        user.setId(id);
-        user.setUsername(username);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        return user;
-    }
+    private boolean banned;
 
     public static UserResponse fromUser(User user) {
         UserResponse adminUserDto = new UserResponse();
@@ -28,6 +20,7 @@ public class UserResponse {
         adminUserDto.setUsername(user.getUsername());
         adminUserDto.setFirstName(user.getFirstName());
         adminUserDto.setLastName(user.getLastName());
+        adminUserDto.setBanned(user.isBanned());
         return adminUserDto;
     }
 }

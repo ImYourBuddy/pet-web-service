@@ -44,4 +44,13 @@ public class AdminController {
         User moder = adminService.addModerById(id);
         return ResponseEntity.ok().body(moder);
     }
+
+    @DeleteMapping("/users/{id}/remove-moder")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    public ResponseEntity<User> removeModerById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        User moder = adminService.removeModerById(id);
+        return ResponseEntity.ok().body(moder);
+    }
+
+
 }

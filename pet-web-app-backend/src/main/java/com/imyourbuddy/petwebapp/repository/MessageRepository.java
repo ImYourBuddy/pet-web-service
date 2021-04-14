@@ -17,8 +17,18 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query(value = "select * from message where chat_id =:chatId order by timestamp", nativeQuery = true)
+    @Query(value = "SELECT * FROM message WHERE chat_id =:chatId ORDER BY timestamp", nativeQuery = true)
     List<Message> findAllByChatId(@Param("chatId") long chatId);
 
     List<Message> findAllBySender(long sender);
+
+    @Query(value = "SELECT * FROM message WHERE chat_id =:chatId AND status = 'RECEIVED' AND sender !=:user",
+            nativeQuery = true)
+    List<Message> findAllReceived(@Param("chatId") long chatId, @Param("user") long user);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE public.message SET status = 'DELIVERED' WHERE chat_id =:chatId AND status = 'RECEIVED'",
+            nativeQuery = true)
+    void markAsDelivered(@Param("chatId") long chatId);
 }

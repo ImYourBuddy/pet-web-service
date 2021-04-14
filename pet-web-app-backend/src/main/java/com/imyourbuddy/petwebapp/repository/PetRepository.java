@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for {@link Pet} class
@@ -15,5 +16,7 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
 
     List<Pet> findByOwner(long ownerId);
 
-    Pet findById(long id);
+    Optional<Pet> findById(long id);
+
+
 }
