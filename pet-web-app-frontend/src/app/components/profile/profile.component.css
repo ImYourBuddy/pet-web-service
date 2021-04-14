@@ -1,3 +1,15 @@
 .submit-form {
   margin: auto;
 }
+
+.buttons {
+  text-align: center;
+}
+
+.profile-info {
+  font-size: 20px;
+}
+
+.buttons {
+  margin: 10px;
+}

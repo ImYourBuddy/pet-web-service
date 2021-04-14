@@ -1,7 +1,4 @@
 <div>
-  <button class="btn btn-primary btn-block" (click)="hideUsers = !hideUsers">Show users</button>
-</div>
-<div *ngIf="!hideUsers">
   <div class="list"
        *ngFor="let user of users;"
   >
@@ -16,9 +13,11 @@
         Roles: {{user.roles}}
       </div>
       <div *ngIf="!user.roles.includes('MODERATOR')">
-        <button class="btn btn-primary btn-block" (click)="addModer(user.id)">Add moder role</button>
+        <button class="btn btn-success m-2" (click)="addModer(user.id)">Add moder role</button>
       </div>
-      <strong *ngIf="isSuccessful">Strong</strong>
+      <div *ngIf="user.roles.includes('MODERATOR')">
+        <button class="btn btn-danger m-2" (click)="removeModer(user.id)">Remove moder role</button>
+      </div>
     </div>
   </div>
 </div>

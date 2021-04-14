@@ -58,4 +58,17 @@ export class PostService {
   restore(id: bigint) {
     return this.http.patch(API_URL + '/' + id, {});
   }
+
+  ratePost(postId: bigint, userId: bigint, liked: boolean) {
+    return this.http.post(API_URL + '/rate', {
+      postId,
+      userId,
+      liked
+    });
+  }
+
+  checkMark(postId, userId) {
+    return this.http.get(API_URL + '/rate/' + postId + '/' + userId);
+  }
+
 }

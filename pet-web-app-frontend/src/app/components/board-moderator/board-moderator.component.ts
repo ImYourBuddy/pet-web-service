@@ -4,6 +4,7 @@ import {PostService} from '../../services/post-service/post.service';
 import {AdminService} from '../../services/admin-service/admin.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {ModerService} from '../../services/moder-service/moder.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-board-moderator',
@@ -13,17 +14,37 @@ import {ModerService} from '../../services/moder-service/moder.service';
 export class BoardModeratorComponent implements OnInit {
   posts: any;
   experts: any;
+  users: any;
+  userId: bigint;
+  currentUser: any;
 
+  banDescription: any;
   isSuccessful = false;
   errorMessage = '';
   hidePosts = true;
   hideExpertRequest = true;
+  hideUsers = true;
+  hideBanInput = true;
 
   constructor(private postService: PostService, private adminService: AdminService,
-              private moderService: ModerService, private token: TokenStorageService) {
+              private moderService: ModerService, private token: TokenStorageService,
+              private userService: UserService, private router: Router) {
   }
 
   ngOnInit(): void {
+    this.currentUser = this.token.getUser();
+    this.userId = this.token.getUser().id;
+    this.userService.getUser(this.userId)
+      .subscribe(
+        data => {
+          this.currentUser = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+          this.token.signOut();
+          this.router.navigate(['/login']);
+        });
     this.postService.getAllForModer()
       .subscribe(
         data => {
@@ -42,6 +63,7 @@ export class BoardModeratorComponent implements OnInit {
         error => {
           console.log(error);
         });
+    this.getAllUsers();
   }
 
   removeFromPublicAccess(id: bigint) {
@@ -50,6 +72,7 @@ export class BoardModeratorComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.reloadPage();
       },
       err => {
         this.errorMessage = err.error.message;
@@ -63,6 +86,7 @@ export class BoardModeratorComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.reloadPage();
       },
       err => {
         this.errorMessage = err.error.message;
@@ -76,6 +100,7 @@ export class BoardModeratorComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.reloadPage();
       },
       err => {
         this.errorMessage = err.error.message;
@@ -89,6 +114,7 @@ export class BoardModeratorComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.reloadPage();
       },
       err => {
         this.errorMessage = err.error.message;
@@ -96,4 +122,61 @@ export class BoardModeratorComponent implements OnInit {
     );
   }
 
+  rejectExpert(expertId: bigint) {
+    this.moderService.rejectExpert(expertId).subscribe
+    (
+      data => {
+        console.log(data);
+        this.isSuccessful = true;
+        this.reloadPage();
+      },
+      err => {
+        this.errorMessage = err.error.message;
+      }
+    );
+  }
+
+  deleteExpert(userId: bigint) {
+    this.moderService.deleteExpert(userId).subscribe
+    (
+      data => {
+        console.log(data);
+        this.isSuccessful = true;
+        this.reloadPage();
+      },
+      err => {
+        this.errorMessage = err.error.message;
+      }
+    );
+  }
+
+
+  getAllUsers() {
+    this.adminService.getUsers()
+      .subscribe(
+        data => {
+          this.users = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
+  }
+
+  banUser(userId) {
+    this.moderService.banUser(userId, this.banDescription).subscribe(data => {
+      this.reloadPage();
+    });
+  }
+
+  unbanUser(userId) {
+    this.moderService.unbanUser(userId).subscribe(data => {
+      this.reloadPage();
+    });
+
+  }
+
+  reloadPage(): void {
+    window.location.reload();
+  }
 }

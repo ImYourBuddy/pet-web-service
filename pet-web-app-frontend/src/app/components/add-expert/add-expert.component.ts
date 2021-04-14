@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ExpertService} from '../../services/expert-service/expert.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-add-expert',
@@ -17,7 +18,7 @@ export class AddExpertComponent {
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private expertService: ExpertService, private token: TokenStorageService) {
+  constructor(private expertService: ExpertService, private token: TokenStorageService, private router: Router) {
   }
 
   onSubmit(): void {
@@ -28,6 +29,7 @@ export class AddExpertComponent {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.router.navigate(['/profile']);
       },
       err => {
         this.errorMessage = err.error.message;

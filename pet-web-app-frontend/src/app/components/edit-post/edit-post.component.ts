@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-edit-post',
@@ -13,7 +13,7 @@ export class EditPostComponent implements OnInit {
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private postService: PostService, private route: ActivatedRoute) { }
+  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.getPost(this.route.snapshot.paramMap.get('id'));
@@ -26,6 +26,7 @@ export class EditPostComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.router.navigate(['expert']);
       },
       err => {
         this.errorMessage = err.error.message;

@@ -12,7 +12,7 @@
       class="form-control"
       id="qualification"
       required
-      [(ngModel)]="expert.qualification"
+      [(ngModel)]="currentExpert.qualification"
       name="qualification"
       required
       minlength="20"
@@ -35,14 +35,11 @@
       type="checkbox"
       class="form-control"
       id="onlineHelp"
-      [(ngModel)]="expert.onlineHelp"
+      [(ngModel)]="currentExpert.onlineHelp"
       name="onlineHelp"
     />
   </div>
   <div class="buttons">
-    <button class="btn btn-info">Send request</button>
-  </div>
-  <div class="alert alert-success" *ngIf="isSuccessful">
-    Your request was successfully send!
+    <button class="btn btn-info">Change info request</button>
   </div>
 </form>

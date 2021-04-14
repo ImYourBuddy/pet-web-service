@@ -23,7 +23,51 @@ import {AddPetComponent} from './components/add-pet/add-pet.component';
 import {ChatComponent} from './components/chat/chat.component';
 import {ExpertsListComponent} from './components/experts-list/experts-list.component';
 import {ChatListComponent} from './components/chat-lists/chat-list.component';
+import {NotifierModule, NotifierOptions} from 'angular-notifier';
+import {JwPaginationModule} from 'jw-angular-pagination';
+import {EditPetComponent} from './components/edit-pet/edit-pet.component';
+import {EditExpertComponent} from './components/edit-expert/edit-expert.component';
 
+const customNotifierOptions: NotifierOptions = {
+  position: {
+    horizontal: {
+      position: 'left',
+      distance: 12
+    },
+    vertical: {
+      position: 'bottom',
+      distance: 12,
+      gap: 10
+    }
+  },
+  theme: 'material',
+  behaviour: {
+    autoHide: false,
+    onClick: 'hide',
+    onMouseover: 'pauseAutoHide',
+    showDismissButton: true,
+    stacking: 4
+  },
+  animations: {
+    enabled: true,
+    show: {
+      preset: 'slide',
+      speed: 300,
+      easing: 'ease'
+    },
+    hide: {
+      preset: 'fade',
+      speed: 300,
+      easing: 'ease',
+      offset: 50
+    },
+    shift: {
+      speed: 300,
+      easing: 'ease'
+    },
+    overlap: 150
+  }
+};
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,15 +86,19 @@ import {ChatListComponent} from './components/chat-lists/chat-list.component';
     EditPostComponent,
     ChatComponent,
     ExpertsListComponent,
-    ChatListComponent
+    ChatListComponent,
+    EditPetComponent,
+    EditExpertComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NotifierModule.withConfig(customNotifierOptions),
+    JwPaginationModule
   ],
-  providers: [authInterceptorProviders],
+  providers: [authInterceptorProviders, ChatComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

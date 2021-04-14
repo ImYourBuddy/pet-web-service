@@ -35,11 +35,11 @@ export class EditProfileComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.router.navigate(['/profile']);
       },
       err => {
         this.errorMessage = err.error.message;
       }
     );
-    this.router.navigate(['/profile']);
   }
 }

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {UserService} from '../../services/user/user.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-add-post',
@@ -15,13 +17,33 @@ export class AddPostComponent implements OnInit {
     text: null,
     author: null
   };
+  currentUser: any;
+  userId: bigint;
+  newPost: any;
 
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private postService: PostService, private token: TokenStorageService) { }
+  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  }
 
   ngOnInit(): void {
+    this.userId = this.token.getUser().id;
+    this.userService.getUser(this.userId)
+      .subscribe(
+        data => {
+          this.currentUser = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+          this.token.signOut();
+          window.location.reload();
+        });
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
   }
 
   onSubmit(): void {
@@ -31,7 +53,9 @@ export class AddPostComponent implements OnInit {
     this.postService.add(title, description, text, author).subscribe(
       data => {
         console.log(data);
+        this.newPost = data;
         this.isSuccessful = true;
+        this.router.navigate(['/posts']);
       },
       err => {
         this.errorMessage = err.error.message;

@@ -25,4 +25,23 @@ export class ModerService {
     }, httpOptions);
   }
 
+  rejectExpert(expertId: bigint) {
+    return this.http.delete(API_URL + '/experts/' + expertId);
+  }
+  deleteExpert(userId: bigint) {
+    return this.http.delete(API_URL + '/experts/delete/' + userId);
+  }
+
+  banUser(userId: bigint, description: string) {
+    return this.http.post(API_URL + '/ban',{
+      userId,
+      description,
+      banned: true
+    });
+  }
+
+  unbanUser(userId: bigint) {
+    return this.http.delete(API_URL + '/ban/' + userId, httpOptions);
+  }
+
 }

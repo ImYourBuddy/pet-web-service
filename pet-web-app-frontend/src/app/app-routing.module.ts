@@ -16,6 +16,8 @@ import {AddPetComponent} from './components/add-pet/add-pet.component';
 import {ChatComponent} from './components/chat/chat.component';
 import {ExpertsListComponent} from './components/experts-list/experts-list.component';
 import {ChatListComponent} from './components/chat-lists/chat-list.component';
+import {EditPetComponent} from './components/edit-pet/edit-pet.component';
+import {EditExpertComponent} from './components/edit-expert/edit-expert.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'posts', pathMatch: 'full' },
@@ -28,6 +30,8 @@ const routes: Routes = [
   { path: 'profile/edit', component: EditProfileComponent },
   { path: 'profile/become-expert', component: AddExpertComponent },
   { path: 'add-pet', component: AddPetComponent },
+  { path: 'edit-pet/:petId', component: EditPetComponent},
+  { path: 'edit-expert', component: EditExpertComponent},
   { path: 'moderator', component: BoardModeratorComponent },
   { path: 'admin', component: BoardAdminComponent },
   { path: 'expert', component: BoardExpertComponent },

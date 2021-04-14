@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../services/user/user.service';
 import {AdminService} from '../../services/admin-service/admin.service';
+import {Router} from '@angular/router';
+import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 
 @Component({
   selector: 'app-board-admin',
@@ -9,15 +11,34 @@ import {AdminService} from '../../services/admin-service/admin.service';
 })
 export class BoardAdminComponent implements OnInit {
   users: any;
+  userId: bigint;
+  currentUser;
 
   isSuccessful = false;
   errorMessage = '';
   hideUsers = true;
 
-  constructor(private adminService: AdminService) {
+  constructor(private adminService: AdminService, private token: TokenStorageService,
+              private userService: UserService, private router: Router) {
   }
 
   ngOnInit(): void {
+    this.userId = this.token.getUser().id;
+    this.userService.getUser(this.userId)
+      .subscribe(
+        data => {
+          this.currentUser = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+          this.token.signOut();
+          window.location.reload();
+        });
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
     this.getAllUsers();
   }
 
@@ -42,6 +63,19 @@ export class BoardAdminComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        window.location.reload();
+      },
+      err => {
+        this.errorMessage = err.error.message;
+      }
+    );
+  }
+  removeModer(id: bigint) {
+    this.adminService.removeModer(id).subscribe(
+      data => {
+        console.log(data);
+        this.isSuccessful = true;
+        window.location.reload();
       },
       err => {
         this.errorMessage = err.error.message;

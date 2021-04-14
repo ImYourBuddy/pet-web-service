@@ -1,47 +1,57 @@
 <div class="container" *ngIf="currentUser; else loggedOut">
   <header class="jumbotron">
     <h3>
-      <strong>{{ currentUser.username }}</strong> Profile
+      <strong>{{ currentUser.username }}</strong> profile
     </h3>
   </header>
-  <p>
+  <p class="profile-info">
     <strong>First name:</strong>
     {{ currentUser.firstName }}
   </p>
-  <p>
+  <p class="profile-info">
     <strong>Last name:</strong>
     {{ currentUser.lastName }}
   </p>
-  <p>
-    <button class="btn btn-primary btn-block" routerLink="/add-pet">
+  <p *ngIf="expertInfo != null && roles.includes('ROLE_EXPERT')" class="profile-info">
+    <strong>Expert qualification:</strong>
+    {{expertInfo.qualification}}
+  </p>
+  <div class="buttons">
+    <button class="btn btn-info m-2" routerLink="/add-pet">
       Add pet
     </button>
-    <button class="btn btn-primary btn-block" routerLink="/profile/edit">
-     Edit
+    <button class="btn btn-info m-2" routerLink="/profile/edit">
+      Edit profile
     </button>
-    <button *ngIf="!roles.includes('ROLE_EXPERT')" class="btn btn-primary btn-block" routerLink="/profile/become-expert">
+    <button *ngIf="expertInfo == null" class="btn btn-info m-2" routerLink="/profile/become-expert">
       I want to become an expert
     </button>
-  </p>
+    <button *ngIf="expertInfo != null && roles.includes('ROLE_EXPERT')" class="btn btn-info m-2" routerLink="/edit-expert">
+      Edit expert info
+    </button>
+  </div>
   <div class="pets" *ngFor="let pet of pets">
-    <p>
-      <strong>Name: {{pet.name}}</strong>
-    </p>
-    <p>
-      Specie: {{pet.species}}
-    </p>
-    <p>
-      Breed: {{pet.breed}}
-    </p>
-    <p>
-      Gender: {{pet.gender}}
-    </p>
-    <p>
-      Birthdate: {{pet.birthdate | date:'longDate'}}
-    </p>
+    <div class="list-group-item">
+      <p>
+        <strong>Name: {{pet.name}}</strong>
+      </p>
+      <p>
+        Specie: {{pet.species}}
+      </p>
+      <p>
+        Breed: {{pet.breed}}
+      </p>
+      <p>
+        Gender: {{pet.gender}}
+      </p>
+      <p>
+        Birthdate: {{pet.birthdate | date:'longDate'}}
+      </p>
+      <button class="btn btn-danger buttons" (click)="deletePet(pet.id)">Delete pet</button>
+      <button class="btn btn-info buttons" routerLink="/edit-pet/{{pet.id}}">Edit pet info</button>
+    </div>
   </div>
 </div>
 
 <ng-template #loggedOut>
-  Please login.
 </ng-template>

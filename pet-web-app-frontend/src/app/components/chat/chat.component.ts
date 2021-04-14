@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {ChatService} from '../../services/chat-service/chat.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {ActivatedRoute} from '@angular/router';
@@ -6,6 +6,10 @@ import {UserService} from '../../services/user/user.service';
 
 import * as SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
+import {AppComponent} from '../../app.component';
+import {NotifierService} from 'angular-notifier';
+
+
 
 const API_URL = 'http://localhost:8080';
 
@@ -16,45 +20,36 @@ const API_URL = 'http://localhost:8080';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent {
+  private static newMessages: any[];
+  private notifier: NotifierService;
 
-  // userId;
-  // recipientId;
-  // input;
-  // messages = [];
-  //
-  // constructor(private chatService: ChatService, private route: ActivatedRoute, private token: TokenStorageService) {
-  // }
-  //
-  // ngOnInit(): void {
-  //   this.recipientId = this.route.snapshot.paramMap.get('id');
-  //   this.userId = this.token.getUser().id;
-  // }
-  //
-  // sendMessage() {
-  //   if (this.input) {
-  //     this.chatService.sendMessage(this.input);
-  //     this.messages = this.chatService.msg;
-  //     this.input = '';
-  //   }
-  // }
+  constructor(private chatService: ChatService, private token: TokenStorageService,
+              private route: ActivatedRoute, private userService: UserService, notifier: NotifierService,
+              private app: AppComponent) {
+    this.notifier = notifier;
+  }
+  @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
   title = 'Pet-service';
   input;
   to;
   userId;
-  sender: any;
   recipient: any;
   messages: any;
+  inChat: boolean;
   public newMessages: any[] = [];
   public sentMessages: any[] = [];
-  public stompClient;
-  constructor(private chatService: ChatService, private token: TokenStorageService,
-              private route: ActivatedRoute, private userService: UserService) {}
+  private stompClient;
+  sender;
+  container: HTMLElement;
 
   ngOnInit(): void {
+    this.inChat = true;
+    console.log('In chat: ' + this.inChat);
+    this.app.stompClient.disconnect();
     this.userId = this.token.getUser().id;
     this.to = this.route.snapshot.paramMap.get('id');
-    this.initializeWebSocketConnection();
+    this.initializeWebSocketConnection(this.userId);
     this.findMessages();
     this.userService.getUser(this.userId)
       .subscribe(
@@ -74,18 +69,59 @@ export class ChatComponent {
         error => {
           console.log(error);
         });
+    this.chatService.haveNewMessagesInChat(this.userId, this.to)
+      .subscribe(
+        data => {
+           if (data == true) {
+             this.chatService.markAsDelivered(this.userId, this.to)
+               .subscribe();
+           }
+           console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
   }
 
-  initializeWebSocketConnection() {
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
+
+  ngOnDestroy(): void {
+    console.log('Try to disconnect...');
+    this.stompClient.disconnect();
+    this.app.initializeWebSocketConnection(this.userId);
+  }
+  // ngAfterViewChecked() {
+  //   this.container = document.getElementById('chat');
+  //   this.container.scrollTop = this.container.scrollHeight;
+  // }
+
+  initializeWebSocketConnection(userId) {
     const ws = new SockJS(API_URL + '/socket');
     this.stompClient = Stomp.over(ws);
     const that = this;
     // tslint:disable-next-line:only-arrow-functions
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe('/chat/' + that.userId, (message) => {
+      that.stompClient.subscribe('/chat/' + userId, (message) => {
         if (message.body) {
-          let parse = JSON.parse(message.body);
-          that.newMessages.push(parse);
+          const parse = JSON.parse(message.body);
+          if (that.to == parse.sender) {
+            that.newMessages.push(parse);
+            that.chatService.markAsDelivered(that.userId, that.to)
+              .subscribe();
+            setTimeout(() => {
+              that.scrollToBottom();
+            }, 0);
+          } else {
+            that.notifier.notify('success', 'You have a new message from ' + parse.senderName);
+          }
         }
       });
     });
@@ -93,15 +129,20 @@ export class ChatComponent {
 
   sendMessage() {
     if (this.input) {
-      let newMessage = {
+      const newMessage = {
         sender: this.userId,
         text: this.input,
-        timestamp: new Date()};
+        timestamp: new Date()
+      };
+      // AppComponent.stompClient.send('/rest/send/message/' + this.to, {}, JSON.stringify(newMessage));
       this.stompClient.send('/rest/send/message/' + this.to, {}, JSON.stringify(newMessage));
       // this.sentMessages.push(newMessage);
       this.newMessages.push(newMessage);
       this.input = '';
     }
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 0);
   }
 
   findMessages() {
@@ -116,9 +157,20 @@ export class ChatComponent {
         });
   }
 
-  setMessage(message) {
-
+  public setMessage(message) {
+    this.newMessages.push(message);
   }
 
 
+  getUser(id, user): any {
+    this.userService.getUser(id)
+      .subscribe(
+        data => {
+          user = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
+  }
 }

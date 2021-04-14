@@ -12,5 +12,27 @@
 }
 
 .post-text {
-  text-align: justify ;
+  text-align: justify;
+  /*width: 900px;*/
+  font-size: 17px;
+  word-wrap: break-word;
+  /*pxoverflow-x: hidden;*/
+  /*margin-left: auto;*/
+  /*margin-right: auto;*/
 }
+.rating {
+  margin: 30px;
+  text-align: center;
+  font-size: 	x-large;
+}
+
+.btn {
+  margin: 10px;
+}
+
+.login-notify {
+  margin: 30px;
+  text-align: center;
+  font-size: 	x-large;
+}
+

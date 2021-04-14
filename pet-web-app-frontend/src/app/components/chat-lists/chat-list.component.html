@@ -1,22 +1,36 @@
-<div class="list"
-     *ngFor="let chat of chats;"
->
-  <div class="list-group-item">
-    <div class="post-description">
-      <div *ngIf="chat.user == userId; else anotherUser">
-        {{chat.expertName}}
-        <div class="form-group">
-          <button class="btn btn-primary btn-block" routerLink="/chat/{{chat.expert}}">Enter the chat</button>
-        </div>
-      </div>
-      <ng-template #anotherUser>
-        <div *ngIf="chat.expert == userId">
-         Chat with user {{chat.userName}}
+<div *ngIf="chats.length != 0; else notify">
+  <div class="list"
+       *ngFor="let chat of chats;"
+  >
+    <div class="list-group-item">
+      <div class="post-description">
+        <div *ngIf="chat.user == userId; else anotherUser">
+          {{chat.expertName}}
+          <div class="notification" *ngIf="chat.haveNewMessages == true">
+            You have new messages!
+          </div>
           <div class="form-group">
-            <button class="btn btn-primary btn-block" routerLink="/chat/{{chat.user}}">Enter the chat</button>
+            <button class="btn btn-info" routerLink="/chat/{{chat.expert}}">Enter the chat</button>
           </div>
         </div>
-      </ng-template>
+        <ng-template #anotherUser>
+          <div *ngIf="chat.expert == userId">
+            {{chat.userName}}
+            <div class="notification" *ngIf="chat.haveNewMessages == true">
+              You have new messages!
+            </div>
+            <div class="form-group">
+              <button class="btn btn-info" routerLink="/chat/{{chat.user}}">Enter the chat</button>
+            </div>
+          </div>
+        </ng-template>
+      </div>
     </div>
   </div>
 </div>
+<ng-template #notify>
+  <div class="notify">
+    You don't have chats. You can choose pet expert in "Experts" section and start a chat.
+  </div>
+</ng-template>
+

@@ -2,7 +2,7 @@
   width: 250px;
 }
 
-.manage-button {
+.btn btn-primary btn-block{
   margin: 50px;
 }
 
@@ -10,3 +10,24 @@
   color: darkred;
   font-size: 17px;
 }
+
+.buttons {
+  margin: 20px;
+  text-align: center;
+}
+
+.list-group-item {
+  font-size: 17px;
+}
+
+.post-title {
+  color: black;
+  font-size: 19px;
+}
+
+.notify {
+  margin-top: 250px;
+  text-align: center;
+  font-size: large;
+}
+

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {UserService} from '../../services/user/user.service';
+import {Router} from '@angular/router';
+import {ExpertService} from '../../services/expert-service/expert.service';
 
 @Component({
   selector: 'app-profile',
@@ -10,11 +12,12 @@ import {UserService} from '../../services/user/user.service';
 export class ProfileComponent implements OnInit {
 
   currentUser: any;
+  expertInfo: any;
   roles: string[] = [];
   hideBecomeExpert: boolean;
   pets: any;
 
-  constructor(private userService: UserService, private token: TokenStorageService) { }
+  constructor(private userService: UserService, private token: TokenStorageService, private router: Router, private expertService: ExpertService) { }
 
   ngOnInit(): void {
     // tslint:disable-next-line:no-unused-expression
@@ -28,12 +31,42 @@ export class ProfileComponent implements OnInit {
         },
         error => {
           console.log(error);
+          this.token.signOut();
+          window.location.reload();
         });
-    this.userService.getPets(id)
+    this.expertService.getByUserId(id)
       .subscribe(
         data => {
-          this.pets = data;
+          this.expertInfo = data;
           console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
+    if (this.roles.includes('ROLE_OWNER')) {
+      this.userService.getPets(id)
+        .subscribe(
+          data => {
+            this.pets = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+    }
+  }
+
+  deletePet(petId: bigint) {
+    let userId = this.token.getUser().id;
+    this.userService.deletePet(userId, petId)
+      .subscribe(
+        data => {
+          console.log(data);
+          window.location.reload();
         },
         error => {
           console.log(error);
