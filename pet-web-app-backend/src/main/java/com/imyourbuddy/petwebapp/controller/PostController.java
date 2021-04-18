@@ -1,0 +1,114 @@
+package com.imyourbuddy.petwebapp.controller;
+
+import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.Mark;
+import com.imyourbuddy.petwebapp.model.Post;
+import com.imyourbuddy.petwebapp.model.PostImage;
+import com.imyourbuddy.petwebapp.model.projection.PostQueryResult;
+import com.imyourbuddy.petwebapp.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.util.List;
+
+/**
+ * REST controller for {@link Post}
+ */
+
+@RestController
+@RequestMapping("/rest/post")
+@CrossOrigin(origins = "*")
+public class PostController {
+    private final PostService service;
+
+    @Autowired
+    public PostController(PostService service) {
+        this.service = service;
+    }
+
+    @GetMapping()
+    public List<PostQueryResult> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        Post post = service.getPostById(id);
+        return ResponseEntity.ok().body(post);
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<PostImage> getImageByPostId(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        PostImage postImageByPostId = service.getPostImageByPostId(id);
+        return ResponseEntity.ok().body(postImageByPostId);
+    }
+
+    @GetMapping("/author/{author}")
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public List<Post> getPostsByAuthor(@PathVariable(name = "author") long author) throws ResourceNotFoundException {
+        return service.getPostsByAuthor(author);
+    }
+    @PostMapping()
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Post> addNew(@RequestParam(value="file", required=false) MultipartFile image,
+                                       @RequestPart(value = "post") @Valid Post post) throws ResourceNotFoundException {
+        Post newPost = service.save(post, image);
+        return ResponseEntity.ok().body(newPost);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Post> editPost(@PathVariable(name = "id") long id,
+                                         @RequestPart(value = "post") @Valid Post post,
+                                         @RequestParam(value="file", required=false) MultipartFile image) throws ResourceNotFoundException {
+        Post newPost = service.edit(id, post, image);
+        return ResponseEntity.ok().body(newPost);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public Post deletePost(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        return service.delete(id);
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public Post restore(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        return service.restore(id);
+    }
+
+    @GetMapping("/moder")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public List<Post> getAllForModer() {
+        return service.getAllForModer();
+    }
+
+    @DeleteMapping("/moder/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Post> deletePostByModer(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        Post post = service.deletePostByModer(id);
+        return ResponseEntity.ok().body(post);
+    }
+
+    @PostMapping("/rate")
+    @PreAuthorize("hasRole('OWNER')")
+    public void ratePost(@RequestBody Mark mark) throws ResourceNotFoundException {
+        service.ratePost(mark);
+    }
+
+    @GetMapping("/rate/{postId}/{userId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public Mark checkMark(@PathVariable(name = "postId") long postId,
+                          @PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+        return service.checkMark(postId, userId);
+    }
+
+
+
+
+
+}
