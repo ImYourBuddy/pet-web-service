@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class ExpertRequest {
-    private long userId;
     private long expertId;
 }

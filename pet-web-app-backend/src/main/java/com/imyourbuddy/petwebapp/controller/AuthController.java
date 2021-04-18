@@ -2,7 +2,6 @@ package com.imyourbuddy.petwebapp.controller;
 
 import com.imyourbuddy.petwebapp.dto.request.LoginRequest;
 import com.imyourbuddy.petwebapp.dto.request.SignupRequest;
-import com.imyourbuddy.petwebapp.dto.response.JwtResponse;
 import com.imyourbuddy.petwebapp.model.User;
 import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

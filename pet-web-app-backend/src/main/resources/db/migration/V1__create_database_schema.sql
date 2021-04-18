@@ -13,8 +13,6 @@ insert into public.role (name)
 values ('ROLE_EXPERT');
 insert into public.role (name)
 values ('ROLE_OWNER');
-insert into public.role (name)
-values ('ROLE_READER');
 
 CREATE TABLE public.user
 (
@@ -56,7 +54,6 @@ CREATE TABLE public.pet_expert
     online_help   boolean                NOT NULL,
     user_id       bigint                 NOT NULL,
     reputation    bigint                 NOT NULL,
-    deleted       boolean                NOT NULL DEFAULT false,
     confirmed     boolean                NOT NULL DEFAULT false,
     PRIMARY KEY (id)
 );
@@ -102,6 +99,21 @@ CREATE TABLE public.post
 ALTER TABLE public.post
     ADD CONSTRAINT author_fk FOREIGN KEY (author)
         REFERENCES public.user (id)
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+        NOT VALID;
+
+CREATE TABLE public.post_image
+(
+    id bigserial NOT NULL,
+    post_id bigint NOT NULL,
+    image bytea NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE public.post_image
+    ADD CONSTRAINT post_fk FOREIGN KEY (post_id)
+        REFERENCES public.post (id)
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
         NOT VALID;

@@ -3,8 +3,10 @@ package com.imyourbuddy.petwebapp.controller;
 import com.imyourbuddy.petwebapp.dto.request.BanRequest;
 import com.imyourbuddy.petwebapp.dto.request.ExpertRequest;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.Pet;
+import com.imyourbuddy.petwebapp.model.PetExpert;
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestQueryResult;
 import com.imyourbuddy.petwebapp.service.ModeratorService;
 import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +20,22 @@ import java.util.List;
 @RequestMapping("/rest/moder")
 @CrossOrigin("*")
 public class ModeratorController {
-    private final UserService userService;
     private final ModeratorService moderatorService;
 
     @Autowired
-    public ModeratorController(UserService userService, ModeratorService moderatorService) {
-        this.userService = userService;
+    public ModeratorController(ModeratorService moderatorService) {
         this.moderatorService = moderatorService;
     }
 
-    @PostMapping("/ban")
+    @PostMapping("/users/{userId}/ban")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public ResponseEntity<User> banUserById(@RequestBody BanRequest request) throws ResourceNotFoundException {
-        User user = moderatorService.banUserById(request);
+    public ResponseEntity<User> banUserById(@PathVariable(name = "userId") long userId,
+                                            @RequestBody BanRequest banRequest) throws ResourceNotFoundException {
+        User user = moderatorService.banUserById(userId, banRequest.getDescription());
         return ResponseEntity.ok().body(user);
     }
 
-    @DeleteMapping ("/ban/{userId}")
+    @DeleteMapping ("/users/{userId}/ban")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
     public ResponseEntity<User> unbanUserById(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
         User user = moderatorService.unbanUserById(userId);
@@ -43,25 +44,30 @@ public class ModeratorController {
 
     @GetMapping("/experts")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public List<PetExpertRequestProjection> getExpertRequest() {
+    public List<PetExpertRequestQueryResult> getExpertRequest() {
         return moderatorService.getExpertRequest();
     }
 
-    @PatchMapping("/experts")
+    @PatchMapping("/experts/{userId}")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public void confirmExpert(@RequestBody ExpertRequest expert) throws ResourceNotFoundException {
-        moderatorService.confirmExpert(expert.getUserId(), expert.getExpertId());
+    public ResponseEntity<PetExpert> confirmExpert(@PathVariable(name = "userId") long userId,
+                             @RequestBody ExpertRequest expert) throws ResourceNotFoundException {
+
+         PetExpert petExpert = moderatorService.confirmExpert(userId, expert.getExpertId());
+         return ResponseEntity.ok().body(petExpert);
     }
 
     @DeleteMapping("/experts/{expertId}")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public void rejectExpert(@PathVariable(name = "expertId") long expertId) throws ResourceNotFoundException {
-        moderatorService.rejectExpert(expertId);
+    public ResponseEntity<PetExpert> rejectExpert(@PathVariable(name = "expertId") long expertId) throws ResourceNotFoundException {
+        PetExpert petExpert = moderatorService.rejectExpert(expertId);
+        return ResponseEntity.ok().body(petExpert);
     }
 
-    @DeleteMapping("/experts/delete/{userId}")
+    @DeleteMapping("/experts/{userId}/delete")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public void deleteModer(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
-        moderatorService.deleteExpert(userId);
+    public ResponseEntity<PetExpert> deleteModer(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+        PetExpert petExpert = moderatorService.deleteExpert(userId);
+        return ResponseEntity.ok().body(petExpert);
     }
 }

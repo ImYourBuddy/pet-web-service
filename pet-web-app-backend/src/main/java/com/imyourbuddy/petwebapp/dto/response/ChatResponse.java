@@ -1,6 +1,6 @@
 package com.imyourbuddy.petwebapp.dto.response;
 
-import com.imyourbuddy.petwebapp.model.projection.ChatProjection;
+import com.imyourbuddy.petwebapp.model.projection.ChatQueryResult;
 import lombok.Data;
 
 @Data
@@ -12,14 +12,14 @@ public class ChatResponse {
     private String expertName;
     private boolean haveNewMessages;
 
-    public static ChatResponse fromChatProjection(ChatProjection chatProjection) {
+    public static ChatResponse fromChatQueryResult(ChatQueryResult chatQueryResult) {
         ChatResponse chatResponse = new ChatResponse();
 
-        chatResponse.setId(chatProjection.getId());
-        chatResponse.setUser(chatProjection.getUser());
-        chatResponse.setUserName(chatProjection.getUserName());
-        chatResponse.setExpert(chatProjection.getExpert());
-        chatResponse.setExpertName(chatProjection.getExpertName());
+        chatResponse.setId(chatQueryResult.getId());
+        chatResponse.setUser(chatQueryResult.getUser());
+        chatResponse.setUserName(chatQueryResult.getUserName());
+        chatResponse.setExpert(chatQueryResult.getExpert());
+        chatResponse.setExpertName(chatQueryResult.getExpertName());
 
         return chatResponse;
     }

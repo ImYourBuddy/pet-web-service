@@ -5,11 +5,13 @@ import com.imyourbuddy.petwebapp.model.Ban;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Repository interface for {@link Ban} class
  */
 
 @Repository
 public interface BanRepository extends JpaRepository<Ban, Long> {
-    Ban findByUserId(long userId);
+    Optional<Ban> findByUserId(long userId);
 }

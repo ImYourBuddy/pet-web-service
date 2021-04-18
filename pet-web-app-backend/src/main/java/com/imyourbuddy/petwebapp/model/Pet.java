@@ -14,7 +14,7 @@ import java.util.Date;
 public class Pet {
 
     private enum Species {
-        DOG, CAT, FISH;
+        DOG, CAT, FISH, HAMSTER, MICE, BIRD, HORSE, LIZARD, RABBIT, COW;
     }
 
     private enum Gender {

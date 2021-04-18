@@ -31,7 +31,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> editProfile(@PathVariable(name = "id") long id,
-                                                    @RequestBody EditUserRequest request) throws ResourceNotFoundException {
+                                                    @RequestBody @Valid EditUserRequest request) throws ResourceNotFoundException {
         UserResponse userResponse = userService.editProfile(id, request);
 
         return ResponseEntity.ok().body(userResponse);
@@ -43,29 +43,30 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping("/add-pet")
-    public ResponseEntity<Pet> addPet(@RequestBody @Valid Pet pet) throws ResourceNotFoundException {
-        Pet addedPet = userService.addPet(pet);
+    @PostMapping("/{userId}/pets")
+    public ResponseEntity<Pet> addPet(@PathVariable(name = "userId") long userId,
+            @RequestBody @Valid Pet pet) throws ResourceNotFoundException {
+        Pet addedPet = userService.addPet(userId, pet);
         return ResponseEntity.ok().body(addedPet);
     }
 
-    @GetMapping("/{id}/pets")
+    @GetMapping("/{userId}/pets")
     @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public List<Pet> getAllPetsById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        return userService.getAllPetsById(id);
+    public List<Pet> getAllPetsById(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+        return userService.getAllPetsByUserId(userId);
     }
 
-    @DeleteMapping("/{ownerId}/pets/{petId}")
+    @DeleteMapping("/{userId}/pets/{petId}")
     @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public ResponseEntity<Pet> deletePet(@PathVariable(name = "ownerId") long ownerId,
+    public ResponseEntity<Pet> deletePet(@PathVariable(name = "userId") long ownerId,
                                          @PathVariable(name = "petId") long petId) throws ResourceNotFoundException {
         Pet deletedPet = userService.deletePet(ownerId, petId);
         return ResponseEntity.ok().body(deletedPet);
     }
 
-    @GetMapping("/{ownerId}/pets/{petId}")
+    @GetMapping("/{userId}/pets/{petId}")
     @PreAuthorize("hasRole('OWNER') or hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public ResponseEntity<Pet> getPet(@PathVariable(name = "ownerId") long ownerId,
+    public ResponseEntity<Pet> getPet(@PathVariable(name = "userId") long ownerId,
                                          @PathVariable(name = "petId") long petId) throws ResourceNotFoundException {
         Pet pet = userService.getPetById(ownerId, petId);
         return ResponseEntity.ok().body(pet);

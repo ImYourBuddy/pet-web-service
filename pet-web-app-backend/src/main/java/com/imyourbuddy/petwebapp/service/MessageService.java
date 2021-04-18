@@ -1,6 +1,7 @@
 package com.imyourbuddy.petwebapp.service;
 
-import com.imyourbuddy.petwebapp.model.projection.ChatProjection;
+import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
+import com.imyourbuddy.petwebapp.model.projection.ChatQueryResult;
 import com.imyourbuddy.petwebapp.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import com.imyourbuddy.petwebapp.model.Message;
 import java.util.List;
 
 /**
- * Service class for {@link Message}
+ * Service class for {@link Message} class.
  */
 
 @Service
@@ -27,22 +28,16 @@ public class MessageService {
         return repository.save(chatMessage);
     }
 
-    public List<Message> findChatMessages(long userId, long expertId) {
-        long chatId = chatService.getChatId(userId, expertId, false);
+    public List<Message> findChatMessages(long firstUser, long secondUser) throws ResourceNotFoundException {
 
-        List<Message> messages = repository.findAllByChatId(chatId);
+        long chatId = chatService.getChatId(firstUser, secondUser, false);
 
-        return messages;
+        return repository.findAllByChatId(chatId);
     }
 
-    public List<Message> getAll() {
-        return repository.findAll();
-    }
-
-    public boolean haveNewMessages(long userId) {
-        boolean result = false;
-        List<ChatProjection> allChatByUser = chatService.getAllChatsByUser(userId);
-        for (ChatProjection chat : allChatByUser) {
+    public boolean haveNewMessages(long userId) throws ResourceNotFoundException {
+        List<ChatQueryResult> allChatByUser = chatService.getAllChatsByUser(userId);
+        for (ChatQueryResult chat : allChatByUser) {
             List<Message> newMessages = repository.findAllReceived(chat.getId(), userId);
             if (newMessages.size() != 0) {
                 return true;
@@ -51,16 +46,16 @@ public class MessageService {
         return false;
     }
 
-    public boolean haveNewMessagesInChat(long userId, long expertId) {
-        long chatId = chatService.getChatId(userId, expertId, false);
-        List<Message> newMessages = repository.findAllReceived(chatId, userId);
+    public boolean haveNewMessagesInChat(long firstUser, long secondUser) throws ResourceNotFoundException {
+        long chatId = chatService.getChatId(firstUser, secondUser, false);
+        List<Message> newMessages = repository.findAllReceived(chatId, firstUser);
         if(newMessages.size() != 0) {
             return true;
         }
         return false;
     }
 
-    public void markAsDelivered(long userId, long expertId) {
+    public void markAsDelivered(long userId, long expertId) throws ResourceNotFoundException {
         long chatId = chatService.getChatId(userId, expertId, false);
         repository.markAsDelivered(chatId);
     }

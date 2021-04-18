@@ -28,7 +28,5 @@ public class PetExpert{
 
     private long reputation;
 
-    private boolean deleted;
-
     private boolean confirmed;
 }

@@ -31,24 +31,24 @@ public class AdminController {
         return userService.getAll();
     }
 
-    @DeleteMapping("/users/{id}")
+    @PatchMapping("/users/{id}")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
     public ResponseEntity<User> deleteUserById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
         User user = userService.deleteUserById(id);
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping("/users/{id}/add-moder")
+    @PostMapping("/users/{id}/moder")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<User> addModerById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        User moder = adminService.addModerById(id);
+        User moder = adminService.addModerByUserId(id);
         return ResponseEntity.ok().body(moder);
     }
 
-    @DeleteMapping("/users/{id}/remove-moder")
+    @DeleteMapping("/users/{id}/moder")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<User> removeModerById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        User moder = adminService.removeModerById(id);
+        User moder = adminService.removeModerByUserId(id);
         return ResponseEntity.ok().body(moder);
     }
 

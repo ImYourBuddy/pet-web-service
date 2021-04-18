@@ -2,7 +2,7 @@ package com.imyourbuddy.petwebapp.service;
 
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.PetExpert;
-import com.imyourbuddy.petwebapp.model.projection.PetExpertProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertQueryResult;
 import com.imyourbuddy.petwebapp.repository.PetExpertRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,30 +17,26 @@ import java.util.List;
 @Service
 public class PetExpertService {
     private final PetExpertRepository petExpertRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public PetExpertService(PetExpertRepository petExpertRepository, UserRepository userRepository) {
+    public PetExpertService(PetExpertRepository petExpertRepository, UserService userService) {
         this.petExpertRepository = petExpertRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    public List<PetExpertProjection> getAll() {
-        List<PetExpertProjection> allExperts = petExpertRepository.findAllConfirmedExperts();
-        return allExperts;
+    public List<PetExpertQueryResult> getAll() {
+        return petExpertRepository.findAllConfirmedExperts();
     }
 
     public PetExpert getByUserId(long userId) throws ResourceNotFoundException {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + userId + " not found"));
-        PetExpert petExpert = petExpertRepository.findByUserId(userId)
+        userService.getById(userId);
+        return petExpertRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pet expert with user id = " + userId + " not found"));
-        return petExpert;
     }
 
     public PetExpert save(PetExpert expert) throws ResourceNotFoundException {
-        userRepository.findById(expert.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + expert.getUserId() + " not found"));
+        userService.getById(expert.getUserId());
         return petExpertRepository.save(expert);
     }
 
@@ -50,5 +46,15 @@ public class PetExpertService {
         expert.setOnlineHelp(updatedExpert.isOnlineHelp());
         petExpertRepository.save(expert);
         return expert;
+    }
+
+    public boolean checkExpertByUserId(long userId) throws ResourceNotFoundException {
+        userService.getById(userId);
+        PetExpert petExpert = petExpertRepository.findByUserId(userId)
+                .orElse(null);
+        if (petExpert != null) {
+            return true;
+        }
+        return false;
     }
 }

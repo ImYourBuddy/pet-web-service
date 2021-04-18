@@ -16,6 +16,4 @@ public class BanRequest {
 
     @NotBlank
     private String description;
-
-    private boolean banned;
 }

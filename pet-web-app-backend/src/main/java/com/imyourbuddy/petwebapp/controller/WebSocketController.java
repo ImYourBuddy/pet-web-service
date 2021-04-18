@@ -1,6 +1,6 @@
 package com.imyourbuddy.petwebapp.controller;
 
-import com.imyourbuddy.petwebapp.dto.request.MessageRequest;
+
 import com.imyourbuddy.petwebapp.dto.response.NotificationMessage;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Message;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -41,7 +42,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/send/message/{to}")
-    public void sendMessage(@DestinationVariable long to,@Payload Message message) throws ResourceNotFoundException {
+    public void sendMessage(@DestinationVariable long to,@Payload @Valid Message message) throws ResourceNotFoundException {
         userService.getById(to);
         long chatId = chatService.getChatId(message.getSender(), to, true);
         System.out.println(chatId);

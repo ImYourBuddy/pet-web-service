@@ -15,11 +15,11 @@ import com.imyourbuddy.petwebapp.repository.UserRepository;
 import com.imyourbuddy.petwebapp.security.jwt.JwtUtils;
 import com.imyourbuddy.petwebapp.security.jwt.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,10 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+
+/**
+ * Service class for {@link User} class.
+ */
 
 @Service
 public class UserService {
@@ -61,7 +65,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new MessageResponse("User is banned!"));
         }
         List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
@@ -74,7 +78,7 @@ public class UserService {
             return ResponseEntity
                     .badRequest().body(new MessageResponse("Username is already taken!"));
         }
-        Role reader = roleRepository.findByName("ROLE_READER");
+        Role reader = roleRepository.findByName("ROLE_OWNER");
         List<Role> userRoles = new ArrayList<>();
         Timestamp createdDate = new Timestamp(new Date().getTime());
         userRoles.add(reader);
@@ -88,9 +92,9 @@ public class UserService {
 
     public List<UserResponse> getAll() {
         List<User> users = userRepository.findAll();
-        List<UserResponse> responses = new LinkedList<>();
+        List<UserResponse> responses = new ArrayList<>();
         users.forEach(user -> {
-            List<String> roles = new LinkedList<>();
+            List<String> roles = new ArrayList<>();
             user.getRoles().forEach(role -> {
                 roles.add(role.getName().substring(5));
             });
@@ -111,14 +115,6 @@ public class UserService {
         return responses;
     }
 
-    public User getByLogin(String login) throws ResourceNotFoundException {
-        Optional<User> foundUser = userRepository.findByUsername(login);
-        if (foundUser == null) {
-            throw new ResourceNotFoundException("User with login = " + login + "not found.");
-        }
-        return foundUser.orElse(new User());
-    }
-
     public User getById(long id) throws ResourceNotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + "not found."));
@@ -135,38 +131,28 @@ public class UserService {
 
         foundUser.setFirstName(userRequest.getFirstName());
         foundUser.setLastName(userRequest.getLastName());
-        foundUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         UserResponse userResponse = UserResponse.fromUser(foundUser);
         userRepository.save(foundUser);
 
         return userResponse;
     }
 
-    public Pet addPet(Pet pet) throws ResourceNotFoundException {
-        User foundUser = getById(pet.getOwner());
-        Role role_owner = roleRepository.findByName("ROLE_OWNER");
-        List<Role> roles = foundUser.getRoles();
-        if (!roles.contains(role_owner)) {
-            roles.add(role_owner);
-            foundUser.setRoles(roles);
-            userRepository.save(foundUser);
-        }
+    public Pet addPet(long userId, Pet pet) throws ResourceNotFoundException {
+        User foundUser = getById(userId);
+        pet.setOwner(userId);
         petRepository.save(pet);
 
         return pet;
     }
 
-    public List<Pet> getAllPetsById(long ownerId) throws ResourceNotFoundException {
+    public List<Pet> getAllPetsByUserId(long ownerId) throws ResourceNotFoundException {
         getById(ownerId);
         List<Pet> pets = petRepository.findByOwner(ownerId);
-        if (pets.size() == 0) {
-            throw new ResourceNotFoundException("User with id = " + ownerId + " don't have pets.");
-        }
         return pets;
     }
 
     public Pet getPetById(long ownerId, long petId) throws ResourceNotFoundException {
-        List<Pet> allPetsById = getAllPetsById(ownerId);
+        List<Pet> allPetsById = getAllPetsByUserId(ownerId);
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pet with id = " + petId + " not found."));
         if (!allPetsById.contains(pet)) {
@@ -176,19 +162,8 @@ public class UserService {
     }
 
     public Pet deletePet(long ownerId, long petId) throws ResourceNotFoundException {
-        User owner = getById(ownerId);
-        List<Pet> allPetsById = getAllPetsById(ownerId);
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pet with id = " + petId + " not found."));
-        allPetsById.remove(pet);
+        Pet pet = getPetById(ownerId, petId);
         petRepository.delete(pet);
-        if (allPetsById.size() == 0) {
-            List<Role> roles = owner.getRoles();
-            Role role_owner = roleRepository.findByName("ROLE_OWNER");
-            roles.remove(role_owner);
-            owner.setRoles(roles);
-            userRepository.save(owner);
-        }
         return pet;
     }
 

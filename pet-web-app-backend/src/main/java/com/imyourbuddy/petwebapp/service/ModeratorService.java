@@ -6,7 +6,7 @@ import com.imyourbuddy.petwebapp.model.Ban;
 import com.imyourbuddy.petwebapp.model.PetExpert;
 import com.imyourbuddy.petwebapp.model.Role;
 import com.imyourbuddy.petwebapp.model.User;
-import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestProjection;
+import com.imyourbuddy.petwebapp.model.projection.PetExpertRequestQueryResult;
 import com.imyourbuddy.petwebapp.repository.BanRepository;
 import com.imyourbuddy.petwebapp.repository.PetExpertRepository;
 import com.imyourbuddy.petwebapp.repository.RoleRepository;
@@ -15,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+/**
+ * Moderator service class for {@link User} class.
+ */
 
 @Service
 public class ModeratorService {
@@ -31,58 +35,62 @@ public class ModeratorService {
         this.banRepository = banRepository;
     }
 
-    public User banUserById(BanRequest banRequest) throws ResourceNotFoundException {
-        User user = userRepository.findById(banRequest.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + banRequest.getUserId() + " not found"));
-        userRepository.banUserById(banRequest.getUserId(), banRequest.isBanned());
-        Ban ban = new Ban(banRequest.getUserId(), banRequest.getDescription());
+    public User banUserById(long userId, String description) throws ResourceNotFoundException {
+        User user = checkUser(userId);
+        userRepository.banUserById(userId, true);
+        Ban ban = new Ban(userId, description);
         banRepository.save(ban);
         return user;
     }
 
     public User unbanUserById(long userId) throws ResourceNotFoundException {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + userId + " not found"));
-        userRepository.banUserById(userId, false);
-        Ban ban = banRepository.findByUserId(userId);
+        User user = checkUser(userId);
+        if (user.isBanned()) {
+            userRepository.banUserById(userId, false);
+        }
+        Ban ban = banRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ban for user with id = " + userId + " not found"));
         banRepository.delete(ban);
         return user;
     }
 
-    public List<PetExpertRequestProjection> getExpertRequest() {
-        return userRepository.getExpertRequest();
+    public List<PetExpertRequestQueryResult> getExpertRequest() {
+        return expertRepository.getExpertRequest();
     }
 
-    public void confirmExpert(long userId, long expertId) throws ResourceNotFoundException {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + userId + " not found"));
-        expertRepository.findById(expertId)
+    public PetExpert confirmExpert(long userId, long expertId) throws ResourceNotFoundException {
+        User user = checkUser(userId);
+        PetExpert petExpert = expertRepository.findById(expertId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expert with id = " + expertId + " not found"));
         Role role_expert = roleRepository.findByName("ROLE_EXPERT");
         List<Role> roles = user.getRoles();
         roles.add(role_expert);
         userRepository.save(user);
         expertRepository.confirmExpert(expertId);
+        return petExpert;
     }
 
-    public void rejectExpert(long expertId) throws ResourceNotFoundException {
+    public PetExpert rejectExpert(long expertId) throws ResourceNotFoundException {
         PetExpert petExpert = expertRepository.findById(expertId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expert with id = " + expertId + " not found"));
-        userRepository.findById(petExpert.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + petExpert.getUserId() + " not found"));
         expertRepository.delete(petExpert);
+        return petExpert;
     }
 
-    public void deleteExpert(long userId) throws ResourceNotFoundException {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + userId + " not found"));
+    public PetExpert deleteExpert(long userId) throws ResourceNotFoundException {
+        User user = checkUser(userId);
         PetExpert petExpert = expertRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expert with user id = " + userId + " not found"));
         Role roleExpert = roleRepository.findByName("ROLE_EXPERT");
         List<Role> roles = user.getRoles();
         roles.remove(roleExpert);
-        user.setRoles(roles);
         userRepository.save(user);
         expertRepository.delete(petExpert);
+        return petExpert;
+    }
+
+    private User checkUser(long userId) throws ResourceNotFoundException {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + userId + " not found"));
     }
 }
