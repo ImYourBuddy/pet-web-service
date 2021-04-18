@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {ExpertService} from '../../services/expert-service/expert.service';
 import {Router} from '@angular/router';
+import {Expert} from '../../models/expert.model';
 
 
 @Component({
@@ -11,7 +12,7 @@ import {Router} from '@angular/router';
 })
 export class EditExpertComponent implements OnInit {
 
-  currentExpert = null;
+  currentExpert: Expert;
   isSuccessful = false;
   errorMessage = '';
 
@@ -23,9 +24,7 @@ export class EditExpertComponent implements OnInit {
   }
 
   onSubmit() {
-    const {qualification, onlineHelp: onlineHelp} = this.currentExpert;
-    let userId = this.token.getUser().id;
-    this.expertService.edit(userId, qualification, onlineHelp).subscribe(
+    this.expertService.edit(this.currentExpert).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;
@@ -39,7 +38,7 @@ export class EditExpertComponent implements OnInit {
 
 
   getExpert() {
-    let userId = this.token.getUser().id;
+    const userId = this.token.getUser().id;
     this.expertService.getByUserId(userId)
       .subscribe(
         data => {

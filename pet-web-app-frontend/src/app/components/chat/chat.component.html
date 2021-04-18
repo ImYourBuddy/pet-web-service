@@ -5,9 +5,9 @@
       <span>{{recipient.firstName}} {{recipient.lastName}}</span>
     </div>
     <div #scrollMe id="chat" class="chat">
-      <div *ngIf="messages.length == 0" class="welcome-message">
-        Your message history will be displayed here.
-      </div>
+<!--      <div *ngIf="messages == null" class="welcome-message">-->
+<!--        Your message history will be displayed here.-->
+<!--      </div>-->
       <div *ngFor="let msg of messages">
         <div class="container-darker" *ngIf="msg.sender == to">
           <p>{{msg.text}}</p>

@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
+import {Pet} from '../../models/pet.model';
 
 @Component({
   selector: 'app-add-pet',
@@ -9,11 +10,11 @@ import {Router} from '@angular/router';
   styleUrls: ['./add-pet.component.css']
 })
 export class AddPetComponent {
-  pet: any = {
-    species: null,
-    name: null,
-    breed: null,
-    gender: null,
+  pet: Pet = {
+    species: '',
+    name: '',
+    breed: '',
+    gender: '',
     birthdate: null,
     owner: null
   };
@@ -30,9 +31,8 @@ export class AddPetComponent {
 
   onSubmit(): void {
     this.pet.owner = this.token.getUser().id;
-    const {species, name, breed, gender, birthdate, owner} = this.pet;
 
-    this.userService.addPet(owner, species, name, breed, gender, birthdate).subscribe(
+    this.userService.addPet(this.pet).subscribe(
       data => {
         this.isSuccessful = true;
         console.log(data);

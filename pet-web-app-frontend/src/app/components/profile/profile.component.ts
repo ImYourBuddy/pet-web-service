@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
 import {ExpertService} from '../../services/expert-service/expert.service';
+import {User} from '../../models/user.model';
+import {Pet} from '../../models/pet.model';
+import {Expert} from '../../models/expert.model';
 
 @Component({
   selector: 'app-profile',
@@ -11,13 +14,14 @@ import {ExpertService} from '../../services/expert-service/expert.service';
 })
 export class ProfileComponent implements OnInit {
 
-  currentUser: any;
-  expertInfo: any;
+  currentUser: User;
+  expertInfo: Expert;
   roles: string[] = [];
-  hideBecomeExpert: boolean;
-  pets: any;
+  hideBecomeExpert = false;
+  pets: Pet[];
 
-  constructor(private userService: UserService, private token: TokenStorageService, private router: Router, private expertService: ExpertService) { }
+  constructor(private userService: UserService, private token: TokenStorageService, private router: Router, private expertService: ExpertService) {
+  }
 
   ngOnInit(): void {
     // tslint:disable-next-line:no-unused-expression
@@ -34,18 +38,31 @@ export class ProfileComponent implements OnInit {
           this.token.signOut();
           window.location.reload();
         });
-    this.expertService.getByUserId(id)
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
+    this.expertService.checkByUserId(id)
       .subscribe(
         data => {
-          this.expertInfo = data;
+          if (data == true) {
+            this.hideBecomeExpert = true;
+          }
           console.log(data);
         },
         error => {
           console.log(error);
         });
-    const tok = this.token.getToken();
-    if (tok == null) {
-      this.router.navigate(['/login']);
+    if (this.roles.includes('ROLE_EXPERT')) {
+      this.expertService.getByUserId(id)
+        .subscribe(
+          data => {
+            this.expertInfo = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
     }
     if (this.roles.includes('ROLE_OWNER')) {
       this.userService.getPets(id)
@@ -61,7 +78,7 @@ export class ProfileComponent implements OnInit {
   }
 
   deletePet(petId: bigint) {
-    let userId = this.token.getUser().id;
+    const userId = this.token.getUser().id;
     this.userService.deletePet(userId, petId)
       .subscribe(
         data => {

@@ -1,8 +1,10 @@
 import {Component} from '@angular/core';
 import {ExpertService} from '../../services/expert-service/expert.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
+import {Expert} from '../../models/expert.model';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-experts-list',
@@ -10,9 +12,9 @@ import {Router} from '@angular/router';
   styleUrls: ['./experts-list.component.css']
 })
 export class ExpertsListComponent {
-  experts: any;
+  experts: Expert[];
   userId: bigint;
-  currentUser: any;
+  currentUser: User;
   constructor(private expertService: ExpertService, private token: TokenStorageService, private userService: UserService, private router: Router) {
   }
 

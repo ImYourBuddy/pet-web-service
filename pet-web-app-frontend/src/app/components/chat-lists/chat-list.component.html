@@ -3,8 +3,8 @@
        *ngFor="let chat of chats;"
   >
     <div class="list-group-item">
-      <div class="post-description">
-        <div *ngIf="chat.user == userId; else anotherUser">
+      <div>
+        <div class="name" *ngIf="chat.user == userId; else anotherUser">
           {{chat.expertName}}
           <div class="notification" *ngIf="chat.haveNewMessages == true">
             You have new messages!

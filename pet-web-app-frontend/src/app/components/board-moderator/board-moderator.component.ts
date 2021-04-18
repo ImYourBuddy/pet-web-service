@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {PostService} from '../../services/post-service/post.service';
 import {AdminService} from '../../services/admin-service/admin.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {ModerService} from '../../services/moder-service/moder.service';
 import {Router} from '@angular/router';
+import {Post} from '../../models/post.model';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-board-moderator',
@@ -12,9 +14,9 @@ import {Router} from '@angular/router';
   styleUrls: ['./board-moderator.component.css']
 })
 export class BoardModeratorComponent implements OnInit {
-  posts: any;
+  posts: Post[];
   experts: any;
-  users: any;
+  users: User[];
   userId: bigint;
   currentUser: any;
 
@@ -25,6 +27,7 @@ export class BoardModeratorComponent implements OnInit {
   hideExpertRequest = true;
   hideUsers = true;
   hideBanInput = true;
+  bannedUser;
 
   constructor(private postService: PostService, private adminService: AdminService,
               private moderService: ModerService, private token: TokenStorageService,
@@ -32,6 +35,15 @@ export class BoardModeratorComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (window.sessionStorage.getItem('hideUsers') != null) {
+      this.hideUsers = false;
+    }
+    if (window.sessionStorage.getItem('hidePosts') != null) {
+      this.hidePosts = false;
+    }
+    if (window.sessionStorage.getItem('hideExpertRequest') != null) {
+      this.hideExpertRequest = false;
+    }
     this.currentUser = this.token.getUser();
     this.userId = this.token.getUser().id;
     this.userService.getUser(this.userId)
@@ -66,6 +78,10 @@ export class BoardModeratorComponent implements OnInit {
     this.getAllUsers();
   }
 
+  ngOnDestroy() {
+    window.sessionStorage.clear();
+  }
+
   removeFromPublicAccess(id: bigint) {
     this.postService.deletePost(id).subscribe
     (
@@ -73,6 +89,7 @@ export class BoardModeratorComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.reloadPage();
+        window.sessionStorage.setItem('hidePosts', 'false');
       },
       err => {
         this.errorMessage = err.error.message;
@@ -87,6 +104,7 @@ export class BoardModeratorComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.reloadPage();
+        window.sessionStorage.setItem('hidePosts', 'false');
       },
       err => {
         this.errorMessage = err.error.message;
@@ -101,6 +119,7 @@ export class BoardModeratorComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.reloadPage();
+        window.sessionStorage.setItem('hidePosts', 'false');
       },
       err => {
         this.errorMessage = err.error.message;
@@ -115,6 +134,7 @@ export class BoardModeratorComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.reloadPage();
+        window.sessionStorage.setItem('hideExpertRequest', 'false');
       },
       err => {
         this.errorMessage = err.error.message;
@@ -129,6 +149,7 @@ export class BoardModeratorComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.reloadPage();
+        window.sessionStorage.setItem('hideExpertRequest', 'false');
       },
       err => {
         this.errorMessage = err.error.message;
@@ -143,6 +164,7 @@ export class BoardModeratorComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.reloadPage();
+        window.sessionStorage.setItem('hideUsers', 'false');
       },
       err => {
         this.errorMessage = err.error.message;
@@ -166,17 +188,24 @@ export class BoardModeratorComponent implements OnInit {
   banUser(userId) {
     this.moderService.banUser(userId, this.banDescription).subscribe(data => {
       this.reloadPage();
+      window.sessionStorage.setItem('hideUsers', 'false');
+
     });
   }
 
   unbanUser(userId) {
     this.moderService.unbanUser(userId).subscribe(data => {
       this.reloadPage();
+      window.sessionStorage.setItem('hideUsers', 'false');
     });
 
   }
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  clearStorage() {
+    window.sessionStorage.clear();
   }
 }

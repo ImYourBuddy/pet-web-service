@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-add-user',
@@ -9,11 +10,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 })
 export class AddUserComponent implements OnInit {
 
-  user: any = {
-    username: null,
-    password: null,
-    firstName: null,
-    lastName: null
+  user: User = {
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: ''
   };
   isSuccessful = false;
   isSignUpFailed = false;
@@ -26,9 +27,7 @@ export class AddUserComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { username, password, firstName, lastName } = this.user;
-
-    this.authService.registerUser(username, password, firstName, lastName).subscribe(
+    this.authService.registerUser(this.user).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;

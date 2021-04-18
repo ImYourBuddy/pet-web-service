@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {ExpertService} from '../../services/expert-service/expert.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
+import {Expert} from '../../models/expert.model';
 
 @Component({
   selector: 'app-add-expert',
@@ -9,8 +10,8 @@ import {Router} from '@angular/router';
   styleUrls: ['./add-expert.component.css']
 })
 export class AddExpertComponent {
-  expert: any = {
-    qualification: null,
+  expert: Expert = {
+    qualification: '',
     onlineHelp: null,
     userId: null
   };
@@ -23,9 +24,8 @@ export class AddExpertComponent {
 
   onSubmit(): void {
     this.expert.userId = this.token.getUser().id;
-    const {qualification, onlineHelp, userId} = this.expert;
 
-    this.expertService.requestExpert(qualification, onlineHelp, userId).subscribe(
+    this.expertService.requestExpert(this.expert).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;

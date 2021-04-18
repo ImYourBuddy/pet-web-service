@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {AdminService} from '../../services/admin-service/admin.service';
 import {Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-board-admin',
@@ -10,9 +11,9 @@ import {TokenStorageService} from '../../services/token-storage/token-storage.se
   styleUrls: ['./board-admin.component.css']
 })
 export class BoardAdminComponent implements OnInit {
-  users: any;
+  users: User[];
   userId: bigint;
-  currentUser;
+  currentUser: User;
 
   isSuccessful = false;
   errorMessage = '';

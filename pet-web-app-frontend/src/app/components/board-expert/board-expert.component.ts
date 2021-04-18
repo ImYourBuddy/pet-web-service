@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
+import {User} from '../../models/user.model';
+import {Post} from '../../models/post.model';
 
 @Component({
   selector: 'app-board-expert',
@@ -10,10 +12,10 @@ import {UserService} from '../../services/user/user.service';
   styleUrls: ['./board-expert.component.css']
 })
 export class BoardExpertComponent implements OnInit {
-  posts: any;
+  posts: Post[];
   userId: bigint;
-  currentUser: any;
-  pageOfItems: Array<any>;
+  currentUser: User;
+  pageOfItems: Post[];
 
   isSuccessful = false;
   errorMessage = '';
@@ -81,7 +83,7 @@ export class BoardExpertComponent implements OnInit {
     );
   }
 
-  onChangePage(pageOfItems: Array<any>) {
+  onChangePage(pageOfItems: Post[]) {
     this.pageOfItems = pageOfItems;
   }
 

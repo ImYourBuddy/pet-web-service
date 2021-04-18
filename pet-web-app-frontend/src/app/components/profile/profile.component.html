@@ -14,7 +14,9 @@
   </p>
   <p *ngIf="expertInfo != null && roles.includes('ROLE_EXPERT')" class="profile-info">
     <strong>Expert qualification:</strong>
-    {{expertInfo.qualification}}
+    {{expertInfo.qualification}} <br/>
+    <strong>Your reputation:</strong>
+    {{expertInfo.reputation}}
   </p>
   <div class="buttons">
     <button class="btn btn-info m-2" routerLink="/add-pet">
@@ -23,7 +25,7 @@
     <button class="btn btn-info m-2" routerLink="/profile/edit">
       Edit profile
     </button>
-    <button *ngIf="expertInfo == null" class="btn btn-info m-2" routerLink="/profile/become-expert">
+    <button *ngIf="!hideBecomeExpert" class="btn btn-info m-2" routerLink="/profile/become-expert">
       I want to become an expert
     </button>
     <button *ngIf="expertInfo != null && roles.includes('ROLE_EXPERT')" class="btn btn-info m-2" routerLink="/edit-expert">

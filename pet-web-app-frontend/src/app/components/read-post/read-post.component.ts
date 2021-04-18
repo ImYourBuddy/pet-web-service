@@ -3,6 +3,7 @@ import {PostService} from '../../services/post-service/post.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {NotifierService} from 'angular-notifier';
+import {Post} from '../../models/post.model';
 
 @Component({
   selector: 'app-read-post',
@@ -11,9 +12,13 @@ import {NotifierService} from 'angular-notifier';
 })
 export class ReadPostComponent implements OnInit {
 
-  currentPost = null;
-  userId;
+  currentPost: Post;
+  userId: bigint;
   userMark = null;
+  postImage: any;
+  isSuccessful = false;
+  isFailed = false;
+  errorMessage = '';
 
   constructor(private postService: PostService, private route: ActivatedRoute, private token: TokenStorageService,
               private notifier: NotifierService) {
@@ -21,6 +26,7 @@ export class ReadPostComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPost(this.route.snapshot.paramMap.get('id'));
+    this.getPostImage(this.route.snapshot.paramMap.get('id'));
     this.userId = this.token.getUser().id;
     this.checkMark(this.route.snapshot.paramMap.get('id'), this.userId);
   }
@@ -30,14 +36,29 @@ export class ReadPostComponent implements OnInit {
       .subscribe(
         data => {
           this.currentPost = data;
+          this.isSuccessful = true;
           console.log(data);
+        },
+        error => {
+          this.errorMessage = error.error;
+          this.isFailed = true;
+          console.log(error.error);
+        });
+  }
+
+  getPostImage(id) {
+    this.postService.getPostImage(id)
+      .subscribe(
+        data => {
+          this.postImage = data;
+          console.log(this.postImage.image);
         },
         error => {
           console.log(error);
         });
   }
 
-  checkMark(postId, userId) {
+  checkMark(postId, userId: bigint) {
     this.postService.checkMark(postId, userId)
       .subscribe(
         data => {

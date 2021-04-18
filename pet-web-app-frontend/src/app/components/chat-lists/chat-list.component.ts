@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
-import {ExpertService} from '../../services/expert-service/expert.service';
 import {ChatService} from '../../services/chat-service/chat.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
 
 @Component({

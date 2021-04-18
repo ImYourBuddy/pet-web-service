@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
+import {Post} from '../../models/post.model';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-add-post',
@@ -11,15 +13,16 @@ import {Router} from '@angular/router';
 })
 export class AddPostComponent implements OnInit {
 
-  post: any = {
-    title: null,
-    description: null,
-    text: null,
+  post: Post = {
+    title: '',
+    description: '',
+    text: '',
     author: null
   };
-  currentUser: any;
+  currentUser: User;
   userId: bigint;
-  newPost: any;
+  newPost: Post;
+  selectedFile: File;
 
   isSuccessful = false;
   errorMessage = '';
@@ -48,9 +51,8 @@ export class AddPostComponent implements OnInit {
 
   onSubmit(): void {
     this.post.author = this.token.getUser().id;
-    const {title, description, text, author} = this.post;
-
-    this.postService.add(title, description, text, author).subscribe(
+    const file = this.selectedFile;
+    this.postService.add(this.post, file).subscribe(
       data => {
         console.log(data);
         this.newPost = data;
@@ -61,6 +63,10 @@ export class AddPostComponent implements OnInit {
         this.errorMessage = err.error.message;
       }
     );
+  }
+
+  onFileChanged(event) {
+    this.selectedFile = event.target.files[0];
   }
 
 }

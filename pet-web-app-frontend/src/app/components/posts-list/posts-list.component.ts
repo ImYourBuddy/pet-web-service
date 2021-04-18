@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
+import {Post} from '../../models/post.model';
 
 @Component({
   selector: 'app-posts-list',
@@ -11,10 +12,8 @@ import {Router} from '@angular/router';
 })
 export class PostsListComponent implements OnInit {
 
-  posts: any;
-  userId: bigint;
-  currentUser: any;
-  pageOfItems: Array<any>;
+  posts: Post[];
+  pageOfItems: Post[];
 
   constructor(private postService: PostService, private userService: UserService, private token: TokenStorageService, private router: Router) { }
 
@@ -33,7 +32,7 @@ export class PostsListComponent implements OnInit {
           console.log(error);
         });
   }
-  onChangePage(pageOfItems: Array<any>) {
+  onChangePage(pageOfItems: Post[]) {
     this.pageOfItems = pageOfItems;
   }
 }

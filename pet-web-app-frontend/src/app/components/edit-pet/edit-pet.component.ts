@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
+import {Pet} from '../../models/pet.model';
 
 @Component({
   selector: 'app-edit-pet',
@@ -9,7 +10,7 @@ import {UserService} from '../../services/user/user.service';
   styleUrls: ['./edit-pet.component.css']
 })
 export class EditPetComponent implements OnInit {
-  currentPet = null;
+  currentPet: Pet;
   isSuccessful = false;
   errorMessage = '';
 
@@ -21,9 +22,7 @@ export class EditPetComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const {id, name, species, breed, gender, birthdate} = this.currentPet;
-    let userId = this.token.getUser().id;
-    this.userService.editPet(userId, id, name, species, breed, gender, birthdate).subscribe(
+    this.userService.editPet(this.currentPet).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;
@@ -36,8 +35,8 @@ export class EditPetComponent implements OnInit {
   }
 
 
-  getPet(petId) {
-    let userId = this.token.getUser().id;
+  getPet(petId): void {
+    const userId = this.token.getUser().id;
     this.userService.getPet(userId, petId)
       .subscribe(
         data => {

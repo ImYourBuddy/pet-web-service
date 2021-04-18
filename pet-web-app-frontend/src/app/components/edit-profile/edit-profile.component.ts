@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-edit-profile',
@@ -10,7 +11,7 @@ import {Router} from '@angular/router';
 })
 export class EditProfileComponent implements OnInit {
 
-  user: any;
+  user: User;
   isSuccessful = false;
   errorMessage = '';
 
@@ -30,8 +31,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   onSubmit() {
-    const {id, firstName, lastName} = this.user;
-    this.userService.updateProfile(id, firstName, lastName).subscribe(
+    this.userService.updateProfile(this.user).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;

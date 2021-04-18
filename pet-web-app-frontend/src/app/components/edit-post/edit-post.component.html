@@ -110,6 +110,10 @@
       <div *ngIf="description.errors.required">Text is required</div>
     </div>
   </div>
+  <div class="form-group">
+    <label for="preview-image">Change preview image</label>
+    <input type="file" class="form-control-file" id="preview-image" accept=".jpg, .jpeg, .png" (change)="onFileChanged($event)">
+  </div>
   <div class="buttons">
     <button class="btn btn-info">Save changes post</button>
   </div>

@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Expert} from '../../models/expert.model';
 
 const API_URL = 'http://localhost:8080/rest/pet-expert';
 
@@ -15,33 +17,24 @@ export class ExpertService {
   constructor(private http: HttpClient) {
   }
 
-  requestExpert(qualification: string, onlineHelp: boolean, userId: bigint) {
-    return this.http.post(API_URL, {
-      qualification,
-      onlineHelp,
-      userId
-    }, httpOptions);
+  requestExpert(expert: Expert): Observable<Expert> {
+    return this.http.post(API_URL, expert, httpOptions);
   }
 
-  getAllExperts() {
-    return this.http.get(API_URL);
+  getAllExperts(): Observable<Expert[]> {
+    return this.http.get<Expert[]>(API_URL);
   }
 
-  getByUserId(userId: bigint) {
+  getByUserId(userId: bigint): Observable<Expert> {
     return this.http.get(API_URL + '/' + userId);
   }
 
-  edit(userId: bigint, qualification: string, onlineHelp: boolean) {
-    return this.http.put(API_URL, {
-      qualification,
-      onlineHelp,
-      userId
-    }, httpOptions);
+  checkByUserId(userId: bigint): Observable<any> {
+    return this.http.get(API_URL + '/' + userId + '/check');
   }
 
-
-  findMessages(senderId, recipientId) {
-    return this.http.get('http://localhost:8080/rest/message/' + senderId + '/' + recipientId);
+  edit(expert: Expert): Observable<Expert> {
+    return this.http.put(API_URL, expert, httpOptions);
   }
 
 }

@@ -2,13 +2,13 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 import {ChatService} from '../../services/chat-service/chat.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {ActivatedRoute} from '@angular/router';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 
 import * as SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
 import {AppComponent} from '../../app.component';
 import {NotifierService} from 'angular-notifier';
-
+import {User} from '../../models/user.model';
 
 
 const API_URL = 'http://localhost:8080';
@@ -20,7 +20,6 @@ const API_URL = 'http://localhost:8080';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent {
-  private static newMessages: any[];
   private notifier: NotifierService;
 
   constructor(private chatService: ChatService, private token: TokenStorageService,
@@ -28,20 +27,19 @@ export class ChatComponent {
               private app: AppComponent) {
     this.notifier = notifier;
   }
+
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-  title = 'Pet-service';
-  input;
-  to;
-  userId;
-  recipient: any;
-  messages: any;
+  input: '';
+  to: string;
+  userId: bigint;
+  recipient: User;
+  messages: any[];
   inChat: boolean;
   public newMessages: any[] = [];
   public sentMessages: any[] = [];
   private stompClient;
-  sender;
-  container: HTMLElement;
+  sender: User;
 
   ngOnInit(): void {
     this.inChat = true;
@@ -72,11 +70,11 @@ export class ChatComponent {
     this.chatService.haveNewMessagesInChat(this.userId, this.to)
       .subscribe(
         data => {
-           if (data == true) {
-             this.chatService.markAsDelivered(this.userId, this.to)
-               .subscribe();
-           }
-           console.log(data);
+          if (data == true) {
+            this.chatService.markAsDelivered(this.userId, this.to)
+              .subscribe();
+          }
+          console.log(data);
         },
         error => {
           console.log(error);
@@ -90,7 +88,8 @@ export class ChatComponent {
   scrollToBottom(): void {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err) {
+    }
   }
 
   ngOnDestroy(): void {
@@ -98,6 +97,7 @@ export class ChatComponent {
     this.stompClient.disconnect();
     this.app.initializeWebSocketConnection(this.userId);
   }
+
   // ngAfterViewChecked() {
   //   this.container = document.getElementById('chat');
   //   this.container.scrollTop = this.container.scrollHeight;
