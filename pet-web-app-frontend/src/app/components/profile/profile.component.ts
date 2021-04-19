@@ -25,35 +25,26 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     // tslint:disable-next-line:no-unused-expression
-    const id = this.token.getUser().id;
-    this.roles = this.token.getUser().roles;
-    this.userService.getUser(id)
-      .subscribe(
-        data => {
-          this.currentUser = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-          this.token.signOut();
-          window.location.reload();
-        });
     const tok = this.token.getToken();
     if (tok == null) {
       this.router.navigate(['/login']);
-    }
-    this.expertService.checkByUserId(id)
-      .subscribe(
-        data => {
-          if (data == true) {
-            this.hideBecomeExpert = true;
-          }
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-    if (this.roles.includes('ROLE_EXPERT')) {
+    } else {
+      const id = this.token.getUser().id;
+      this.roles = this.token.getUser().roles;
+      this.userService.getUser(id)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      if (tok == null) {
+        this.router.navigate(['/login']);
+      }
       this.expertService.getByUserId(id)
         .subscribe(
           data => {
@@ -63,8 +54,6 @@ export class ProfileComponent implements OnInit {
           error => {
             console.log(error);
           });
-    }
-    if (this.roles.includes('ROLE_OWNER')) {
       this.userService.getPets(id)
         .subscribe(
           data => {

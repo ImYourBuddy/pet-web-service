@@ -16,7 +16,6 @@ export class ReadPostComponent implements OnInit {
   userId: bigint;
   userMark = null;
   postImage: any;
-  isSuccessful = false;
   isFailed = false;
   errorMessage = '';
 
@@ -36,7 +35,6 @@ export class ReadPostComponent implements OnInit {
       .subscribe(
         data => {
           this.currentPost = data;
-          this.isSuccessful = true;
           console.log(data);
         },
         error => {

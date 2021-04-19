@@ -58,7 +58,9 @@ export class PostService {
   }
 
   deletePost(id: bigint): Observable<Post> {
-    return this.http.patch(API_URL + '/' + id, {});
+    return this.http.patch(API_URL + '/' + id, {
+      deleted: true
+    }, httpOptions);
   }
 
   deletePostByModer(id: bigint): Observable<Post> {
@@ -66,11 +68,13 @@ export class PostService {
   }
 
   restore(id: bigint): Observable<Post> {
-    return this.http.patch(API_URL + '/' + id, {});
+    return this.http.patch(API_URL + '/' + id, {
+      deleted: false
+    }, httpOptions);
   }
 
   ratePost(postId: bigint, userId: bigint, liked: boolean): Observable<any> {
-    return this.http.post(API_URL + '/rate', {
+    return this.http.post(API_URL + '/' + postId + '/rate', {
       postId,
       userId,
       liked

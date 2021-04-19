@@ -1,4 +1,4 @@
-<div class="content" role="main">
+<div *ngIf="!showErrorMessage" class="content" role="main">
   <div class="content">
     <notifier-container></notifier-container>
     <div class="toolbar" role="banner">
@@ -36,4 +36,10 @@
     <button class="btn btn-info btn-block" (click)="sendMessage()">Send</button>
   </div>
 </div>
-
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showErrorMessage"
+>
+  {{ errorMessage }}
+</div>

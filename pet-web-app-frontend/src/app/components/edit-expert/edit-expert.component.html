@@ -1,5 +1,5 @@
 <form
-  *ngIf="!isSuccessful"
+  *ngIf="!showErrorMessage"
   name="form"
   (ngSubmit)="f.form.valid && onSubmit()"
   #f="ngForm"
@@ -43,3 +43,10 @@
     <button class="btn btn-success">Change info request</button>
   </div>
 </form>
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showErrorMessage"
+>
+  {{ errorMessage }}
+</div>

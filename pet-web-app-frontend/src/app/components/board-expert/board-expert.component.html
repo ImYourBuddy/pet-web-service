@@ -21,8 +21,7 @@
       <p *ngIf="post.deleted" class="deleted">Deleted</p>
       <button class="btn btn-info buttons" routerLink="/posts/{{ post.id }}/edit">Edit post</button>
       <button *ngIf="!post.deleted" class="btn btn-danger buttons" (click)="deletePost(post.id)">Delete post</button>
-      <button *ngIf="post.deleted" class="btn btn-success buttons" (click)="restorePost(post.id)"
-              routerLink="/expert">Restore</button>
+      <button *ngIf="post.deleted" class="btn btn-success buttons" (click)="restorePost(post.id)">Restore</button>
     </div>
   </div>
 </div>

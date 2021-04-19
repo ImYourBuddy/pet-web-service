@@ -1,7 +1,7 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {ChatService} from '../../services/chat-service/chat.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user-service/user.service';
 
 import * as SockJS from 'sockjs-client';
@@ -24,14 +24,14 @@ export class ChatComponent {
 
   constructor(private chatService: ChatService, private token: TokenStorageService,
               private route: ActivatedRoute, private userService: UserService, notifier: NotifierService,
-              private app: AppComponent) {
+              private app: AppComponent, private router: Router) {
     this.notifier = notifier;
   }
 
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
   input: '';
-  to: string;
+  to;
   userId: bigint;
   recipient: User;
   messages: any[];
@@ -40,45 +40,57 @@ export class ChatComponent {
   public sentMessages: any[] = [];
   private stompClient;
   sender: User;
+  showErrorMessage = false;
+  errorMessage: '';
 
   ngOnInit(): void {
-    this.inChat = true;
-    console.log('In chat: ' + this.inChat);
-    this.app.stompClient.disconnect();
-    this.userId = this.token.getUser().id;
-    this.to = this.route.snapshot.paramMap.get('id');
-    this.initializeWebSocketConnection(this.userId);
-    this.findMessages();
-    this.userService.getUser(this.userId)
-      .subscribe(
-        data => {
-          this.sender = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-    this.userService.getUser(this.to)
-      .subscribe(
-        data => {
-          this.recipient = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-    this.chatService.haveNewMessagesInChat(this.userId, this.to)
-      .subscribe(
-        data => {
-          if (data == true) {
-            this.chatService.markAsDelivered(this.userId, this.to)
-              .subscribe();
-          }
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      this.inChat = true;
+      console.log('In chat: ' + this.inChat);
+      this.app.stompClient.disconnect();
+      this.userId = this.token.getUser().id;
+      this.to = this.route.snapshot.paramMap.get('id');
+      this.initializeWebSocketConnection(this.userId);
+      this.findMessages();
+      this.userService.getUser(this.userId)
+        .subscribe(
+          data => {
+            this.sender = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      if (tok == null) {
+        this.router.navigate(['/login']);
+      }
+      this.userService.getUser(this.to)
+        .subscribe(
+          data => {
+            this.recipient = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+      this.chatService.haveNewMessagesInChat(this.userId, this.to)
+        .subscribe(
+          data => {
+            if (data == true) {
+              this.chatService.markAsDelivered(this.userId, this.to)
+                .subscribe();
+            }
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+    }
   }
 
   ngAfterViewInit() {
@@ -153,7 +165,8 @@ export class ChatComponent {
           console.log(data);
         },
         error => {
-          console.log(error);
+        this.showErrorMessage = true;
+        this.errorMessage = error.error;
         });
   }
 

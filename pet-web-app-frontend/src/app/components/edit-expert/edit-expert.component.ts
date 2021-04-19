@@ -13,21 +13,25 @@ import {Expert} from '../../models/expert.model';
 export class EditExpertComponent implements OnInit {
 
   currentExpert: Expert;
-  isSuccessful = false;
+  showErrorMessage = false;
   errorMessage = '';
 
   constructor(private token: TokenStorageService, private expertService: ExpertService, private router: Router) {
   }
 
   ngOnInit() {
-    this.getExpert();
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      this.getExpert();
+    }
   }
 
   onSubmit() {
     this.expertService.edit(this.currentExpert).subscribe(
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.router.navigate(['profile']);
       },
       err => {
@@ -46,7 +50,8 @@ export class EditExpertComponent implements OnInit {
           console.log(data);
         },
         error => {
-          console.log(error);
+          this.showErrorMessage = true;
+          this.errorMessage = error.error;
         });
   }
 }

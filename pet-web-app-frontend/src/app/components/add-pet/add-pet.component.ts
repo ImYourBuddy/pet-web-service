@@ -27,6 +27,10 @@ export class AddPetComponent {
 
   // tslint:disable-next-line:use-lifecycle-interface
   ngOnInit(): void {
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
   }
 
   onSubmit(): void {

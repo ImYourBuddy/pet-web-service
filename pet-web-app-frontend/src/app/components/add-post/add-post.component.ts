@@ -31,21 +31,25 @@ export class AddPostComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userId = this.token.getUser().id;
-    this.userService.getUser(this.userId)
-      .subscribe(
-        data => {
-          this.currentUser = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-          this.token.signOut();
-          window.location.reload();
-        });
     const tok = this.token.getToken();
     if (tok == null) {
       this.router.navigate(['/login']);
+    } else {
+      this.userId = this.token.getUser().id;
+      this.userService.getUser(this.userId)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      // if (tok == null) {
+      //   this.router.navigate(['/login']);
+      // }
     }
   }
 

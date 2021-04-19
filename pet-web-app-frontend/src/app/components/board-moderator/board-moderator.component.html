@@ -62,10 +62,10 @@
         {{expert.onlineHelp}}
       </div>
       <div class="form-group">
-        <button class="btn btn-success buttons" (click)="confirmExpert(expert.user, expert.id)">
+        <button class="btn btn-success buttons" (click)="confirmExpert(expert.user)">
           Confirm expert
         </button>
-        <button class="btn btn-danger buttons" (click)="rejectExpert(expert.id)">
+        <button class="btn btn-danger buttons" (click)="rejectExpert(expert.user)">
           Reject expert
         </button>
       </div>
@@ -106,6 +106,7 @@
           <label for="description">Description: </label>
           <input type="text" id="description" [(ngModel)]="banDescription">
           <button class="btn btn-danger btn-block" (click)="banUser(user.id)">Ban</button>
+          <button class="btn btn-warning btn-block" (click)="hideBanInput = !hideBanInput">Cancel</button>
         </div>
       </div>
     </div>

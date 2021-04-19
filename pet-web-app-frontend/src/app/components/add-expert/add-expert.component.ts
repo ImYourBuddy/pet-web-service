@@ -22,6 +22,13 @@ export class AddExpertComponent {
   constructor(private expertService: ExpertService, private token: TokenStorageService, private router: Router) {
   }
 
+  ngOnInit(): void {
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
+  }
+
   onSubmit(): void {
     this.expert.userId = this.token.getUser().id;
 
@@ -35,5 +42,6 @@ export class AddExpertComponent {
         this.errorMessage = err.error.message;
       }
     );
+
   }
 }

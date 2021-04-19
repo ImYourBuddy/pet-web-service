@@ -18,16 +18,21 @@ export class EditProfileComponent implements OnInit {
   constructor(private userService: UserService, private token: TokenStorageService, private router: Router) { }
 
   ngOnInit(): void {
-    const id = this.token.getUser().id;
-    this.userService.getUser(id)
-      .subscribe(
-        data => {
-          this.user = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      const id = this.token.getUser().id;
+      this.userService.getUser(id)
+        .subscribe(
+          data => {
+            this.user = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+    }
   }
 
   onSubmit() {

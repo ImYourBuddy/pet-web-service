@@ -20,23 +20,27 @@ export class ExpertsListComponent {
 
   // tslint:disable-next-line:use-lifecycle-interface
   ngOnInit() {
-    this.userId = this.token.getUser().id;
-    this.userService.getUser(this.userId)
-      .subscribe(
-        data => {
-          this.currentUser = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-          this.token.signOut();
-          window.location.reload();
-        });
     const tok = this.token.getToken();
     if (tok == null) {
       this.router.navigate(['/login']);
+    } else {
+      this.userId = this.token.getUser().id;
+      this.userService.getUser(this.userId)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      if (tok == null) {
+        this.router.navigate(['/login']);
+      }
+      this.getExperts();
     }
-    this.getExperts();
   }
 
   getExperts() {

@@ -17,9 +17,14 @@ export class EditPostComponent implements OnInit {
   selectedFile: File;
   editedPost: Post;
 
-  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router,
+              private token: TokenStorageService) { }
 
   ngOnInit(): void {
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
     this.getPost(this.route.snapshot.paramMap.get('id'));
   }
 

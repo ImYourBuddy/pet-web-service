@@ -45,9 +45,4 @@ export class UserService {
   getPet(owner: bigint, petId: bigint): Observable<Pet> {
     return this.http.get(API_URL + '/' + owner + '/pets/' + petId);
   }
-
-
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(API_URL + '/summaries');
-  }
 }

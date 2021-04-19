@@ -5,3 +5,7 @@
 .submit-form {
   font-size: 17px;
 }
+.alert-danger {
+  text-align: center;
+  font-size: 17px;
+}

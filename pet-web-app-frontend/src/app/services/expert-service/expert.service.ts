@@ -34,7 +34,7 @@ export class ExpertService {
   }
 
   edit(expert: Expert): Observable<Expert> {
-    return this.http.put(API_URL, expert, httpOptions);
+    return this.http.put(API_URL + '/' + expert.userId, expert, httpOptions);
   }
 
 }

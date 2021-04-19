@@ -21,14 +21,12 @@ export class ModerService {
     return this.http.get(API_URL + '/experts');
   }
 
-  confirmExpert(userId: bigint, expertId: bigint): Observable<Expert> {
-    return this.http.patch(API_URL + '/experts/' + userId, {
-      expertId
-    }, httpOptions);
+  confirmExpert(userId: bigint): Observable<Expert> {
+    return this.http.patch(API_URL + '/experts/' + userId, {}, httpOptions);
   }
 
-  rejectExpert(expertId: bigint): Observable<Expert> {
-    return this.http.delete(API_URL + '/experts/' + expertId);
+  rejectExpert(userId: bigint): Observable<Expert> {
+    return this.http.delete(API_URL + '/experts/' + userId);
   }
 
   deleteExpert(userId: bigint): Observable<Expert> {

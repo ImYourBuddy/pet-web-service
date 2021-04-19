@@ -25,7 +25,7 @@
     <button class="btn btn-info m-2" routerLink="/profile/edit">
       Edit profile
     </button>
-    <button *ngIf="!hideBecomeExpert" class="btn btn-info m-2" routerLink="/profile/become-expert">
+    <button *ngIf="expertInfo == null" class="btn btn-info m-2" routerLink="/profile/become-expert">
       I want to become an expert
     </button>
     <button *ngIf="expertInfo != null && roles.includes('ROLE_EXPERT')" class="btn btn-info m-2" routerLink="/edit-expert">

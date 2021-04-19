@@ -35,47 +35,52 @@ export class BoardModeratorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (window.sessionStorage.getItem('hideUsers') != null) {
-      this.hideUsers = false;
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      if (window.sessionStorage.getItem('hideUsers') != null) {
+        this.hideUsers = false;
+      }
+      if (window.sessionStorage.getItem('hidePosts') != null) {
+        this.hidePosts = false;
+      }
+      if (window.sessionStorage.getItem('hideExpertRequest') != null) {
+        this.hideExpertRequest = false;
+      }
+      this.currentUser = this.token.getUser();
+      this.userId = this.token.getUser().id;
+      this.userService.getUser(this.userId)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            this.router.navigate(['/login']);
+          });
+      this.postService.getAllForModer()
+        .subscribe(
+          data => {
+            this.posts = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+      this.moderService.getExpertRequest()
+        .subscribe(
+          data => {
+            this.experts = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+      this.getAllUsers();
     }
-    if (window.sessionStorage.getItem('hidePosts') != null) {
-      this.hidePosts = false;
-    }
-    if (window.sessionStorage.getItem('hideExpertRequest') != null) {
-      this.hideExpertRequest = false;
-    }
-    this.currentUser = this.token.getUser();
-    this.userId = this.token.getUser().id;
-    this.userService.getUser(this.userId)
-      .subscribe(
-        data => {
-          this.currentUser = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-          this.token.signOut();
-          this.router.navigate(['/login']);
-        });
-    this.postService.getAllForModer()
-      .subscribe(
-        data => {
-          this.posts = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-    this.moderService.getExpertRequest()
-      .subscribe(
-        data => {
-          this.experts = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-    this.getAllUsers();
   }
 
   ngOnDestroy() {
@@ -127,8 +132,8 @@ export class BoardModeratorComponent implements OnInit {
     );
   }
 
-  confirmExpert(userId: bigint, expertId: bigint) {
-    this.moderService.confirmExpert(userId, expertId).subscribe
+  confirmExpert(userId: bigint) {
+    this.moderService.confirmExpert(userId).subscribe
     (
       data => {
         console.log(data);
@@ -142,8 +147,8 @@ export class BoardModeratorComponent implements OnInit {
     );
   }
 
-  rejectExpert(expertId: bigint) {
-    this.moderService.rejectExpert(expertId).subscribe
+  rejectExpert(userId: bigint) {
+    this.moderService.rejectExpert(userId).subscribe
     (
       data => {
         console.log(data);
