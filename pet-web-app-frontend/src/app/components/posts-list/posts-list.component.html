@@ -1,5 +1,5 @@
 <div class="list"
-     *ngFor="let post of posts;"
+     *ngFor="let post of pageOfItems;"
 >
   <div class="list-group-item">
     <a class="post-title" routerLink="/posts/{{ post.id }}">
@@ -9,14 +9,13 @@
       {{post.description}}
     </div>
     <div class="info">
-      <p class="author">
-      </p>
+      <p>Rating: {{post.rating}}</p>
       <p class="date">
-        {{post.createdDate | date:'longDate'}}
-      </p>
-      <p class="author">
-        {{post.author}}
+        {{post.createdDate | date:'medium'}}, {{post.author}}
       </p>
     </div>
   </div>
+</div>
+<div class="pagination">
+  <jw-pagination [pageSize]="5" [items]="posts" (changePage)="onChangePage($event)"></jw-pagination>
 </div>

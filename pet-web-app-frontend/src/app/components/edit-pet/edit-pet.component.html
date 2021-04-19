@@ -1,0 +1,116 @@
+<form
+  *ngIf="!showErrorMessage"
+  name="form"
+  (ngSubmit)="f.form.valid && onSubmit()"
+  #f="ngForm"
+  novalidate
+>
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      required
+      [(ngModel)]="currentPet.name"
+      name="name"
+      minlength="2"
+      maxlength="50"
+      #name="ngModel"
+    />
+    <div class="alert-danger" *ngIf="name.errors && f.submitted">
+      <div *ngIf="name.errors.required">Name is required</div>
+      <div *ngIf="name.errors.minlength">
+        Name must be at least 2 characters
+      </div>
+      <div *ngIf="name.errors.maxlength">
+        Name must be at most 50 characters
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="species">Specie</label>
+    <select
+      type="text"
+      class="form-control"
+      id="species"
+      required
+      [(ngModel)]="currentPet.species"
+      name="species"
+      #species="ngModel"
+    >
+      <option value="DOG">Dog</option>
+      <option value="CAT">Cat</option>
+      <option value="FISH">Fish</option>
+    </select>
+    <div class="alert-danger" *ngIf="species.errors && f.submitted">
+      <div *ngIf="species.errors.required">Species is required</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="breed">Breed</label>
+    <input
+      type="text"
+      class="form-control"
+      id="breed"
+      required
+      [(ngModel)]="currentPet.breed"
+      name="breed"
+      minlength="5"
+      maxlength="30"
+      #breed="ngModel"
+    />
+    <div class="alert-danger" *ngIf="breed.errors && f.submitted">
+      <div *ngIf="breed.errors.required">Breed is required</div>
+      <div *ngIf="breed.errors.minlength">
+        Breed must be at least 2 characters
+      </div>
+      <div *ngIf="name.errors.maxlength">
+        Breed must be at most 50 characters
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="gender">Gender</label>
+    <select
+      type="text"
+      class="form-control"
+      id="gender"
+      required
+      [(ngModel)]="currentPet.gender"
+      name="gender"
+      #gender="ngModel"
+    >
+      <option value="MALE">Male</option>
+      <option value="FEMALE">Female</option>
+    </select>
+    <div class="alert-danger" *ngIf="gender.errors && f.submitted">
+      <div *ngIf="gender.errors.required">Gender is required</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="birthdate">Birthdate</label>
+    <input
+      type="date"
+      class="form-control"
+      id="birthdate"
+      required
+      [(ngModel)]="currentPet.birthdate"
+      name="birthdate"
+      #birthdate="ngModel"
+    />
+    <div class="alert-danger" *ngIf="birthdate.errors && f.submitted">
+      <div *ngIf="birthdate.errors.required">Birthdate is required</div>
+    </div>
+  </div>
+  <div class="buttons">
+    <button class="btn btn-info">Save changes</button>
+  </div>
+</form>
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showErrorMessage"
+>
+  {{ errorMessage }}
+</div>

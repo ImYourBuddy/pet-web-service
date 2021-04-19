@@ -1,7 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {AppComponent} from '../../app.component';
+import {User} from '../../models/user.model';
+
 
 @Component({
   selector: 'app-user-login',
@@ -9,14 +12,15 @@ import {TokenStorageService} from '../../services/token-storage/token-storage.se
   styleUrls: ['./user-login.component.css']
 })
 export class UserLoginComponent implements OnInit {
-  user: any = {
-    username: null,
-    password: null
+  user: User = {
+    username: '',
+    password: ''
   };
   isLoggedIn = false;
   isLoginFailed = false;
   errorMessage = '';
   roles: string[] = [];
+  userId: bigint;
   hide = true;
 
   constructor(private authService: AuthService, private router: Router, private tokenStorage: TokenStorageService) {
@@ -26,13 +30,14 @@ export class UserLoginComponent implements OnInit {
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
       this.roles = this.tokenStorage.getUser().roles;
+      this.router.navigate(['/posts']);
     }
   }
 
   onSubmit(): void {
-    const { username, password } = this.user;
+    const {username, password} = this.user;
 
-    this.authService.loginUser(username, password).subscribe(
+    this.authService.loginUser(this.user).subscribe(
       data => {
         this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveUser(data);
@@ -40,6 +45,7 @@ export class UserLoginComponent implements OnInit {
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.roles = this.tokenStorage.getUser().roles;
+        this.userId = this.tokenStorage.getUser().id;
         this.reloadPage();
       },
       err => {
@@ -47,7 +53,6 @@ export class UserLoginComponent implements OnInit {
         this.isLoginFailed = true;
       }
     );
-    this.router.navigate(['/posts']);
   }
 
   reloadPage(): void {

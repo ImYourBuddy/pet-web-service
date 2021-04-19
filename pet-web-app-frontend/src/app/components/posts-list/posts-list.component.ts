@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
+import {UserService} from '../../services/user-service/user.service';
+import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {Router} from '@angular/router';
+import {Post} from '../../models/post.model';
 
 @Component({
   selector: 'app-posts-list',
@@ -8,9 +12,10 @@ import {PostService} from '../../services/post-service/post.service';
 })
 export class PostsListComponent implements OnInit {
 
-  posts: any;
+  posts: Post[];
+  pageOfItems: Post[];
 
-  constructor(private postService: PostService) { }
+  constructor(private postService: PostService, private userService: UserService, private token: TokenStorageService, private router: Router) { }
 
   ngOnInit() {
     this.retrieveTutorials();
@@ -26,5 +31,8 @@ export class PostsListComponent implements OnInit {
         error => {
           console.log(error);
         });
+  }
+  onChangePage(pageOfItems: Post[]) {
+    this.pageOfItems = pageOfItems;
   }
 }

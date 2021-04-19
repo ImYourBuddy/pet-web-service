@@ -1,4 +1,55 @@
-<form class="submit-form" (ngSubmit)="onSubmit()">
+<!--<form class="submit-form" (ngSubmit)="onSubmit()">-->
+<!--  <div class="form-group">-->
+<!--    <label for="title">Title</label>-->
+<!--    <input-->
+<!--      type="text"-->
+<!--      class="form-control"-->
+<!--      id="title"-->
+<!--      required-->
+<!--      [(ngModel)]="currentPost.title"-->
+<!--      name="title"-->
+<!--      [value]="currentPost.title"-->
+<!--    />-->
+<!--  </div>-->
+<!--  <div class="form-group">-->
+<!--    <label for="description">Description</label>-->
+<!--    <input-->
+<!--      type="text"-->
+<!--      class="form-control"-->
+<!--      id="description"-->
+<!--      required-->
+<!--      [(ngModel)]="currentPost.description"-->
+<!--      name="description"-->
+<!--      [value]="currentPost.description"-->
+<!--    />-->
+<!--  </div>-->
+<!--  <div class="form-group">-->
+<!--    <label for="text">Text</label>-->
+<!--    <input-->
+<!--      type="text"-->
+<!--      class="form-control"-->
+<!--      id="text"-->
+<!--      required-->
+<!--      [(ngModel)]="currentPost.text"-->
+<!--      name="text"-->
+<!--      [value]="currentPost.text"-->
+<!--    />-->
+<!--  </div>-->
+<!--  <div>-->
+<!--    <button class="btn btn-info buttons">Save changes</button>-->
+<!--  </div>-->
+<!--  <div class="alert alert-success" *ngIf="isSuccessful">-->
+<!--    Your post was successfully edited!-->
+<!--  </div>-->
+<!--</form>-->
+
+<form
+  *ngIf="!isSuccessful"
+  name="form"
+  (ngSubmit)="f.form.valid && onSubmit()"
+  #f="ngForm"
+  novalidate
+>
   <div class="form-group">
     <label for="title">Title</label>
     <input
@@ -8,8 +59,20 @@
       required
       [(ngModel)]="currentPost.title"
       name="title"
-      [value]="currentPost.title"
+      required
+      minlength="2"
+      maxlength="255"
+      #title="ngModel"
     />
+    <div class="alert-danger" *ngIf="title.errors && f.submitted">
+      <div *ngIf="title.errors.required">Title is required</div>
+      <div *ngIf="title.errors.minlength">
+        Title must be at least 2 characters
+      </div>
+      <div *ngIf="title.errors.maxlength">
+        Title must be at most 255 characters
+      </div>
+    </div>
   </div>
   <div class="form-group">
     <label for="description">Description</label>
@@ -20,25 +83,39 @@
       required
       [(ngModel)]="currentPost.description"
       name="description"
-      [value]="currentPost.description"
+      required
+      minlength="20"
+      maxlength="255"
+      #description="ngModel"
     />
+    <div class="alert-danger" *ngIf="description.errors && f.submitted">
+      <div *ngIf="description.errors.required">Description is required</div>
+      <div *ngIf="description.errors.minlength">
+        Description must be at least 2 characters
+      </div>
+      <div *ngIf="description.errors.maxlength">
+        Description must be at most 255 characters
+      </div>
+    </div>
   </div>
   <div class="form-group">
     <label for="text">Text</label>
-    <input
-      type="text"
-      class="form-control"
-      id="text"
-      required
-      [(ngModel)]="currentPost.text"
-      name="text"
-      [value]="currentPost.text"
-    />
+    <textarea class="form-control form-control-lg post-text"
+              id="text"
+              required
+              [(ngModel)]="currentPost.text"
+              name="text"
+              #text="ngModel"></textarea>
+    <div class="alert-danger" *ngIf="text.errors && f.submitted">
+      <div *ngIf="description.errors.required">Text is required</div>
+    </div>
   </div>
   <div class="form-group">
-    <button class="btn btn-primary btn-block">Add post</button>
+    <label for="preview-image">Change preview image</label>
+    <input type="file" class="form-control-file" id="preview-image" accept=".jpg, .jpeg, .png" (change)="onFileChanged($event)">
   </div>
-  <div class="alert alert-success" *ngIf="isSuccessful">
-    Your post was successfully edited!
+  <div class="buttons">
+    <button class="btn btn-info">Save changes post</button>
   </div>
 </form>
+

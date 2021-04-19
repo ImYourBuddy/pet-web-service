@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {Post} from '../../models/post.model';
 
 @Component({
   selector: 'app-edit-post',
@@ -9,23 +11,33 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class EditPostComponent implements OnInit {
 
-  currentPost = null;
+  currentPost: Post;
   isSuccessful = false;
   errorMessage = '';
+  selectedFile: File;
+  editedPost: Post;
 
-  constructor(private postService: PostService, private route: ActivatedRoute) { }
+  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router,
+              private token: TokenStorageService) { }
 
   ngOnInit(): void {
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    }
     this.getPost(this.route.snapshot.paramMap.get('id'));
   }
 
   onSubmit(): void {
-    const {title, description, text} = this.currentPost;
+    const {title, description, text, author} = this.currentPost;
+    const file = this.selectedFile;
 
-    this.postService.editPost(this.currentPost.id, title, description, text).subscribe(
+    this.postService.editPost(this.currentPost, file).subscribe(
       data => {
         console.log(data);
+        this.editedPost = data;
         this.isSuccessful = true;
+        this.router.navigate(['posts/' + this.editedPost.id]);
       },
       err => {
         this.errorMessage = err.error.message;
@@ -43,6 +55,10 @@ export class EditPostComponent implements OnInit {
         error => {
           console.log(error);
         });
+  }
+
+  onFileChanged(event) {
+    this.selectedFile = event.target.files[0];
   }
 
 }

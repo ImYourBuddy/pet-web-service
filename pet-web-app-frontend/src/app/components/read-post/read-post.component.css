@@ -1,10 +1,11 @@
 .post-info {
-  max-width: 900px;
+  max-width: 1200px;
   margin: auto;
 }
 
 .post-title {
   font-size: x-large;
+  /*text-align: center;*/
 }
 
 .post-description {
@@ -12,5 +13,43 @@
 }
 
 .post-text {
-  text-align: justify ;
+  text-align: justify;
+  /*width: 1200px;*/
+  font-size: 17px;
+  word-wrap: break-word;
+  /*pxoverflow-x: hidden;*/
+  /*margin-left: auto;*/
+  /*margin-right: auto;*/
+}
+.rating {
+  margin: 30px;
+  text-align: center;
+  font-size: 	x-large;
+}
+
+.btn {
+  margin: 10px;
+}
+
+.login-notify {
+  margin: 30px;
+  text-align: center;
+  font-size: 	x-large;
+}
+
+.post-image {
+  text-align: center;
+  max-height: 1080px;
+  max-width: 1920px;
+  overflow:hidden;
+}
+
+.post-description {
+  font-size: 17px;
+  /*text-align: center;*/
+}
+
+.alert-danger {
+  text-align: center;
+  font-size: 17px;
 }

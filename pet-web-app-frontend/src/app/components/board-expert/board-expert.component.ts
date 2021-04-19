@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PostService} from '../../services/post-service/post.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
+import {UserService} from '../../services/user-service/user.service';
+import {User} from '../../models/user.model';
+import {Post} from '../../models/post.model';
 
 @Component({
   selector: 'app-board-expert',
@@ -9,15 +12,40 @@ import {Router} from '@angular/router';
   styleUrls: ['./board-expert.component.css']
 })
 export class BoardExpertComponent implements OnInit {
-  posts: any;
+  posts: Post[];
+  userId: bigint;
+  currentUser: User;
+  pageOfItems: Post[];
 
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private postService: PostService, private token: TokenStorageService) { }
+  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  }
 
   ngOnInit(): void {
-    this.retrieveTutorials();
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      this.userId = this.token.getUser().id;
+      this.userService.getUser(this.userId)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      const tok = this.token.getToken();
+      if (tok == null) {
+        this.router.navigate(['/login']);
+      }
+      this.retrieveTutorials();
+    }
   }
 
   retrieveTutorials() {
@@ -39,6 +67,7 @@ export class BoardExpertComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        window.location.reload();
       },
       err => {
         this.errorMessage = err.error.message;
@@ -52,11 +81,16 @@ export class BoardExpertComponent implements OnInit {
       data => {
         console.log(data);
         this.isSuccessful = true;
+        window.location.reload();
       },
       err => {
         this.errorMessage = err.error.message;
       }
     );
+  }
+
+  onChangePage(pageOfItems: Post[]) {
+    this.pageOfItems = pageOfItems;
   }
 
 }

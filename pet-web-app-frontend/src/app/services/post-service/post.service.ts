@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Post} from '../../models/post.model';
 
 const API_URL = 'http://localhost:8080/rest/post';
 const httpOptions = {
@@ -14,48 +16,73 @@ export class PostService {
   constructor(private http: HttpClient) {
   }
 
-  getAll() {
-    return this.http.get(API_URL);
+  getAll(): Observable<Post[]> {
+    return this.http.get<Post[]>(API_URL);
   }
 
-  getAllForModer() {
-    return this.http.get(API_URL + '/moder');
+  getAllForModer(): Observable<Post[]> {
+    return this.http.get<Post[]>(API_URL + '/moder');
   }
 
-  get(id) {
+  get(id: bigint): Observable<Post> {
     return this.http.get(API_URL + '/' + id);
   }
 
-  add(title: string, description: string, text: string, author: bigint) {
-    return this.http.post(API_URL, {
-      title,
-      description,
-      text,
-      author
+  getPostImage(id: bigint): Observable<any> {
+    return this.http.get(API_URL + '/' + id + '/image');
+
+  }
+
+  add(post: Post, file: File): Observable<Post> {
+    let fd = new FormData();
+    let postBlob: Blob;
+    // @ts-ignore
+    postBlob = new Blob([JSON.stringify(post)], {type: 'application/json'});
+    fd.append('post', postBlob);
+    fd.append('file', file);
+    return this.http.post(API_URL, fd);
+  }
+
+  getByAuthor(id: bigint): Observable<Post[]> {
+    return this.http.get<Post[]>(API_URL + '/author/' + id);
+  }
+
+  editPost(post: Post, file: File): Observable<Post> {
+    let fd = new FormData();
+    let postBlob: Blob;
+    // @ts-ignore
+    postBlob = new Blob([JSON.stringify(post)], {type: 'application/json'});
+    fd.append('post', postBlob);
+    fd.append('file', file);
+    return this.http.put(API_URL + '/' + post.id, fd);
+  }
+
+  deletePost(id: bigint): Observable<Post> {
+    return this.http.patch(API_URL + '/' + id, {
+      deleted: true
     }, httpOptions);
   }
 
-  getByAuthor(id) {
-    return this.http.get(API_URL + '/author/' + id);
-  }
-
-  editPost(id: bigint, title: string, description: string, text: string) {
-    return this.http.put(API_URL + '/' + id , {
-      title,
-      description,
-      text
-    }, httpOptions);
-  }
-
-  deletePost(id: bigint) {
-    return this.http.delete(API_URL + '/' + id);
-  }
-
-  deletePostByModer(id: bigint) {
+  deletePostByModer(id: bigint): Observable<Post> {
     return this.http.delete(API_URL + '/moder/' + id);
   }
 
-  restore(id: bigint) {
-    return this.http.patch(API_URL + '/' + id, {});
+  restore(id: bigint): Observable<Post> {
+    return this.http.patch(API_URL + '/' + id, {
+      deleted: false
+    }, httpOptions);
   }
+
+  ratePost(postId: bigint, userId: bigint, liked: boolean): Observable<any> {
+    return this.http.post(API_URL + '/' + postId + '/rate', {
+      postId,
+      userId,
+      liked
+    });
+  }
+
+  checkMark(postId: bigint, userId: bigint): Observable<any> {
+    return this.http.get(API_URL + '/rate/' + postId + '/' + userId);
+  }
+
 }

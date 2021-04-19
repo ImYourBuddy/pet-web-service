@@ -41,6 +41,26 @@ export class UserService {
     }, httpOptions);
   }
 
+  deletePet(owner: bigint, pet: bigint) {
+    return this.http.delete(API_URL + '/' + owner + '/pets/' + pet);
+  }
+
+  editPet(owner: bigint, pet: bigint, name: string, species: string, breed: string, gender: string, birthdate) {
+    return this.http.put(API_URL + '/' + owner + '/pets/' + pet, {
+      species,
+      name,
+      breed,
+      gender,
+      birthdate
+    }, httpOptions);
+
+  }
+
+  getPet(owner: bigint, pet: bigint) {
+    return this.http.get(API_URL + '/' + owner + '/pets/' + pet);
+  }
+
+
   getUsers() {
     return this.http.get(API_URL + '/summaries');
   }

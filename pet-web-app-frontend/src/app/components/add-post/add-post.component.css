@@ -1,3 +1,24 @@
 .submit-form {
   margin: auto;
 }
+
+.buttons {
+  text-align: center;
+  margin: 30px;
+}
+
+label {
+  font-size: 17px;
+}
+
+.form-control-lg {
+  height: 250px;
+}
+
+.post-text {
+  font-size: 15px;
+}
+
+textarea {
+  wrap-option: hard;
+}

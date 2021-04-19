@@ -6,3 +6,31 @@
   color: darkred;
   font-size: 17px;
 }
+
+.list-group-item {
+  font-size: 17px;
+  width: 900px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.buttons {
+  margin: 10px;
+}
+
+jw-pagination {
+  margin: 30px;
+  margin-right: auto;
+  margin-left: auto;
+  cursor: pointer;
+}
+.post-title {
+  font-size: 19px;
+  padding-bottom: 100px;
+  color: black;
+}
+.notify {
+  margin-top: 250px;
+  text-align: center;
+  font-size: large;
+}

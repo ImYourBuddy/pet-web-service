@@ -1,0 +1,23 @@
+.list-group-item {
+  margin: auto;
+}
+
+.btn {
+  width: auto;
+  margin-top: 10px;
+}
+
+.notification {
+  color: crimson;
+}
+
+.notify {
+  margin-top: 250px;
+  text-align: center;
+  font-size: large;
+}
+
+.list-group-item {
+  font-size: 17px;
+  width: 800px;
+}

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-edit-profile',
@@ -10,36 +11,40 @@ import {Router} from '@angular/router';
 })
 export class EditProfileComponent implements OnInit {
 
-  user: any;
+  user: User;
   isSuccessful = false;
   errorMessage = '';
 
   constructor(private userService: UserService, private token: TokenStorageService, private router: Router) { }
 
   ngOnInit(): void {
-    const id = this.token.getUser().id;
-    this.userService.getUser(id)
-      .subscribe(
-        data => {
-          this.user = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      const id = this.token.getUser().id;
+      this.userService.getUser(id)
+        .subscribe(
+          data => {
+            this.user = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+    }
   }
 
   onSubmit() {
-    const {id, firstName, lastName} = this.user;
-    this.userService.updateProfile(id, firstName, lastName).subscribe(
+    this.userService.updateProfile(this.user).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;
+        this.router.navigate(['/profile']);
       },
       err => {
         this.errorMessage = err.error.message;
       }
     );
-    this.router.navigate(['/profile']);
   }
 }

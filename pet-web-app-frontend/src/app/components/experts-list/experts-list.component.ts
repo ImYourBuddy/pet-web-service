@@ -1,5 +1,10 @@
 import {Component} from '@angular/core';
 import {ExpertService} from '../../services/expert-service/expert.service';
+import {TokenStorageService} from '../../services/token-storage/token-storage.service';
+import {UserService} from '../../services/user-service/user.service';
+import {Router} from '@angular/router';
+import {Expert} from '../../models/expert.model';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-experts-list',
@@ -7,13 +12,35 @@ import {ExpertService} from '../../services/expert-service/expert.service';
   styleUrls: ['./experts-list.component.css']
 })
 export class ExpertsListComponent {
-  experts: any;
-  constructor(private expertService: ExpertService) {
+  experts: Expert[];
+  userId: bigint;
+  currentUser: User;
+  constructor(private expertService: ExpertService, private token: TokenStorageService, private userService: UserService, private router: Router) {
   }
 
   // tslint:disable-next-line:use-lifecycle-interface
   ngOnInit() {
-    this.getExperts();
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      this.userId = this.token.getUser().id;
+      this.userService.getUser(this.userId)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      if (tok == null) {
+        this.router.navigate(['/login']);
+      }
+      this.getExperts();
+    }
   }
 
   getExperts() {
@@ -27,5 +54,4 @@ export class ExpertsListComponent {
           console.log(error);
         });
   }
-
 }

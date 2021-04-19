@@ -1,3 +1,16 @@
 .list-group-item {
   margin: auto;
 }
+
+.form-group {
+  font-size: 17px;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.buttons {
+  text-align: center;
+  margin: 30px;
+}
+

@@ -1,20 +1,60 @@
-<div *ngIf="currentPost" class="post-info">
+<div *ngIf="currentPost" class="post-info" xmlns="http://www.w3.org/1999/html">
   <div class="post-title">
-    {{currentPost.title}}
+    <strong>{{currentPost.title}}</strong>
   </div>
-  <p>
-
-  </p>
+  <br/>
   <div class="post-description">
     {{currentPost.description}}
   </div>
-  <p>
-
-  </p>
+  <br/>
+  <div *ngIf="postImage != null" class="post-image">
+    <img src="data:image/png;base64,{{postImage.image}}" width="780" height="440">
+  </div>
+  <br/>
   <div class="post-text">
     {{currentPost.text}}
   </div>
-  <div class="post-text">
-    {{currentPost.author}}
+  <!--  <div class="post-text">-->
+  <!--    {{currentPost.author}}-->
+  <!--  </div>-->
+  <div class="rating" *ngIf="userId != undefined; else login">
+    <div class="not-rated" *ngIf="userMark == null; else rated">
+      <button type="button" class="btn btn-danger" (click)="ratePost(currentPost.id, userId, false)">Dislike</button>
+      {{currentPost.rating}}
+      <button type="button" class="btn btn-success" (click)="ratePost(currentPost.id, userId, true)">Like</button>
+    </div>
+    <ng-template #rated>
+      <div class="rated">
+        <button type="button" class="btn btn-danger" disabled>Dislike</button>
+        <strong>{{currentPost.rating}}</strong>
+        <button type="button" class="btn btn-success" disabled>Like</button>
+        <div *ngIf="userMark.liked">
+          You liked it!
+        </div>
+        <div *ngIf="!userMark.liked">
+          You disliked it!
+        </div>
+      </div>
+    </ng-template>
   </div>
+  <ng-template #login>
+    <div class="rating">
+      <div class="not-rated">
+        <button type="button" class="btn btn-danger" (click)="notifier.notify('error', 'You should be logged!')">
+          Dislike
+        </button>
+        {{currentPost.rating}}
+        <button type="button" class="btn btn-success" (click)="notifier.notify('error', 'You should be logged!')">Like
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="isFailed"
+>
+  {{ errorMessage }}
 </div>

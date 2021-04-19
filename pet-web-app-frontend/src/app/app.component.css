@@ -1,1 +1,4 @@
 /*styles for app.component*/
+.navbar {
+  background-color: red;
+}

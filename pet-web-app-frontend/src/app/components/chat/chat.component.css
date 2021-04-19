@@ -1,3 +1,103 @@
-.list-group-item {
+.toolbar {
+  height: 60px;
   margin: auto;
+  display: flex;
+  align-items: center;
+  background-color: #00b3b3;
+  color: white;
+  font-weight: 600;
+  width: 800px;
+  padding: 5px;
+}
+
+span {
+  padding: 10px;
+}
+
+.content {
+  display: flex;
+  margin: 32px auto;
+  padding: 0 16px;
+  max-width: 960px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chat {
+  border: 2px solid #dedede;
+  width: 800px;
+  margin: auto;
+  padding: 5px;
+  overflow-y: scroll;
+  height: 500px;
+}
+.container {
+  border: 2px solid #c2efc2;
+  background-color: #c2efc2;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  width: 500px;
+  margin-left: auto;
+  font-size: 17px;
+}
+
+.container-darker {
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  width: 500px;
+  border-color: #b3e6ff;
+  background-color: #b3e6ff;
+  margin-right: auto;
+  font-size: 17px;
+}
+
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.container-darker::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.time-right {
+  float: right;
+  color: #14141f;
+  font-size: 12px;
+}
+
+.time-left {
+  float: left;
+  color: #14141f;
+  font-size: 12px;
+}
+
+.btn btn-success {
+  margin:auto;
+  padding: 10px;
+}
+
+.form-control {
+  margin:auto;
+  padding: 10px;
+}
+
+.btn {
+  margin: 10px;
+}
+
+.welcome-message {
+  text-align: center;
+  margin-top: 200px;
+  font-size: 17px;
+}
+
+.alert-danger {
+  text-align: center;
+  font-size: 17px;
 }

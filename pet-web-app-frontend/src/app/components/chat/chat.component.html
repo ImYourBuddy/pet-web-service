@@ -1,2 +1,45 @@
-{{currentUser.id}}
-
+<div *ngIf="!showErrorMessage" class="content" role="main">
+  <div class="content">
+    <notifier-container></notifier-container>
+    <div class="toolbar" role="banner">
+      <span>{{recipient.firstName}} {{recipient.lastName}}</span>
+    </div>
+    <div #scrollMe id="chat" class="chat">
+<!--      <div *ngIf="messages == null" class="welcome-message">-->
+<!--        Your message history will be displayed here.-->
+<!--      </div>-->
+      <div *ngFor="let msg of messages">
+        <div class="container-darker" *ngIf="msg.sender == to">
+          <p>{{msg.text}}</p>
+          <span class="time-left">{{msg.timestamp| date:'medium'}}</span>
+        </div>
+        <div class="container" *ngIf="msg.sender == userId">
+          <p>{{msg.text}}</p>
+          <span class="time-right">{{msg.timestamp| date:'medium'}}</span>
+        </div>
+      </div>
+      <div *ngFor="let newMessage of newMessages">
+        <div class="container-darker" *ngIf="newMessage.sender == to">
+          <p>{{newMessage.text}}</p>
+          <span class="time-left">{{newMessage.timestamp| date:'medium'}}</span>
+        </div>
+        <div class="container" *ngIf="newMessage.sender == userId">
+          <p>{{newMessage.text}}</p>
+          <span class="time-right">{{newMessage.timestamp| date:'medium'}}</span>
+        </div>
+      </div>
+      <div *ngFor="let sentMessage of sentMessages">
+        <p>{{sender.firstName}}: {{sentMessage.text}} ({{sentMessage.timestamp| date:'longDate'}})</p>
+      </div>
+    </div>
+    <input class="form-control" type="text" placeholder="message" [(ngModel)]="input">
+    <button class="btn btn-info btn-block" (click)="sendMessage()">Send</button>
+  </div>
+</div>
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showErrorMessage"
+>
+  {{ errorMessage }}
+</div>

@@ -1,4 +1,10 @@
-<form class="submit-form" (ngSubmit)="onSubmit()">
+<form
+  *ngIf="!isSuccessful"
+  name="form"
+  (ngSubmit)="f.form.valid && onSubmit()"
+  #f="ngForm"
+  novalidate
+>
   <div class="form-group">
     <label for="firstName">First name</label>
     <input
@@ -9,10 +15,22 @@
       [(ngModel)]="user.firstName"
       name="firstName"
       [value]="user.firstName"
+      minlength="2"
+      maxlength="30"
+      #firstName="ngModel"
     />
+    <div class="alert-danger" *ngIf="firstName.errors && f.submitted">
+      <div *ngIf="firstName.errors.required">Firstname is required</div>
+      <div *ngIf="firstName.errors.minlength">
+        Firstname must be at least 2 characters
+      </div>
+      <div *ngIf="firstName.errors.maxlength">
+        Firstname must be at most 30 characters
+      </div>
+    </div>
   </div>
   <div class="form-group">
-    <label for="lastName">Description</label>
+    <label for="lastName">Last name</label>
     <input
       type="text"
       class="form-control"
@@ -21,12 +39,21 @@
       [(ngModel)]="user.lastName"
       name="lastName"
       [value]="user.lastName"
+      minlength="2"
+      maxlength="30"
+      #lastName="ngModel"
     />
+    <div class="alert-danger" *ngIf="lastName.errors && f.submitted">
+      <div *ngIf="lastName.errors.required">Lastname is required</div>
+      <div *ngIf="lastName.errors.minlength">
+        Lastname must be at least 2 characters
+      </div>
+      <div *ngIf="lastName.errors.maxlength">
+        Lastname must be at most 30 characters
+      </div>
+    </div>
   </div>
   <div class="form-group">
-    <button class="btn btn-primary btn-block">Change info</button>
-  </div>
-  <div class="alert alert-success" *ngIf="isSuccessful">
-    Your post was successfully edited!
+    <button class="btn btn-success btn-block">Change info</button>
   </div>
 </form>

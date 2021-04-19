@@ -1,5 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Expert} from '../../models/expert.model';
+import {User} from '../../models/user.model';
 
 const API_URL = 'http://localhost:8080/rest/admin';
 const httpOptions = {
@@ -14,12 +17,16 @@ export class AdminService {
   constructor(private http: HttpClient) {
   }
 
-  getUsers() {
-    return this.http.get(API_URL + '/users');
+  getUsers(): Observable<Expert[]> {
+    return this.http.get<Expert[]>(API_URL + '/users');
   }
 
-  addModer(id: bigint) {
-    return this.http.post(API_URL + '/users/' + id + '/add-moder', {},
-     httpOptions);
+  addModer(id: bigint): Observable<User> {
+    return this.http.post(API_URL + '/users/' + id + '/moder', {},
+      httpOptions);
+  }
+
+  removeModer(id: bigint): Observable<User> {
+    return this.http.delete(API_URL + '/users/' + id + '/moder');
   }
 }

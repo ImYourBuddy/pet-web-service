@@ -18,3 +18,10 @@
   color: black;
 }
 
+jw-pagination {
+  margin: 30px;
+  margin-right: auto;
+  margin-left: auto;
+  cursor: pointer;
+}
+

@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
-import {UserService} from '../../services/user/user.service';
+import {UserService} from '../../services/user-service/user.service';
+import {Router} from '@angular/router';
+import {ExpertService} from '../../services/expert-service/expert.service';
+import {User} from '../../models/user.model';
+import {Pet} from '../../models/pet.model';
+import {Expert} from '../../models/expert.model';
 
 @Component({
   selector: 'app-profile',
@@ -9,31 +14,65 @@ import {UserService} from '../../services/user/user.service';
 })
 export class ProfileComponent implements OnInit {
 
-  currentUser: any;
+  currentUser: User;
+  expertInfo: Expert;
   roles: string[] = [];
-  hideBecomeExpert: boolean;
-  pets: any;
+  hideBecomeExpert = false;
+  pets: Pet[];
 
-  constructor(private userService: UserService, private token: TokenStorageService) { }
+  constructor(private userService: UserService, private token: TokenStorageService, private router: Router, private expertService: ExpertService) {
+  }
 
   ngOnInit(): void {
     // tslint:disable-next-line:no-unused-expression
-    const id = this.token.getUser().id;
-    this.roles = this.token.getUser().roles;
-    this.userService.getUser(id)
+    const tok = this.token.getToken();
+    if (tok == null) {
+      this.router.navigate(['/login']);
+    } else {
+      const id = this.token.getUser().id;
+      this.roles = this.token.getUser().roles;
+      this.userService.getUser(id)
+        .subscribe(
+          data => {
+            this.currentUser = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+            this.token.signOut();
+            window.location.reload();
+          });
+      if (tok == null) {
+        this.router.navigate(['/login']);
+      }
+      this.expertService.getByUserId(id)
+        .subscribe(
+          data => {
+            this.expertInfo = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+      this.userService.getPets(id)
+        .subscribe(
+          data => {
+            this.pets = data;
+            console.log(data);
+          },
+          error => {
+            console.log(error);
+          });
+    }
+  }
+
+  deletePet(petId: bigint) {
+    const userId = this.token.getUser().id;
+    this.userService.deletePet(userId, petId)
       .subscribe(
         data => {
-          this.currentUser = data;
           console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-    this.userService.getPets(id)
-      .subscribe(
-        data => {
-          this.pets = data;
-          console.log(data);
+          window.location.reload();
         },
         error => {
           console.log(error);
