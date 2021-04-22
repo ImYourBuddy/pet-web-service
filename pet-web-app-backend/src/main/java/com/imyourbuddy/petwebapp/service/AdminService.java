@@ -31,8 +31,7 @@ public class AdminService {
         Role roleModerator = roleRepository.findByName("ROLE_MODERATOR");
         List<Role> roles = user.getRoles();
         roles.add(roleModerator);
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     public User removeModerByUserId(long userId) throws ResourceNotFoundException {

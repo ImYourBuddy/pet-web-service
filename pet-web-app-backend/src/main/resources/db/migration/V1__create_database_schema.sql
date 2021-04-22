@@ -20,10 +20,10 @@ CREATE TABLE public.user
     username   character varying(50)  NOT NULL UNIQUE,
     password   character varying(100) NOT NULL,
     first_name character varying(30)  NOT NULL,
-    last_name  character varying(30),
-    created    timestamp,
-    banned     boolean DEFAULT false,
-    deleted    boolean DEFAULT false,
+    last_name  character varying(30)  NOT NULL,
+    created    timestamp              NOT NULL,
+    banned     boolean                NOT NULL DEFAULT false,
+    deleted    boolean                NOT NULL DEFAULT false,
     PRIMARY KEY (id)
 );
 
@@ -68,10 +68,10 @@ CREATE TABLE public.pet
 (
     id        bigserial             NOT NULL,
     species   character varying(10) NOT NULL,
-    name      character varying(50),
-    breed     character varying(20),
-    gender    character varying(6),
-    birthdate timestamp,
+    name      character varying(50) NOT NULL,
+    breed     character varying(20) NOT NULL,
+    gender    character varying(6)  NOT NULL,
+    birthdate timestamp             NOT NULL,
     owner     bigint                NOT NULL,
     PRIMARY KEY (id)
 );
@@ -87,10 +87,10 @@ CREATE TABLE public.post
 (
     id           bigserial              NOT NULL,
     title        character varying(255) NOT NULL,
-    description  character varying(255),
+    description  character varying(255) NOT NULL,
     text         text                   NOT NULL,
     author       bigint                 NOT NULL,
-    created_date timestamp,
+    created_date timestamp              NOT NULL,
     rating       bigint                 NOT NULL,
     deleted      boolean                NOT NULL,
     PRIMARY KEY (id)
@@ -105,9 +105,9 @@ ALTER TABLE public.post
 
 CREATE TABLE public.post_image
 (
-    id bigserial NOT NULL,
-    post_id bigint NOT NULL,
-    image bytea NOT NULL,
+    id      bigserial NOT NULL,
+    post_id bigint    NOT NULL,
+    image   bytea     NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -122,7 +122,7 @@ CREATE TABLE public.mark
 (
     post_id bigint,
     user_id bigint,
-    liked boolean NOT NULL,
+    liked   boolean NOT NULL,
     PRIMARY KEY (post_id, user_id)
 );
 

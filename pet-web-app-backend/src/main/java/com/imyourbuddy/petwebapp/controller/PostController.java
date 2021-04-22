@@ -1,6 +1,7 @@
 package com.imyourbuddy.petwebapp.controller;
 
 import com.imyourbuddy.petwebapp.dto.request.DeletePostRequest;
+import com.imyourbuddy.petwebapp.exception.IllegalOperationException;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Mark;
 import com.imyourbuddy.petwebapp.model.Post;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -37,13 +39,13 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+    public ResponseEntity<Post> getPostById(@PathVariable(name = "id") long id) throws ResourceNotFoundException, IllegalOperationException {
         Post post = service.getPostById(id);
         return ResponseEntity.ok().body(post);
     }
 
     @GetMapping("/{id}/image")
-    public ResponseEntity<PostImage> getImageByPostId(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+    public ResponseEntity<PostImage> getImageByPostId(@PathVariable(name = "id") long id) throws ResourceNotFoundException, IllegalOperationException {
         PostImage postImageByPostId = service.getPostImageByPostId(id);
         return ResponseEntity.ok().body(postImageByPostId);
     }
@@ -65,7 +67,7 @@ public class PostController {
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<Post> editPost(@PathVariable(name = "id") long id,
                                          @RequestPart(value = "post") @Valid Post post,
-                                         @RequestParam(value="file", required=false) MultipartFile image) throws ResourceNotFoundException {
+                                         @RequestParam(value="file", required=false) MultipartFile image) throws ResourceNotFoundException, IllegalOperationException {
         Post newPost = service.edit(id, post, image);
         return ResponseEntity.ok().body(newPost);
     }
@@ -83,9 +85,17 @@ public class PostController {
         return service.getAllForModer();
     }
 
+    @GetMapping("/moder/{id}")
+    @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Post> getPostByIdForModer(@PathVariable(name = "id") long id, HttpServletRequest request) throws ResourceNotFoundException, IllegalOperationException {
+        String token = request.getHeader("Authorization");
+        Post post = service.getDeletedPostById(id, token.substring(7, token.length()));
+        return ResponseEntity.ok().body(post);
+    }
+
     @DeleteMapping("/moder/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public ResponseEntity<Post> deletePostByModer(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+    public ResponseEntity<Post> deletePostByModer(@PathVariable(name = "id") long id) throws ResourceNotFoundException, IllegalOperationException {
         Post post = service.deletePostByModer(id);
         return ResponseEntity.ok().body(post);
     }
@@ -93,14 +103,14 @@ public class PostController {
     @PostMapping("/{postId}/rate")
     @PreAuthorize("hasRole('OWNER')")
     public void ratePost(@PathVariable(name = "postId") long postId,
-            @RequestBody Mark mark) throws ResourceNotFoundException {
+            @RequestBody Mark mark) throws ResourceNotFoundException, IllegalOperationException {
         service.ratePost(postId, mark);
     }
 
     @GetMapping("/rate/{postId}/{userId}")
     @PreAuthorize("hasRole('OWNER')")
     public Mark checkMark(@PathVariable(name = "postId") long postId,
-                          @PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+                          @PathVariable(name = "userId") long userId) throws ResourceNotFoundException, IllegalOperationException {
         return service.checkMark(postId, userId);
     }
 
