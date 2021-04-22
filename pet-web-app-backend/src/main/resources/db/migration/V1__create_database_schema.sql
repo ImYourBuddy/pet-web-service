@@ -192,5 +192,3 @@ ALTER TABLE public.message
         ON DELETE RESTRICT
         NOT VALID;
 
-
-
