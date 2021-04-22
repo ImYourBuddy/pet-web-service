@@ -1,20 +1,21 @@
 import {Component} from '@angular/core';
-import {ExpertService} from '../../services/expert-service/expert.service';
+import {ChatService} from '../../services/chat-service/chat.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
-import {Expert} from '../../models/expert.model';
-import {User} from '../../models/user.model';
 
 @Component({
-  selector: 'app-experts-list',
-  templateUrl: './experts-list.component.html',
-  styleUrls: ['./experts-list.component.css']
+  selector: 'app-chat-list',
+  templateUrl: './chat-list.component.html',
+  styleUrls: ['./chat-list.component.css']
 })
-export class ExpertsListComponent {
-  experts: Expert[];
-  userId: bigint;
-  constructor(private expertService: ExpertService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+export class ChatListComponent {
+  chats;
+  userId;
+  user;
+  error: boolean;
+
+  constructor(private chatService: ChatService, private token: TokenStorageService, private userService: UserService, private router: Router) {
   }
 
   // tslint:disable-next-line:use-lifecycle-interface
@@ -24,15 +25,15 @@ export class ExpertsListComponent {
       this.router.navigate(['/login']);
     } else {
       this.userId = this.token.getUser().id;
-      this.getExperts();
+      this.getChats();
     }
   }
 
-  getExperts() {
-    this.expertService.getAllExperts()
+  getChats() {
+    this.chatService.findChats(this.userId)
       .subscribe(
         data => {
-          this.experts = data;
+          this.chats = data;
           console.log(data);
         },
         error => {

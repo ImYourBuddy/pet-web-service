@@ -13,8 +13,6 @@ import {Post} from '../../models/post.model';
 })
 export class BoardExpertComponent implements OnInit {
   posts: Post[];
-  userId: bigint;
-  currentUser: User;
   pageOfItems: Post[];
 
   isSuccessful = false;
@@ -28,22 +26,6 @@ export class BoardExpertComponent implements OnInit {
     if (tok == null) {
       this.router.navigate(['/login']);
     } else {
-      this.userId = this.token.getUser().id;
-      this.userService.getUser(this.userId)
-        .subscribe(
-          data => {
-            this.currentUser = data;
-            console.log(data);
-          },
-          error => {
-            console.log(error);
-            this.token.signOut();
-            window.location.reload();
-          });
-      const tok = this.token.getToken();
-      if (tok == null) {
-        this.router.navigate(['/login']);
-      }
       this.retrieveTutorials();
     }
   }
@@ -57,6 +39,11 @@ export class BoardExpertComponent implements OnInit {
           console.log(data);
         },
         error => {
+          if (error.status == 401) {
+            this.token.signOut();
+            window.location.reload();
+            this.router.navigate(['/login']);
+          }
           console.log(error);
         });
   }
@@ -69,8 +56,13 @@ export class BoardExpertComponent implements OnInit {
         this.isSuccessful = true;
         window.location.reload();
       },
-      err => {
-        this.errorMessage = err.error.message;
+      error => {
+        if (error.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
+        this.errorMessage = error.error.message;
       }
     );
   }
@@ -83,8 +75,13 @@ export class BoardExpertComponent implements OnInit {
         this.isSuccessful = true;
         window.location.reload();
       },
-      err => {
-        this.errorMessage = err.error.message;
+      error => {
+        if (error.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
+        this.errorMessage = error.error.message;
       }
     );
   }

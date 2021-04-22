@@ -78,10 +78,10 @@ public class UserService {
             return ResponseEntity
                     .badRequest().body(new MessageResponse("Username is already taken!"));
         }
-        Role reader = roleRepository.findByName("ROLE_OWNER");
+        Role owner = roleRepository.findByName("ROLE_OWNER");
         List<Role> userRoles = new ArrayList<>();
         Timestamp createdDate = new Timestamp(new Date().getTime());
-        userRoles.add(reader);
+        userRoles.add(owner);
         user.setRoles(userRoles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(createdDate);
@@ -118,6 +118,12 @@ public class UserService {
     public User getById(long id) throws ResourceNotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + "not found."));
+    }
+
+    public User getUserByToken(String token) throws ResourceNotFoundException {
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User with username = " + username + " not found"));
     }
 
     public User deleteUserById(long id) throws ResourceNotFoundException {

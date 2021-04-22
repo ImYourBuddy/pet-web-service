@@ -1,5 +1,6 @@
 package com.imyourbuddy.petwebapp.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 @Table(name = "user", schema = "public")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -58,4 +60,3 @@ public class User {
     }
 
 }
-

@@ -4,6 +4,8 @@ import com.imyourbuddy.petwebapp.model.PostImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 
 /**
  * Repository interface for {@link PostImage} class.
@@ -11,6 +13,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostImageRepository extends JpaRepository<PostImage, Long> {
-    PostImage getByPostId(long postId);
+    PostImage findByPostId(long postId);
 
 }

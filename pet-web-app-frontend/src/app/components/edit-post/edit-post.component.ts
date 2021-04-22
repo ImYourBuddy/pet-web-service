@@ -29,7 +29,7 @@ export class EditPostComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const {title, description, text, author} = this.currentPost;
+    this.currentPost;
     const file = this.selectedFile;
 
     this.postService.editPost(this.currentPost, file).subscribe(
@@ -40,13 +40,18 @@ export class EditPostComponent implements OnInit {
         this.router.navigate(['posts/' + this.editedPost.id]);
       },
       err => {
+        if (err.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
         this.errorMessage = err.error.message;
       }
     );
   }
 
   getPost(id) {
-    this.postService.get(id)
+    this.postService.getDeletedPostById(id)
       .subscribe(
         data => {
           this.currentPost = data;

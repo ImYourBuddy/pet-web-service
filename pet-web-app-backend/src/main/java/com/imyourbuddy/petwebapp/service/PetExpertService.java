@@ -41,7 +41,7 @@ public class PetExpertService {
     }
 
     public PetExpert edit(long userId, PetExpert updatedExpert) throws ResourceNotFoundException {
-        PetExpert expert = getByUserId(updatedExpert.getUserId());
+        PetExpert expert = getByUserId(userId);
         expert.setQualification(updatedExpert.getQualification());
         expert.setOnlineHelp(updatedExpert.isOnlineHelp());
         petExpertRepository.save(expert);

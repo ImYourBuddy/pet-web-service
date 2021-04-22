@@ -23,15 +23,7 @@ export class EditProfileComponent implements OnInit {
       this.router.navigate(['/login']);
     } else {
       const id = this.token.getUser().id;
-      this.userService.getUser(id)
-        .subscribe(
-          data => {
-            this.user = data;
-            console.log(data);
-          },
-          error => {
-            console.log(error);
-          });
+      this.getUser(id);
     }
   }
 
@@ -42,9 +34,31 @@ export class EditProfileComponent implements OnInit {
         this.isSuccessful = true;
         this.router.navigate(['/profile']);
       },
-      err => {
-        this.errorMessage = err.error.message;
+      error => {
+        if (error.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
+        this.errorMessage = error.error.message;
       }
     );
+  }
+
+  getUser(id: bigint) {
+    this.userService.getUser(id)
+      .subscribe(
+        data => {
+          this.user = data;
+          console.log(data);
+        },
+        error => {
+          if (error.status == 401) {
+            this.token.signOut();
+            window.location.reload();
+            this.router.navigate(['/login']);
+          }
+          console.log(error);
+        });
   }
 }

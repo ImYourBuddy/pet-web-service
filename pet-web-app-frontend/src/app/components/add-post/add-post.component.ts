@@ -46,10 +46,8 @@ export class AddPostComponent implements OnInit {
             console.log(error);
             this.token.signOut();
             window.location.reload();
+            this.router.navigate(['/login']);
           });
-      // if (tok == null) {
-      //   this.router.navigate(['/login']);
-      // }
     }
   }
 
@@ -64,6 +62,11 @@ export class AddPostComponent implements OnInit {
         this.router.navigate(['/posts']);
       },
       err => {
+        if (err.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
         this.errorMessage = err.error.message;
       }
     );

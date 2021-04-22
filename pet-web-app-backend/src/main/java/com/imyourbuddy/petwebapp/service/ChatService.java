@@ -39,9 +39,9 @@ public class ChatService {
                 chatRepository.save(newChat);
                 newChat = chatRepository.findChatByUserIdAndExpertId(firstUser, secondUser);
                 return newChat.getId();
+            } else {
+                return 0;
             }
-            throw new ResourceNotFoundException("Chat for users with id = " + firstUser + ", " + secondUser
-                    + " not found");
         }
         return chat.getId();
     }

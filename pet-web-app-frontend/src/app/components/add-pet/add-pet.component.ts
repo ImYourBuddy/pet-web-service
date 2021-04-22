@@ -43,6 +43,11 @@ export class AddPetComponent {
         this.router.navigate(['/profile']);
       },
       err => {
+        if (err.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
         this.errorMessage = err.error.message;
       }
     );

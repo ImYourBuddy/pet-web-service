@@ -24,14 +24,34 @@ export class ReadPostComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getPost(this.route.snapshot.paramMap.get('id'));
+    const roles = this.token.getUser().roles;
+    if (roles != null &&
+      (roles.includes('ROLE_ADMINISTRATOR') || roles.includes('ROLE_MODERATOR') || roles.includes('ROLE_EXPERT'))) {
+      this.getDeletedPost(this.route.snapshot.paramMap.get('id'));
+    } else {
+      this.getPost(this.route.snapshot.paramMap.get('id'));
+    }
     this.getPostImage(this.route.snapshot.paramMap.get('id'));
     this.userId = this.token.getUser().id;
     this.checkMark(this.route.snapshot.paramMap.get('id'), this.userId);
   }
 
   getPost(id) {
-    this.postService.get(id)
+    this.postService.getById(id)
+      .subscribe(
+        data => {
+          this.currentPost = data;
+          console.log(data);
+        },
+        error => {
+          this.errorMessage = error.error;
+          this.isFailed = true;
+          console.log(error.error);
+        });
+  }
+
+  getDeletedPost(id) {
+    this.postService.getDeletedPostById(id)
       .subscribe(
         data => {
           this.currentPost = data;
@@ -52,6 +72,9 @@ export class ReadPostComponent implements OnInit {
           console.log(this.postImage.image);
         },
         error => {
+          this.errorMessage = error.error;
+          this.isFailed = true;
+          console.log(error.error);
           console.log(error);
         });
   }

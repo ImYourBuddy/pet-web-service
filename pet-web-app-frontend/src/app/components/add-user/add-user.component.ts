@@ -20,6 +20,7 @@ export class AddUserComponent implements OnInit {
   isSignUpFailed = false;
   errorMessage = '';
   hide = false;
+  userNamePattern = '^[A-Za-z][A-Za-z0-9_-]+[A-Za-z0-9]$';
 
   constructor(private authService: AuthService, private router: Router) { }
 

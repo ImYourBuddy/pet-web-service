@@ -24,8 +24,12 @@ export class PostService {
     return this.http.get<Post[]>(API_URL + '/moder');
   }
 
-  get(id: bigint): Observable<Post> {
+  getById(id: bigint): Observable<Post> {
     return this.http.get(API_URL + '/' + id);
+  }
+
+  getDeletedPostById(id: bigint) {
+    return this.http.get(API_URL + '/moder/' + id);
   }
 
   getPostImage(id: bigint): Observable<any> {

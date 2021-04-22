@@ -1,6 +1,8 @@
 package com.imyourbuddy.petwebapp.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -10,6 +12,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "pet_expert")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PetExpert{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
