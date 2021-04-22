@@ -38,13 +38,13 @@ export class ProfileComponent implements OnInit {
             console.log(data);
           },
           error => {
+            if (error.status == 401) {
+              this.token.signOut();
+              window.location.reload();
+              this.router.navigate(['/login']);
+            }
             console.log(error);
-            this.token.signOut();
-            window.location.reload();
           });
-      if (tok == null) {
-        this.router.navigate(['/login']);
-      }
       this.expertService.getByUserId(id)
         .subscribe(
           data => {
@@ -75,6 +75,11 @@ export class ProfileComponent implements OnInit {
           window.location.reload();
         },
         error => {
+          if (error.status == 401) {
+            this.token.signOut();
+            window.location.reload();
+            this.router.navigate(['/login']);
+          }
           console.log(error);
         });
   }

@@ -66,9 +66,6 @@ export class ChatComponent {
             this.token.signOut();
             window.location.reload();
           });
-      if (tok == null) {
-        this.router.navigate(['/login']);
-      }
       this.userService.getUser(this.to)
         .subscribe(
           data => {
@@ -78,18 +75,7 @@ export class ChatComponent {
           error => {
             console.log(error);
           });
-      this.chatService.haveNewMessagesInChat(this.userId, this.to)
-        .subscribe(
-          data => {
-            if (data == true) {
-              this.chatService.markAsDelivered(this.userId, this.to)
-                .subscribe();
-            }
-            console.log(data);
-          },
-          error => {
-            console.log(error);
-          });
+      this.haveNewMessages();
     }
   }
 
@@ -165,8 +151,8 @@ export class ChatComponent {
           console.log(data);
         },
         error => {
-        this.showErrorMessage = true;
-        this.errorMessage = error.error;
+          this.showErrorMessage = true;
+          this.errorMessage = error.error;
         });
   }
 
@@ -175,15 +161,20 @@ export class ChatComponent {
   }
 
 
-  getUser(id, user): any {
-    this.userService.getUser(id)
+  haveNewMessages() {
+    this.chatService.haveNewMessagesInChat(this.userId, this.to)
       .subscribe(
         data => {
-          user = data;
+          if (data == true) {
+            this.chatService.markAsDelivered(this.userId, this.to)
+              .subscribe();
+          }
           console.log(data);
         },
         error => {
-          console.log(error);
+          this.showErrorMessage = true;
+          this.errorMessage = error.error;
         });
   }
+
 }

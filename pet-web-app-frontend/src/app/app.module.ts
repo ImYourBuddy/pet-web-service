@@ -22,7 +22,7 @@ import {AddExpertComponent} from './components/add-expert/add-expert.component';
 import {AddPetComponent} from './components/add-pet/add-pet.component';
 import {ChatComponent} from './components/chat/chat.component';
 import {ExpertsListComponent} from './components/experts-list/experts-list.component';
-import {ChatListComponent} from './components/chat-lists/chat-list.component';
+import {ChatListComponent} from './components/chat-list/chat-list.component';
 import {NotifierModule, NotifierOptions} from 'angular-notifier';
 import {JwPaginationModule} from 'jw-angular-pagination';
 import {EditPetComponent} from './components/edit-pet/edit-pet.component';

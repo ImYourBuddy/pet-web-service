@@ -80,7 +80,7 @@
   <div class="list"
        *ngFor="let user of users;"
   >
-    <div *ngIf="currentUser.id != user.id">
+    <div *ngIf="userId != user.id">
       <div class="list-group-item">
         <div class="username">
           Username: {{user.username}}

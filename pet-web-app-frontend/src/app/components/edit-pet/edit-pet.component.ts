@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {UserService} from '../../services/user-service/user.service';
 import {Pet} from '../../models/pet.model';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-edit-pet',
@@ -31,8 +32,13 @@ export class EditPetComponent implements OnInit {
         console.log(data);
         this.router.navigate(['profile']);
       },
-      err => {
-        this.errorMessage = err.error.message;
+      error => {
+        if (error.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
+        this.errorMessage = error.error.message;
       }
     );
   }
@@ -44,9 +50,15 @@ export class EditPetComponent implements OnInit {
       .subscribe(
         data => {
           this.currentPet = data;
-          console.log(this.currentPet.birthdate);
+          const pipe = new DatePipe('en-US');
+          this.currentPet.birthdate = pipe.transform(this.currentPet.birthdate, 'yyyy-MM-dd');
         },
         error => {
+          if (error.status == 401) {
+            this.token.signOut();
+            window.location.reload();
+            this.router.navigate(['/login']);
+          }
           this.showErrorMessage = true;
           this.errorMessage = error.error;
         });

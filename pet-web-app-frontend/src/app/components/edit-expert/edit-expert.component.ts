@@ -34,8 +34,13 @@ export class EditExpertComponent implements OnInit {
         console.log(data);
         this.router.navigate(['profile']);
       },
-      err => {
-        this.errorMessage = err.error.message;
+      error => {
+        if (error.status == 401) {
+          this.token.signOut();
+          window.location.reload();
+          this.router.navigate(['/login']);
+        }
+        this.errorMessage = error.error.message;
       }
     );
   }
@@ -50,6 +55,11 @@ export class EditExpertComponent implements OnInit {
           console.log(data);
         },
         error => {
+          if (error.status == 401) {
+            this.token.signOut();
+            window.location.reload();
+            this.router.navigate(['/login']);
+          }
           this.showErrorMessage = true;
           this.errorMessage = error.error;
         });

@@ -4,6 +4,6 @@ export class Pet {
   name?: string;
   breed?: string;
   gender?: string;
-  birthdate?: Date;
+  birthdate?: string;
   owner?: bigint;
 }

@@ -48,43 +48,43 @@ export class BoardModeratorComponent implements OnInit {
       if (window.sessionStorage.getItem('hideExpertRequest') != null) {
         this.hideExpertRequest = false;
       }
-      this.currentUser = this.token.getUser();
       this.userId = this.token.getUser().id;
-      this.userService.getUser(this.userId)
-        .subscribe(
-          data => {
-            this.currentUser = data;
-            console.log(data);
-          },
-          error => {
-            console.log(error);
-            this.token.signOut();
-            this.router.navigate(['/login']);
-          });
-      this.postService.getAllForModer()
-        .subscribe(
-          data => {
-            this.posts = data;
-            console.log(data);
-          },
-          error => {
-            console.log(error);
-          });
-      this.moderService.getExpertRequest()
-        .subscribe(
-          data => {
-            this.experts = data;
-            console.log(data);
-          },
-          error => {
-            console.log(error);
-          });
+      this.getAllPostForModer();
+      this.getExpertRequests();
       this.getAllUsers();
     }
   }
 
   ngOnDestroy() {
     window.sessionStorage.clear();
+  }
+
+  getAllPostForModer() {
+    this.postService.getAllForModer()
+      .subscribe(
+        data => {
+          this.posts = data;
+          console.log(data);
+        },
+        error => {
+          if (error.status == 401) {
+            this.token.signOut();
+            this.reloadPage();
+            this.router.navigate(['/login']);
+          }
+        });
+  }
+
+  getExpertRequests() {
+    this.moderService.getExpertRequest()
+      .subscribe(
+        data => {
+          this.experts = data;
+          console.log(data);
+        },
+        error => {
+          console.log(error);
+        });
   }
 
   removeFromPublicAccess(id: bigint) {
