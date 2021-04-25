@@ -33,7 +33,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE post p SET deleted = true WHERE p.id =:id", nativeQuery = true)
-    void delete(@Param("id") long id);
+    void removeFromPublicAccess(@Param("id") long id);
 
     @Modifying
     @Transactional
@@ -49,6 +49,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Transactional
     @Query(value = "UPDATE post p SET rating = rating - 1 WHERE p.id =:id", nativeQuery = true)
     void decreaseRating(@Param("id") long id);
-
-    Post findByAuthorAndAndCreatedDateAndTitle(long author, Timestamp createdDate, String title);
 }

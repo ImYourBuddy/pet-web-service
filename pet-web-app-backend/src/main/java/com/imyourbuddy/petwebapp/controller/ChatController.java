@@ -35,7 +35,7 @@ public class ChatController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
     public List<ChatResponse> getAllChatsByUserId(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        return chatService.getChatsWithNewMessages(id);
+        return chatService.getChatsWithNewMessagesFlag(id);
     }
 
     @GetMapping("/messages/{userId}/new")

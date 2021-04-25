@@ -1,6 +1,8 @@
 package com.imyourbuddy.petwebapp.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -11,22 +13,16 @@ import java.util.Date;
 @Entity
 @Table
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pet {
-
-    private enum Species {
-        DOG, CAT, FISH, HAMSTER, MICE, BIRD, HORSE, LIZARD, RABBIT, COW;
-    }
-
-    private enum Gender {
-        MALE, FEMALE;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Enumerated(EnumType.STRING)
-    private Species species;
+    private PetSpecies species;
 
     @NotBlank
     @Size(min = 2, max = 50)
@@ -37,7 +33,7 @@ public class Pet {
     private String breed;
 
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private PetGender gender;
 
     private Date birthdate;
 

@@ -1,6 +1,7 @@
 package com.imyourbuddy.petwebapp.service;
 
 import com.imyourbuddy.petwebapp.dto.request.BanRequest;
+import com.imyourbuddy.petwebapp.exception.IllegalOperationException;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.Ban;
 import com.imyourbuddy.petwebapp.model.PetExpert;
@@ -35,22 +36,28 @@ public class ModeratorService {
         this.banRepository = banRepository;
     }
 
-    public User banUserById(long userId, String description) throws ResourceNotFoundException {
+    public User banUserById(long userId, String description) throws ResourceNotFoundException, IllegalOperationException {
         User user = checkUser(userId);
-        userRepository.banUserById(userId, true);
-        Ban ban = new Ban(userId, description);
-        banRepository.save(ban);
+        if (!user.isBanned()) {
+            userRepository.banUserById(userId, true);
+            Ban ban = new Ban(userId, description);
+            banRepository.save(ban);
+        } else {
+            throw new IllegalOperationException("User is already banned");
+        }
         return user;
     }
 
-    public User unbanUserById(long userId) throws ResourceNotFoundException {
+    public User unbanUserById(long userId) throws ResourceNotFoundException, IllegalOperationException {
         User user = checkUser(userId);
         if (user.isBanned()) {
+            Ban ban = banRepository.findByUserId(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Ban for user with id = " + userId + " not found"));
             userRepository.banUserById(userId, false);
+            banRepository.delete(ban);
+        } else {
+            throw new IllegalOperationException("User isn't banned");
         }
-        Ban ban = banRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ban for user with id = " + userId + " not found"));
-        banRepository.delete(ban);
         return user;
     }
 
@@ -58,21 +65,29 @@ public class ModeratorService {
         return expertRepository.getExpertRequest();
     }
 
-    public PetExpert confirmExpert(long userId) throws ResourceNotFoundException {
+    public PetExpert confirmExpert(long userId) throws ResourceNotFoundException, IllegalOperationException {
         User user = checkUser(userId);
         PetExpert petExpert = expertRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expert with user id = " + userId + " not found"));
-        Role role_expert = roleRepository.findByName("ROLE_EXPERT");
-        List<Role> roles = user.getRoles();
-        roles.add(role_expert);
-        userRepository.save(user);
-        expertRepository.confirmExpert(petExpert.getId());
+        if (!petExpert.isConfirmed()) {
+            Role roleExpert = roleRepository.findByName("ROLE_EXPERT");
+            List<Role> roles = user.getRoles();
+            roles.add(roleExpert);
+            userRepository.save(user);
+            expertRepository.confirmExpert(petExpert.getId());
+        } else {
+            throw new IllegalOperationException("User is already confirmed");
+        }
         return petExpert;
     }
 
-    public PetExpert rejectExpert(long userId) throws ResourceNotFoundException {
+    public PetExpert rejectExpert(long userId) throws ResourceNotFoundException, IllegalOperationException {
+        checkUser(userId);
         PetExpert petExpert = expertRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expert with user id = " + userId + " not found"));
+        if (petExpert.isConfirmed()) {
+            throw new IllegalOperationException("Expert is already confirmed");
+        }
         expertRepository.delete(petExpert);
         return petExpert;
     }

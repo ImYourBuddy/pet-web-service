@@ -20,8 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -55,7 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/rest/auth/**").permitAll()
+                .authorizeRequests()
+                .antMatchers("/rest/auth/**").permitAll()
                 .antMatchers("/rest/post", "/rest/post/{id}", "/rest/post/{id}/image").permitAll()
                 .antMatchers("/socket/**").permitAll()
                 .anyRequest().authenticated();

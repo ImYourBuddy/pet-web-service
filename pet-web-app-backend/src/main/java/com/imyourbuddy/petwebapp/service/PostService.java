@@ -1,6 +1,5 @@
 package com.imyourbuddy.petwebapp.service;
 
-import com.imyourbuddy.petwebapp.dto.request.DeletePostRequest;
 import com.imyourbuddy.petwebapp.exception.IllegalOperationException;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.*;
@@ -53,7 +52,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         if (post.isDeleted()) {
-            throw new IllegalOperationException("Post with id = " + id + " deleted");
+            throw new IllegalOperationException("Post with id = " + id + " is deleted");
         }
         return post;
     }
@@ -68,9 +67,7 @@ public class PostService {
         userService.getById(post.getAuthor());
         Timestamp createdDate = new Timestamp(new Date().getTime());
         post.setCreatedDate(createdDate);
-        postRepository.save(post);
-        Post savedPost = postRepository
-                .findByAuthorAndAndCreatedDateAndTitle(post.getAuthor(), createdDate, post.getTitle());
+        Post savedPost = postRepository.save(post);
         if (image != null) {
             try (BufferedInputStream bis = new BufferedInputStream(image.getInputStream())) {
                 PostImage postImage = new PostImage(savedPost.getId(), bis.readAllBytes());
@@ -79,7 +76,7 @@ public class PostService {
                 e.printStackTrace();
             }
         }
-        return post;
+        return savedPost;
     }
 
     public Post edit(long id, Post updatedPost, MultipartFile updatedImage) throws ResourceNotFoundException {
@@ -112,13 +109,15 @@ public class PostService {
         return postRepository.findAllByAuthor(id);
     }
 
-    public Post delete(long id, DeletePostRequest deleted) throws ResourceNotFoundException {
+    public Post removeFromPublicAccess(long id, boolean delete) throws ResourceNotFoundException, IllegalOperationException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
-        if (deleted.isDeleted()) {
-            postRepository.delete(id);
-        } else {
+        if (delete && !post.isDeleted()) {
+            postRepository.removeFromPublicAccess(id);
+        } else if (!delete && post.isDeleted()) {
             postRepository.restore(id);
+        } else {
+            throw new IllegalOperationException("Post is already deleted or restored");
         }
         return post;
     }
@@ -127,7 +126,7 @@ public class PostService {
         return postRepository.findAllForModer();
     }
 
-    public Post deletePostByModer(long id) throws ResourceNotFoundException, IllegalOperationException {
+    public Post deletePostByModer(long id) throws ResourceNotFoundException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         List<Mark> marks = markRepository.findByPostId(id);
@@ -140,7 +139,7 @@ public class PostService {
         return post;
     }
 
-    public Post getDeletedPostById (long id, String token) throws ResourceNotFoundException, IllegalOperationException {
+    public Post getPostByIdForExpertModerAdmin(long id, String token) throws ResourceNotFoundException, IllegalOperationException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         User user = userService.getUserByToken(token);
@@ -148,21 +147,22 @@ public class PostService {
         Role roleAdministrator = roleRepository.findByName("ROLE_ADMINISTRATOR");
         Role roleModerator = roleRepository.findByName("ROLE_MODERATOR");
         Role roleExpert = roleRepository.findByName("ROLE_EXPERT");
-        if (roles.contains(roleExpert) &&
-                !roles.contains(roleAdministrator) &&
-                !roles.contains(roleModerator)) {
-            if (post.getAuthor() == user.getId()) {
-                return post;
+        if (post.isDeleted()) {
+            if (roles.contains(roleExpert) &&
+                    !roles.contains(roleAdministrator) &&
+                    !roles.contains(roleModerator)) {
+                if (post.getAuthor() == user.getId()) {
+                    return post;
+                }
+                throw new IllegalOperationException("User haven't access to this post");
             }
-            throw new IllegalOperationException("User haven't access to this post");
         }
         return post;
     }
 
     public void ratePost(long postId, Mark mark) throws ResourceNotFoundException, IllegalOperationException {
         userService.getById(mark.getUserId());
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + postId + " not found"));
+        Post post = getPostById(postId);
         markRepository.save(mark);
         if (mark.isLiked()) {
             petExpertRepository.increaseReputation(post.getAuthor());
@@ -173,7 +173,7 @@ public class PostService {
         }
     }
 
-    public Mark checkMark(long postId, long userId) throws ResourceNotFoundException, IllegalOperationException {
+    public Mark checkMark(long postId, long userId) throws ResourceNotFoundException {
         userService.getById(userId);
         postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + postId + " not found"));

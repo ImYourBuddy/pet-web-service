@@ -40,7 +40,6 @@ public class AdminService {
         Role roleModerator = roleRepository.findByName("ROLE_MODERATOR");
         List<Role> roles = user.getRoles();
         roles.remove(roleModerator);
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 }

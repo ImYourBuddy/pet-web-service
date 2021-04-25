@@ -48,16 +48,11 @@ class AdminServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(roleRepository.findByName("ROLE_MODERATOR")).thenReturn(moderatorRole);
 
-        User savedUser = adminService.addModerByUserId(1L);
+        adminService.addModerByUserId(1L);
 
         verify(userRepository).findById(1L);
         verify(roleRepository).findByName("ROLE_MODERATOR");
         verify(userRepository).save(moderator);
-
-        assertEquals(savedUser.getId(), user.getId());
-        assertEquals(savedUser.getUsername(), user.getUsername());
-        assertEquals(savedUser.getPassword(), user.getPassword());
-        assertTrue(savedUser.getRoles().contains(moderatorRole));
     }
 
     @Test
@@ -71,22 +66,23 @@ class AdminServiceTest {
 
     @Test
     public void removeModerByUserIdTestWithoutExceptions() throws ResourceNotFoundException {
+        Role moderatorRole = new Role(1, "ROLE_MODERATOR");
+        List<Role> roles = new ArrayList<>();
+        roles.add(moderatorRole);
+        User moderator = new User(1L, "Test", "test1234", "Test", "Test", new Date(),
+                false, false, roles);
         User user = new User(1L, "Test", "test1234", "Test", "Test", new Date(),
                 false, false, new ArrayList<Role>());
-        Role moderatorRole = new Role(1, "ROLE_MODERATOR");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(moderator));
         when(roleRepository.findByName("ROLE_MODERATOR")).thenReturn(moderatorRole);
 
-        User savedUser = adminService.removeModerByUserId(1L);
+        adminService.removeModerByUserId(1L);
 
         verify(userRepository).findById(1L);
         verify(roleRepository).findByName("ROLE_MODERATOR");
         verify(userRepository).save(user);
-
-        assertEquals(savedUser.getId(), user.getId());
-        assertEquals(savedUser.getUsername(), user.getUsername());
-        assertFalse(savedUser.getRoles().contains(moderatorRole));
     }
 
     @Test
