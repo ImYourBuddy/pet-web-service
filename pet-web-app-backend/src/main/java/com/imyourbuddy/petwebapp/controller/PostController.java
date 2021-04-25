@@ -75,8 +75,8 @@ public class PostController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public Post deletePost(@PathVariable(name = "id") long id,
-                           @RequestBody DeletePostRequest deleted) throws ResourceNotFoundException {
-        return service.delete(id, deleted);
+                           @RequestBody DeletePostRequest deleteRequest) throws ResourceNotFoundException, IllegalOperationException {
+        return service.removeFromPublicAccess(id, deleteRequest.isDelete());
     }
 
     @GetMapping("/moder")
@@ -89,7 +89,7 @@ public class PostController {
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<Post> getPostByIdForModer(@PathVariable(name = "id") long id, HttpServletRequest request) throws ResourceNotFoundException, IllegalOperationException {
         String token = request.getHeader("Authorization");
-        Post post = service.getDeletedPostById(id, token.substring(7, token.length()));
+        Post post = service.getPostByIdForExpertModerAdmin(id, token.substring(7, token.length()));
         return ResponseEntity.ok().body(post);
     }
 

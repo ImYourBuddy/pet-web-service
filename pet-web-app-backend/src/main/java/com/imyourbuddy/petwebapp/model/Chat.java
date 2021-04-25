@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 @Table
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

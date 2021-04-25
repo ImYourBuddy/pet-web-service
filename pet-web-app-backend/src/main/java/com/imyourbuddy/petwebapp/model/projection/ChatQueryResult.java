@@ -6,4 +6,10 @@ public interface ChatQueryResult {
     String getUserName();
     long getExpert();
     String getExpertName();
+
+    void setId(long id);
+    void setUser(long user);
+    void setUserName(String userName);
+    void setExpert(long expert);
+    void setExpertName(String expertName);
 }

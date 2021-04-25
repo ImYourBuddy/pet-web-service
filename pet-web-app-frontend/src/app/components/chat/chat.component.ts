@@ -62,9 +62,12 @@ export class ChatComponent {
             console.log(data);
           },
           error => {
+            if (error.status == 401) {
+              this.token.signOut();
+              window.location.reload();
+              this.router.navigate(['/login']);
+            }
             console.log(error);
-            this.token.signOut();
-            window.location.reload();
           });
       this.userService.getUser(this.to)
         .subscribe(

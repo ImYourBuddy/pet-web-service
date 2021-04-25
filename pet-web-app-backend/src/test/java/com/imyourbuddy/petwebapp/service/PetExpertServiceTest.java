@@ -43,8 +43,8 @@ class PetExpertServiceTest {
     public void editTest() throws ResourceNotFoundException {
         PetExpert expert = new PetExpert(1L, "Test qualification", false, 1L, 10L,
                 true);
-        PetExpert updatedUser = new PetExpert(10L, "Updated test qualification", true, 10L, 1L,
-                true);
+        PetExpert updatedUser = new PetExpert(10L, "Updated test qualification", true, 10L,
+                1L, true);
 
         when(expertRepository.findByUserId(1L)).thenReturn(Optional.of(expert));
 

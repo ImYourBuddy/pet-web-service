@@ -5,6 +5,7 @@ import * as SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
 import {NotifierService} from 'angular-notifier';
 import {ChatService} from './services/chat-service/chat.service';
+import {AuthService} from './services/auth-service/auth.service';
 
 const API_URL = 'http://localhost:8080';
 
@@ -16,7 +17,7 @@ const API_URL = 'http://localhost:8080';
 export class AppComponent {
 
   constructor(private tokenStorageService: TokenStorageService, notifier: NotifierService,
-              private chatService: ChatService) {
+              private chatService: ChatService, private authService: AuthService) {
     this.notifier = notifier;
   }
   private notifier: NotifierService;
@@ -67,8 +68,8 @@ export class AppComponent {
   }
 
   logout(): void {
+    this.authService.logoutUser().subscribe();
     this.tokenStorageService.signOut();
-    window.location.reload();
   }
 
   initializeWebSocketConnection(userId) {

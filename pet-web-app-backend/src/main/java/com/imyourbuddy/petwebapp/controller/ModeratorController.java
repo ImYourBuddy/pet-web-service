@@ -1,6 +1,7 @@
 package com.imyourbuddy.petwebapp.controller;
 
 import com.imyourbuddy.petwebapp.dto.request.BanRequest;
+import com.imyourbuddy.petwebapp.exception.IllegalOperationException;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
 import com.imyourbuddy.petwebapp.model.PetExpert;
 import com.imyourbuddy.petwebapp.model.User;
@@ -27,14 +28,14 @@ public class ModeratorController {
     @PostMapping("/users/{userId}/ban")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
     public ResponseEntity<User> banUserById(@PathVariable(name = "userId") long userId,
-                                            @RequestBody BanRequest banRequest) throws ResourceNotFoundException {
+                                            @RequestBody BanRequest banRequest) throws ResourceNotFoundException, IllegalOperationException {
         User user = moderatorService.banUserById(userId, banRequest.getDescription());
         return ResponseEntity.ok().body(user);
     }
 
     @DeleteMapping ("/users/{userId}/ban")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public ResponseEntity<User> unbanUserById(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+    public ResponseEntity<User> unbanUserById(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException, IllegalOperationException {
         User user = moderatorService.unbanUserById(userId);
         return ResponseEntity.ok().body(user);
     }
@@ -47,7 +48,7 @@ public class ModeratorController {
 
     @PatchMapping("/experts/{userId}")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public ResponseEntity<PetExpert> confirmExpert(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+    public ResponseEntity<PetExpert> confirmExpert(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException, IllegalOperationException {
 
          PetExpert petExpert = moderatorService.confirmExpert(userId);
          return ResponseEntity.ok().body(petExpert);
@@ -55,7 +56,7 @@ public class ModeratorController {
 
     @DeleteMapping("/experts/{userId}")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public ResponseEntity<PetExpert> rejectExpert(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
+    public ResponseEntity<PetExpert> rejectExpert(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException, IllegalOperationException {
         PetExpert petExpert = moderatorService.rejectExpert(userId);
         return ResponseEntity.ok().body(petExpert);
     }

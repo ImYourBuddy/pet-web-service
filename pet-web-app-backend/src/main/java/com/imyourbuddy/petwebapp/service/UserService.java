@@ -61,9 +61,7 @@ public class UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        if (userDetails.isBanned()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("You are banned!"));
-        }
+
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
@@ -82,7 +80,6 @@ public class UserService {
         List<Role> userRoles = new ArrayList<>();
         Timestamp createdDate = new Timestamp(new Date().getTime());
         userRoles.add(owner);
-        user.setRoles(userRoles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(createdDate);
         UserResponse userResponse = UserResponse.fromUser(user);
@@ -92,7 +89,7 @@ public class UserService {
 
     public List<UserResponse> getAll() {
         List<User> users = userRepository.findAll();
-        List<UserResponse> responses = new ArrayList<>();
+        List<UserResponse> response = new ArrayList<>();
         users.forEach(user -> {
             List<String> roles = new ArrayList<>();
             user.getRoles().forEach(role -> {
@@ -100,9 +97,9 @@ public class UserService {
             });
             UserResponse userResponse = UserResponse.fromUser(user);
             userResponse.setRoles(roles);
-            responses.add(userResponse);
+            response.add(userResponse);
         });
-        responses.sort((u1, u2) -> {
+        response.sort((u1, u2) -> {
             if (u1.getRoles().contains("MODERATOR") && !u2.getRoles().contains("MODERATOR")) {
                 return -1;
             } else if ((u1.getRoles().contains("MODERATOR") && u2.getRoles().contains("MODERATOR"))
@@ -112,7 +109,7 @@ public class UserService {
                 return 1;
             }
         });
-        return responses;
+        return response;
     }
 
     public User getById(long id) throws ResourceNotFoundException {
@@ -133,22 +130,20 @@ public class UserService {
     }
 
     public UserResponse editProfile(long id, EditUserRequest userRequest) throws ResourceNotFoundException {
-        User foundUser = getById(id);
+        User user = getById(id);
 
-        foundUser.setFirstName(userRequest.getFirstName());
-        foundUser.setLastName(userRequest.getLastName());
-        UserResponse userResponse = UserResponse.fromUser(foundUser);
-        userRepository.save(foundUser);
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        UserResponse userResponse = UserResponse.fromUser(user);
+        userRepository.save(user);
 
         return userResponse;
     }
 
     public Pet addPet(long userId, Pet pet) throws ResourceNotFoundException {
-        User foundUser = getById(userId);
+        getById(userId);
         pet.setOwner(userId);
-        petRepository.save(pet);
-
-        return pet;
+        return petRepository.save(pet);
     }
 
     public List<Pet> getAllPetsByUserId(long ownerId) throws ResourceNotFoundException {
@@ -180,7 +175,6 @@ public class UserService {
         pet.setBreed(updatedPet.getBreed());
         pet.setGender(updatedPet.getGender());
         pet.setBirthdate(updatedPet.getBirthdate());
-        petRepository.save(pet);
-        return pet;
+        return petRepository.save(pet);
     }
 }

@@ -18,9 +18,9 @@ import java.util.List;
 
 @Service
 public class ChatService {
-    public final ChatRepository chatRepository;
-    public final MessageRepository messageRepository;
-    public final UserService userService;
+    private final ChatRepository chatRepository;
+    private final MessageRepository messageRepository;
+    private final UserService userService;
 
     @Autowired
     public ChatService(ChatRepository chatRepository, MessageRepository messageRepository, UserService userService) {
@@ -36,9 +36,8 @@ public class ChatService {
         if(chat == null) {
             if(create) {
                 Chat newChat = new Chat(firstUser, secondUser);
-                chatRepository.save(newChat);
-                newChat = chatRepository.findChatByUserIdAndExpertId(firstUser, secondUser);
-                return newChat.getId();
+                Chat savedChat = chatRepository.save(newChat);
+                return savedChat.getId();
             } else {
                 return 0;
             }
@@ -51,7 +50,7 @@ public class ChatService {
         return chatRepository.findByUserId(userId);
     }
 
-    public List<ChatResponse> getChatsWithNewMessages(long userId) throws ResourceNotFoundException {
+    public List<ChatResponse> getChatsWithNewMessagesFlag(long userId) throws ResourceNotFoundException {
         List<ChatQueryResult> chatList = getAllChatsByUser(userId);
         List<ChatResponse> result = new ArrayList<>();
         chatList.forEach(chat -> {

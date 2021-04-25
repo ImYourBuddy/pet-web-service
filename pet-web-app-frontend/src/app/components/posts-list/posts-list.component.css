@@ -5,17 +5,19 @@
 
 .list{
   width: 700px;
-  max-height: 300px;
+  max-height: 450px;
   margin: auto;
 }
 .post-description {
   font-size: 15px;
   font-style: italic;
+  text-align: justify;
 }
 
 .post-title {
   font-size: x-large;
   color: black;
+  text-align: justify;
 }
 
 jw-pagination {

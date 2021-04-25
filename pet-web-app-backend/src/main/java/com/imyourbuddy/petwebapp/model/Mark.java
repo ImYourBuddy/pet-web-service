@@ -1,6 +1,8 @@
 package com.imyourbuddy.petwebapp.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,6 +10,8 @@ import javax.persistence.*;
 @Table
 @Data
 @IdClass(MarkId.class)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Mark {
 
     @Id

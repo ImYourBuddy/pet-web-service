@@ -1,7 +1,6 @@
 package com.imyourbuddy.petwebapp.model;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class MarkId implements Serializable {
     private long postId;
