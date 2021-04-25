@@ -22,6 +22,8 @@ export class UserLoginComponent implements OnInit {
   roles: string[] = [];
   userId: bigint;
   hide = true;
+  userNamePattern = '^[A-Za-z][A-Za-z0-9_-]+[A-Za-z0-9]$';
+
 
   constructor(private authService: AuthService, private router: Router, private tokenStorage: TokenStorageService) {
   }

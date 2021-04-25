@@ -14,12 +14,13 @@
         required
         [(ngModel)]="user.username"
         name="username"
-        required
         minlength="3"
         maxlength="50"
+        [pattern]="userNamePattern"
         #username="ngModel"
       />
       <div class="alert-danger" *ngIf="username.errors && f.submitted">
+        <div *ngIf="username.errors.pattern">User name not valid.</div>
         <div *ngIf="username.errors.required">Username is required</div>
         <div *ngIf="username.errors.minlength">
           Username must be at least 3 characters
@@ -35,7 +36,6 @@
       <input
         class="form-control"
         id="password"
-        required
         [(ngModel)]="user.password"
         name="password"
         [type]="hide ? 'password' : 'text'"

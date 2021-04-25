@@ -63,7 +63,7 @@ export class PostService {
 
   deletePost(id: bigint): Observable<Post> {
     return this.http.patch(API_URL + '/' + id, {
-      deleted: true
+      delete: true
     }, httpOptions);
   }
 
@@ -73,7 +73,7 @@ export class PostService {
 
   restore(id: bigint): Observable<Post> {
     return this.http.patch(API_URL + '/' + id, {
-      deleted: false
+      delete: false
     }, httpOptions);
   }
 
