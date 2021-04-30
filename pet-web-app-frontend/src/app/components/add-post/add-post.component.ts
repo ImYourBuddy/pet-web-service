@@ -5,6 +5,7 @@ import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
 import {Post} from '../../models/post.model';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-add-post',
@@ -27,7 +28,8 @@ export class AddPostComponent implements OnInit {
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService,
+              private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class AddPostComponent implements OnInit {
           },
           error => {
             console.log(error);
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);

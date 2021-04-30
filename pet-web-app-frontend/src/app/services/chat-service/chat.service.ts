@@ -25,8 +25,8 @@ export class ChatService {
     return this.http.get('http://localhost:8080/rest/chat/messages/' + userId + '/new');
   }
 
-  haveNewMessagesInChat(senderId: bigint, recipientId: bigint): Observable<any> {
-    return this.http.get('http://localhost:8080/rest/chat/messages/' + senderId + '/' + recipientId + '/new');
+  haveNewMessagesInChat(senderId: bigint, recipientId: bigint): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8080/rest/chat/messages/' + senderId + '/' + recipientId + '/new');
   }
 
   markAsDelivered(senderId: bigint, recipientId: bigint) {

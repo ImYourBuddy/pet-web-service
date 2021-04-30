@@ -3,6 +3,7 @@ import {ExpertService} from '../../services/expert-service/expert.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
 import {Expert} from '../../models/expert.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-add-expert',
@@ -19,7 +20,8 @@ export class AddExpertComponent {
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private expertService: ExpertService, private token: TokenStorageService, private router: Router) {
+  constructor(private expertService: ExpertService, private token: TokenStorageService,
+              private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -40,6 +42,7 @@ export class AddExpertComponent {
       },
       err => {
         if (err.status == 401) {
+          this.authService.logoutUser().subscribe();
           this.token.signOut();
           window.location.reload();
           this.router.navigate(['/login']);

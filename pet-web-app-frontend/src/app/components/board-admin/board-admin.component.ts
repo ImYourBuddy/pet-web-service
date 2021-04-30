@@ -4,6 +4,7 @@ import {AdminService} from '../../services/admin-service/admin.service';
 import {Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-board-admin',
@@ -20,7 +21,7 @@ export class BoardAdminComponent implements OnInit {
   hideUsers = true;
 
   constructor(private adminService: AdminService, private token: TokenStorageService,
-              private userService: UserService, private router: Router) {
+              private userService: UserService, private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -41,6 +42,7 @@ export class BoardAdminComponent implements OnInit {
         },
         error => {
           if (error.status == 401) {
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);

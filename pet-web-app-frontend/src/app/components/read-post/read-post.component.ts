@@ -44,7 +44,7 @@ export class ReadPostComponent implements OnInit {
           console.log(data);
         },
         error => {
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
           this.isFailed = true;
           console.log(error.error);
         });
@@ -58,7 +58,7 @@ export class ReadPostComponent implements OnInit {
           console.log(data);
         },
         error => {
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
           this.isFailed = true;
           console.log(error.error);
         });
@@ -72,10 +72,9 @@ export class ReadPostComponent implements OnInit {
           console.log(this.postImage.image);
         },
         error => {
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
           this.isFailed = true;
           console.log(error.error);
-          console.log(error);
         });
   }
 

@@ -3,6 +3,7 @@ import {PostService} from '../../services/post-service/post.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Post} from '../../models/post.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-edit-post',
@@ -18,7 +19,7 @@ export class EditPostComponent implements OnInit {
   editedPost: Post;
 
   constructor(private postService: PostService, private route: ActivatedRoute, private router: Router,
-              private token: TokenStorageService) { }
+              private token: TokenStorageService, private authService: AuthService) { }
 
   ngOnInit(): void {
     const tok = this.token.getToken();
@@ -41,6 +42,7 @@ export class EditPostComponent implements OnInit {
       },
       err => {
         if (err.status == 401) {
+          this.authService.logoutUser().subscribe();
           this.token.signOut();
           window.location.reload();
           this.router.navigate(['/login']);

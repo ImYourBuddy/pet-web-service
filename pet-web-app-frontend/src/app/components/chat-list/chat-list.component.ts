@@ -3,6 +3,7 @@ import {ChatService} from '../../services/chat-service/chat.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-chat-list',
@@ -15,7 +16,8 @@ export class ChatListComponent {
   user;
   error: boolean;
 
-  constructor(private chatService: ChatService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  constructor(private chatService: ChatService, private token: TokenStorageService, private userService: UserService,
+              private router: Router, private authService: AuthService) {
   }
 
   // tslint:disable-next-line:use-lifecycle-interface
@@ -38,6 +40,7 @@ export class ChatListComponent {
         },
         error => {
           if (error.status == 401) {
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);

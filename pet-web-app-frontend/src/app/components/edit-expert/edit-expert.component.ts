@@ -3,6 +3,7 @@ import {TokenStorageService} from '../../services/token-storage/token-storage.se
 import {ExpertService} from '../../services/expert-service/expert.service';
 import {Router} from '@angular/router';
 import {Expert} from '../../models/expert.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 
 @Component({
@@ -16,7 +17,8 @@ export class EditExpertComponent implements OnInit {
   showErrorMessage = false;
   errorMessage = '';
 
-  constructor(private token: TokenStorageService, private expertService: ExpertService, private router: Router) {
+  constructor(private token: TokenStorageService, private expertService: ExpertService,
+              private router: Router, private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -36,6 +38,7 @@ export class EditExpertComponent implements OnInit {
       },
       error => {
         if (error.status == 401) {
+          this.authService.logoutUser().subscribe();
           this.token.signOut();
           window.location.reload();
           this.router.navigate(['/login']);
@@ -61,7 +64,7 @@ export class EditExpertComponent implements OnInit {
             this.router.navigate(['/login']);
           }
           this.showErrorMessage = true;
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
         });
   }
 }

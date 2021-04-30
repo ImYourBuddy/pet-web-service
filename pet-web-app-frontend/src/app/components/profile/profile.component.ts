@@ -6,6 +6,7 @@ import {ExpertService} from '../../services/expert-service/expert.service';
 import {User} from '../../models/user.model';
 import {Pet} from '../../models/pet.model';
 import {Expert} from '../../models/expert.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +21,8 @@ export class ProfileComponent implements OnInit {
   hideBecomeExpert = false;
   pets: Pet[];
 
-  constructor(private userService: UserService, private token: TokenStorageService, private router: Router, private expertService: ExpertService) {
+  constructor(private userService: UserService, private token: TokenStorageService, private router: Router,
+              private expertService: ExpertService, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -39,6 +41,7 @@ export class ProfileComponent implements OnInit {
           },
           error => {
             if (error.status == 401) {
+              this.authService.logoutUser().subscribe();
               this.token.signOut();
               window.location.reload();
               this.router.navigate(['/login']);
