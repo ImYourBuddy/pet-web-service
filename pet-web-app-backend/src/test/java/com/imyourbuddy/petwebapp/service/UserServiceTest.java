@@ -1,6 +1,8 @@
 package com.imyourbuddy.petwebapp.service;
 
 import com.imyourbuddy.petwebapp.dto.request.EditUserRequest;
+import com.imyourbuddy.petwebapp.dto.request.LoginRequest;
+import com.imyourbuddy.petwebapp.dto.response.JwtResponse;
 import com.imyourbuddy.petwebapp.dto.response.MessageResponse;
 import com.imyourbuddy.petwebapp.dto.response.UserResponse;
 import com.imyourbuddy.petwebapp.exception.ResourceNotFoundException;
@@ -9,6 +11,7 @@ import com.imyourbuddy.petwebapp.repository.PetRepository;
 import com.imyourbuddy.petwebapp.repository.RoleRepository;
 import com.imyourbuddy.petwebapp.repository.UserRepository;
 import com.imyourbuddy.petwebapp.security.jwt.JwtUtils;
+import com.imyourbuddy.petwebapp.security.jwt.UserDetailsImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -55,6 +59,39 @@ class UserServiceTest {
     }
 
     @Test
+    public void authenticateTest() {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginRequest.getUsername(),
+                loginRequest.getPassword()
+        );
+        Role roleOwner = new Role(1, "ROLE_OWNER");
+        List<Role> roles = new ArrayList<>();
+        roles.add(roleOwner);
+        List<String> stringRoles = new ArrayList<>();
+        stringRoles.add("ROLE_OWNER");
+        User user = new User(1L, "username", "password", "First name", "Last name",
+                null, false, false, roles);
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+        UsernamePasswordAuthenticationToken fullPopulatedAuthentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+        ResponseEntity<JwtResponse> responseEntity =  ResponseEntity.ok().body(new JwtResponse("generated token",
+                userDetails.getId(), stringRoles));
+        when(authenticationManager.authenticate(authenticationToken)).thenReturn(fullPopulatedAuthentication);
+        when(jwtUtils.generateJwtToken(fullPopulatedAuthentication)).thenReturn("generated token");
+
+        ResponseEntity<?> authenticate = userService.authenticate(loginRequest);
+
+        assertEquals(responseEntity, authenticate);
+        verify(authenticationManager).authenticate(authenticationToken);
+        verify(jwtUtils).generateJwtToken(fullPopulatedAuthentication);
+
+    }
+
+    @Test
     public void registerTestWithBadRequest() {
         User user = new User(1L, "username", "password", "First name", "Last name",
                 new Date(), false, false, new ArrayList<>());
@@ -89,7 +126,7 @@ class UserServiceTest {
 
     @Test
     public void getAllTest() {
-        Role roleModerator = new Role(1,  "ROLE_MODERATOR");
+        Role roleModerator = new Role(1, "ROLE_MODERATOR");
         Role roleOwner = new Role(2, "ROLE_OWNER");
         List<Role> thirdRoles = new ArrayList<>();
         List<Role> firstSecondRoles = new ArrayList<>();
@@ -153,7 +190,7 @@ class UserServiceTest {
         UserResponse response = UserResponse.fromUser(editedUser);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        UserResponse result = userService.editProfile(1L, request);
+        UserResponse result = userService.editUser(1L, request);
         verify(userRepository).save(editedUser);
         assertEquals(result, response);
 

@@ -46,13 +46,10 @@ public class MessageService {
         return false;
     }
 
-    public boolean haveNewMessagesInChat(long firstUser, long secondUser) throws ResourceNotFoundException {
+    public List<Message> haveNewMessagesInChat(long firstUser, long secondUser) throws ResourceNotFoundException {
         long chatId = chatService.getChatId(firstUser, secondUser, false);
-        List<Message> newMessages = repository.findAllReceived(chatId, firstUser);
-        if(newMessages.size() != 0) {
-            return true;
-        }
-        return false;
+        return repository.findAllReceived(chatId, firstUser);
+
     }
 
     public void markAsDelivered(long userId, long expertId) throws ResourceNotFoundException {

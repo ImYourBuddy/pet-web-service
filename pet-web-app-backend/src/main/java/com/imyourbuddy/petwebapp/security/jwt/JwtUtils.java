@@ -14,8 +14,7 @@ public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${jwt.token.secret}")
-    private String jwtSecret;
+    private final String jwtSecret = System.getenv("PET_SERVICE_JWT_SECRET_KEY");
 
     @Value("${jwt.token.expired}")
     private int jwtExpirationMs;

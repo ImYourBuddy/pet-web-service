@@ -61,7 +61,7 @@ public class ModeratorService {
         return user;
     }
 
-    public List<PetExpertRequestQueryResult> getExpertRequest() {
+    public List<PetExpertRequestQueryResult> getExpertRequests() {
         return expertRepository.getExpertRequest();
     }
 

@@ -6,7 +6,6 @@ import com.imyourbuddy.petwebapp.model.User;
 import com.imyourbuddy.petwebapp.service.AdminService;
 import com.imyourbuddy.petwebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,23 +32,20 @@ public class AdminController {
 
     @PatchMapping("/users/{id}")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('MODERATOR')")
-    public ResponseEntity<User> deleteUserById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        User user = userService.deleteUserById(id);
-        return ResponseEntity.ok().body(user);
+    public User deleteUserById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        return userService.deleteUserById(id);
     }
 
     @PostMapping("/users/{id}/moder")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
-    public ResponseEntity<User> addModerById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        User moder = adminService.addModerByUserId(id);
-        return ResponseEntity.ok().body(moder);
+    public User addModerByUserId(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        return adminService.addModerByUserId(id);
     }
 
     @DeleteMapping("/users/{id}/moder")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
-    public ResponseEntity<User> removeModerById(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
-        User moder = adminService.removeModerByUserId(id);
-        return ResponseEntity.ok().body(moder);
+    public User removeModerByUserId(@PathVariable(name = "id") long id) throws ResourceNotFoundException {
+        return adminService.removeModerByUserId(id);
     }
 
 
