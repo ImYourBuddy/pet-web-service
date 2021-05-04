@@ -33,7 +33,7 @@ public class PetExpertController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('EXPERT')")
+    @PreAuthorize("hasRole('OWNER')")
     public PetExpert getByUserId(@PathVariable(name = "userId") long userId) throws ResourceNotFoundException {
         return service.getByUserId(userId);
     }

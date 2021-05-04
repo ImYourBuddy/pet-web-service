@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/rest/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
     private final UserService userService;
 

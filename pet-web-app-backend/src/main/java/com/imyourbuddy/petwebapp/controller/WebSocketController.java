@@ -29,14 +29,15 @@ public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public WebSocketController(ChatService chatService, MessageService messageService, UserService userService, SimpMessagingTemplate messagingTemplate) {
+    public WebSocketController(ChatService chatService, MessageService messageService, UserService userService,
+                               SimpMessagingTemplate messagingTemplate) {
         this.chatService = chatService;
         this.messageService = messageService;
         this.userService = userService;
         this.messagingTemplate = messagingTemplate;
     }
 
-    @MessageMapping("/send/message/{to}")
+    @MessageMapping("/message/{to}")
     public void sendMessage(@DestinationVariable long to,@Payload @Valid Message message) throws ResourceNotFoundException {
         userService.getById(to);
         long chatId = chatService.getChatId(message.getSender(), to, true);
@@ -47,6 +48,6 @@ public class WebSocketController {
         String senderName = user.getFirstName() + " " + user.getLastName();
         ChatMessage chatMessage = new ChatMessage(message.getChatId(), message.getSender(),
                 senderName, message.getText(), message.getTimestamp());
-        this.messagingTemplate.convertAndSend("/chat/" + to, chatMessage);
+        this.messagingTemplate.convertAndSend("/queue/message/" + to, chatMessage);
     }
 }

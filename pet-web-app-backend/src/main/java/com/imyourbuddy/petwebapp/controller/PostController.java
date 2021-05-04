@@ -56,7 +56,7 @@ public class PostController {
 
     @PostMapping()
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
-    public Post addNewPost(@RequestParam(value = "file", required = false) MultipartFile image,
+    public Post addNewPost(@RequestPart(value = "file", required = false) MultipartFile image,
                            @RequestPart(value = "post") @Valid Post post) throws ResourceNotFoundException {
         return service.save(post, image);
     }
@@ -65,7 +65,7 @@ public class PostController {
     @PreAuthorize("hasRole('EXPERT') or hasRole('MODERATOR') or hasRole('ADMINISTRATOR')")
     public Post editPost(@PathVariable(name = "id") long id,
                          @RequestPart(value = "post") @Valid Post post,
-                         @RequestParam(value = "file", required = false) MultipartFile image) throws ResourceNotFoundException {
+                         @RequestPart(value = "file", required = false) MultipartFile image) throws ResourceNotFoundException {
         return service.edit(id, post, image);
     }
 

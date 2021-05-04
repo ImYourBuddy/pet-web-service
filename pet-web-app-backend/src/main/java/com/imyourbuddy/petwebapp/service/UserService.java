@@ -82,6 +82,7 @@ public class UserService {
         userRoles.add(owner);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(createdDate);
+        user.setRoles(userRoles);
         UserResponse userResponse = UserResponse.fromUser(user);
         userRepository.save(user);
         return ResponseEntity.ok().body(userResponse);
