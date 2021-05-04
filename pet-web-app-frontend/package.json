@@ -4,11 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 8081",
-    "build": "ng build",
+    "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "install": "npm install",
     "cashe": "npm cache clean --force"
   },
   "private": true,
