@@ -55,14 +55,7 @@ class PetExpertControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "OWNER")
-    public void getByUserIdTestWithForbidden() throws Exception {
-        mvc.perform(get("/rest/pet-expert/1"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(roles = "EXPERT")
+    @WithMockUser(roles = {"OWNER","EXPERT"})
     public void getByUserIdTestWithNotFound() throws Exception {
         when(expertService.getByUserId(1L))
                 .thenThrow(new ResourceNotFoundException("Pet expert with user id = 1 not found"));

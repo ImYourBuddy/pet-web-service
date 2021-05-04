@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -88,6 +89,70 @@ class PostControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message", is("Post with id = 1 not found")));
+    }
+
+    @Test
+    public void addNewPostTestWithUnauthorized() throws Exception {
+        Post post = new Post(1, "Test title", "Test description for test", "Test text",
+                1, new Date(), 0, false);
+        MockMultipartFile image = new MockMultipartFile("file", "filename-1.jpeg",
+                "image/jpeg", "some-image".getBytes());
+        MockMultipartFile postRequest = new MockMultipartFile("post", "json", "application/json",
+                new ObjectMapper().writeValueAsString(post).getBytes());
+        mvc.perform(multipart("/rest/post")
+                .file(image)
+                .file(postRequest))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("OWNER")
+    public void addNewPostTestWithForbidden() throws Exception {
+        Post post = new Post(1, "Test title", "Test description for test", "Test text",
+                1, new Date(), 0, false);
+        MockMultipartFile image = new MockMultipartFile("file", "filename-1.jpeg",
+                "image/jpeg", "some-image".getBytes());
+        MockMultipartFile postRequest = new MockMultipartFile("post", "json", "application/json",
+                new ObjectMapper().writeValueAsString(post).getBytes());
+        mvc.perform(multipart("/rest/post")
+                .file(image)
+                .file(postRequest))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "EXPERT")
+    public void addNewPostTestWithNotFound() throws Exception {
+        Post post = new Post(1, "Test title", "Test description for test", "Test text",
+                1, new Date(), 0, false);
+        MockMultipartFile image = new MockMultipartFile("file", "filename-1.jpeg",
+                "image/jpeg", "some-image".getBytes());
+        MockMultipartFile postRequest = new MockMultipartFile("post", "json", "application/json",
+                new ObjectMapper().writeValueAsString(post).getBytes());
+        when(postService.save(post, image))
+                .thenThrow(new ResourceNotFoundException("User with id = 1 not found"));
+        mvc.perform(multipart("/rest/post")
+                .file(image)
+                .file(postRequest))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", is("User with id = 1 not found")));
+    }
+
+    @Test
+    @WithMockUser(roles = "EXPERT")
+    public void addNewPostTestWithBadRequest() throws Exception {
+        Post post = new Post(1, "T", "T", "Test text",
+                1, new Date(), 0, false);
+        MockMultipartFile image = new MockMultipartFile("file", "filename-1.jpeg",
+                "image/jpeg", "some-image".getBytes());
+        MockMultipartFile postRequest = new MockMultipartFile("post", "json", "application/json",
+                new ObjectMapper().writeValueAsString(post).getBytes());
+        mvc.perform(multipart("/rest/post")
+                .file(image)
+                .file(postRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasSize(2)));
     }
 
     @Test
