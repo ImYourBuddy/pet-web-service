@@ -7,6 +7,7 @@ import {ModerService} from '../../services/moder-service/moder.service';
 import {Router} from '@angular/router';
 import {Post} from '../../models/post.model';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-board-moderator',
@@ -21,7 +22,7 @@ export class BoardModeratorComponent implements OnInit {
   currentUser: any;
 
   banDescription: any;
-  isSuccessful = false;
+  showError = false;
   errorMessage = '';
   hidePosts = true;
   hideExpertRequest = true;
@@ -31,7 +32,7 @@ export class BoardModeratorComponent implements OnInit {
 
   constructor(private postService: PostService, private adminService: AdminService,
               private moderService: ModerService, private token: TokenStorageService,
-              private userService: UserService, private router: Router) {
+              private userService: UserService, private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -68,9 +69,14 @@ export class BoardModeratorComponent implements OnInit {
         },
         error => {
           if (error.status == 401) {
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             this.reloadPage();
             this.router.navigate(['/login']);
+          }
+          if (error.status == 403) {
+            this.showError = true;
+            this.errorMessage = 'Please login as moderator';
           }
         });
   }
@@ -92,7 +98,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hidePosts', 'false');
       },
@@ -107,7 +112,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hidePosts', 'false');
       },
@@ -122,7 +126,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hidePosts', 'false');
       },
@@ -137,7 +140,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hideExpertRequest', 'false');
       },
@@ -152,7 +154,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hideExpertRequest', 'false');
       },
@@ -167,7 +168,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hideUsers', 'false');
       },

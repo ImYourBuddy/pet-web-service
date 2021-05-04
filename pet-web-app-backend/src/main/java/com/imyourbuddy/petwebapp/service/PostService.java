@@ -40,7 +40,7 @@ public class PostService {
         this.roleRepository = roleRepository;
     }
 
-    public List<PostQueryResult> getAll() {
+    public List<PostQueryResult> getAllExceptDeleted() {
         List<PostQueryResult> allInOrderByDate = postRepository.findAllInOrderByDate();
         List<PostQueryResult> result = allInOrderByDate.stream()
                 .filter(post -> !post.getDeleted())
@@ -48,7 +48,7 @@ public class PostService {
         return result;
     }
 
-    public Post getPostById(long id) throws ResourceNotFoundException, IllegalOperationException {
+    public Post getPostByIdExceptDeleted(long id) throws ResourceNotFoundException, IllegalOperationException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         if (post.isDeleted()) {
@@ -57,7 +57,7 @@ public class PostService {
         return post;
     }
 
-    public PostImage getPostImageByPostId(long id) throws ResourceNotFoundException, IllegalOperationException {
+    public PostImage getPostImageByPostId(long id) throws ResourceNotFoundException {
         postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         return imageRepository.findByPostId(id);
@@ -122,11 +122,11 @@ public class PostService {
         return post;
     }
 
-    public List<Post> getAllForModer() {
+    public List<Post> getAll() {
         return postRepository.findAllForModer();
     }
 
-    public Post deletePostByModer(long id) throws ResourceNotFoundException {
+    public Post deletePost(long id) throws ResourceNotFoundException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         List<Mark> marks = markRepository.findByPostId(id);
@@ -139,7 +139,7 @@ public class PostService {
         return post;
     }
 
-    public Post getPostByIdForExpertModerAdmin(long id, String token) throws ResourceNotFoundException, IllegalOperationException {
+    public Post getPostById(long id, String token) throws ResourceNotFoundException, IllegalOperationException {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with id = " + id + " not found"));
         User user = userService.getUserByToken(token);
@@ -162,7 +162,7 @@ public class PostService {
 
     public void ratePost(long postId, Mark mark) throws ResourceNotFoundException, IllegalOperationException {
         userService.getById(mark.getUserId());
-        Post post = getPostById(postId);
+        Post post = getPostByIdExceptDeleted(postId);
         markRepository.save(mark);
         if (mark.isLiked()) {
             petExpertRepository.increaseReputation(post.getAuthor());

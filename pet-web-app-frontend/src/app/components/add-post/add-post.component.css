@@ -22,3 +22,8 @@ label {
 textarea {
   wrap-option: hard;
 }
+
+.show-error {
+  text-align: center;
+  font-size: 17px;
+}

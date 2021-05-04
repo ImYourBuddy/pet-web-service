@@ -15,9 +15,7 @@ import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -80,7 +78,7 @@ class PostServiceTest {
 
         when(postRepository.findAllInOrderByDate()).thenReturn(posts);
 
-        List<PostQueryResult> allPosts = postService.getAll();
+        List<PostQueryResult> allPosts = postService.getAllExceptDeleted();
         verify(postRepository).findAllInOrderByDate();
         assertEquals(1, allPosts.size());
         assertEquals(firstPost.getId(), allPosts.get(0).getId());
@@ -96,7 +94,7 @@ class PostServiceTest {
     public void getPostByIdTestWithResourceNotFoundException() {
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> postService.getPostById(1L));
+        assertThrows(ResourceNotFoundException.class, () -> postService.getPostByIdExceptDeleted(1L));
         verify(postRepository).findById(1L);
     }
 
@@ -107,7 +105,7 @@ class PostServiceTest {
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
 
-        assertThrows(IllegalOperationException.class, () -> postService.getPostById(1L));
+        assertThrows(IllegalOperationException.class, () -> postService.getPostByIdExceptDeleted(1L));
         verify(postRepository).findById(1L);
     }
 
@@ -116,15 +114,15 @@ class PostServiceTest {
         Post post = new Post("Test post", "Test post description", "test post text", 1L);
         Post savedPost = new Post(1L, "Test post", "Test post description", "test post text",
                 1L, new Date(),0L, false);
-        when(postRepository.save(post)).thenReturn(savedPost);
         MockMultipartFile image = new MockMultipartFile("image", "test image.png", MediaType.IMAGE_PNG_VALUE,
-                    "image".getBytes());
+                "image".getBytes());
         PostImage postImage = null  ;
         try {
             postImage = new PostImage(1L, image.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        when(postRepository.save(post)).thenReturn(savedPost);
 
         postService.save(post, image);
         verify(imageRepository).save(postImage);
@@ -154,6 +152,61 @@ class PostServiceTest {
 
         verify(imageRepository, never()).save(any());
         verify(imageRepository, never()).findByPostId(anyLong());
+        verify(postRepository).save(updatedPost);
+    }
+
+    @Test
+    public void editPostTestWithoutPreviousImage() throws ResourceNotFoundException {
+        Post post = new Post(1L, "Test post", "Test post description", "test post text",
+                1L, new Date(),0L, false);
+        Post updatedPost = new Post(1L, "Updated test post", "Updated test post description",
+                "Updated test post text", 1L, new Date(),0L, false);
+        MockMultipartFile image = new MockMultipartFile("image", "test image.png", MediaType.IMAGE_PNG_VALUE,
+                "image".getBytes());
+        PostImage postImage = null  ;
+        try {
+            postImage = new PostImage(1L, image.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(imageRepository.findByPostId(1L)).thenReturn(null);
+
+        postService.edit(1L, updatedPost, image);
+
+        verify(postRepository).findById(1L);
+        verify(imageRepository).findByPostId(1L);
+        verify(imageRepository).save(postImage);
+        verify(postRepository).save(updatedPost);
+    }
+
+
+    @Test
+    public void editPostTest() throws ResourceNotFoundException {
+        Post post = new Post(1L, "Test post", "Test post description", "test post text",
+                1L, new Date(),0L, false);
+        Post updatedPost = new Post(1L, "Updated test post", "Updated test post description",
+                "Updated test post text", 1L, new Date(),0L, false);
+        MockMultipartFile image = new MockMultipartFile("image", "test image.png", MediaType.IMAGE_PNG_VALUE,
+                "image".getBytes());
+        MockMultipartFile updatedImage = new MockMultipartFile("updated image", "updated test image.png",
+                MediaType.IMAGE_PNG_VALUE, "updated image".getBytes());
+        PostImage postImage = null;
+        PostImage updatedPostImage = null;
+        try {
+            postImage = new PostImage(1L, image.getBytes());
+            updatedPostImage = new PostImage(1L, updatedImage.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(imageRepository.findByPostId(1L)).thenReturn(postImage);
+
+        postService.edit(1L, updatedPost, updatedImage);
+
+        verify(postRepository).findById(1L);
+        verify(imageRepository).findByPostId(1L);
+        verify(imageRepository).save(updatedPostImage);
         verify(postRepository).save(updatedPost);
     }
 
@@ -213,7 +266,7 @@ class PostServiceTest {
     public void deletePostByModerTestWithResourceNotFoundException() {
         when(postRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> postService.deletePostByModer(1L));
+        assertThrows(ResourceNotFoundException.class, () -> postService.deletePost(1L));
         verify(postRepository).findById(1L);
         verify(markRepository, never()).findByPostId(anyLong());
         verify(markRepository, never()).delete(any());
@@ -235,7 +288,7 @@ class PostServiceTest {
         when(markRepository.findByPostId(1L)).thenReturn(marks);
         when(imageRepository.findByPostId(1L)).thenReturn(image);
 
-        postService.deletePostByModer(1L);
+        postService.deletePost(1L);
 
         verify(postRepository).findById(1L);
         verify(markRepository).findByPostId(1L);
@@ -250,7 +303,7 @@ class PostServiceTest {
         when(postRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
-                () -> postService.getPostByIdForExpertModerAdmin(1L, "token"));
+                () -> postService.getPostById(1L, "token"));
         verify(postRepository).findById(1L);
         verify(userService, never()).getUserByToken(anyString());
         verify(roleRepository, never()).findByName(anyString());
@@ -274,7 +327,7 @@ class PostServiceTest {
         when(roleRepository.findByName("ROLE_EXPERT")).thenReturn(roleExpert);
 
         assertThrows(IllegalOperationException.class,
-                () -> postService.getPostByIdForExpertModerAdmin(1L, "token"));
+                () -> postService.getPostById(1L, "token"));
         verify(postRepository).findById(1L);
         verify(userService).getUserByToken("token");
         verify(roleRepository).findByName("ROLE_ADMINISTRATOR");

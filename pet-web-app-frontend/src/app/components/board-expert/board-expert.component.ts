@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {UserService} from '../../services/user-service/user.service';
 import {User} from '../../models/user.model';
 import {Post} from '../../models/post.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-board-expert',
@@ -15,10 +16,12 @@ export class BoardExpertComponent implements OnInit {
   posts: Post[];
   pageOfItems: Post[];
 
+  showError = false;
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService,
+              private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -40,9 +43,14 @@ export class BoardExpertComponent implements OnInit {
         },
         error => {
           if (error.status == 401) {
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);
+          }
+          if (error.status == 403) {
+            this.showError = true;
+            this.errorMessage = 'Please login as expert';
           }
           console.log(error);
         });

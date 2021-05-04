@@ -66,7 +66,7 @@ public class UserService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        return ResponseEntity.ok().body(new JwtResponse(jwt,
                 userDetails.getId(),
                 roles));
     }
@@ -82,6 +82,7 @@ public class UserService {
         userRoles.add(owner);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(createdDate);
+        user.setRoles(userRoles);
         UserResponse userResponse = UserResponse.fromUser(user);
         userRepository.save(user);
         return ResponseEntity.ok().body(userResponse);
@@ -114,7 +115,7 @@ public class UserService {
 
     public User getById(long id) throws ResourceNotFoundException {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + "not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id = " + id + " not found"));
     }
 
     public User getUserByToken(String token) throws ResourceNotFoundException {
@@ -129,7 +130,7 @@ public class UserService {
         return user;
     }
 
-    public UserResponse editProfile(long id, EditUserRequest userRequest) throws ResourceNotFoundException {
+    public UserResponse editUser(long id, EditUserRequest userRequest) throws ResourceNotFoundException {
         User user = getById(id);
 
         user.setFirstName(userRequest.getFirstName());

@@ -46,7 +46,7 @@ public class ChatController {
 
     @GetMapping("/messages/{senderId}/{recipientId}/new")
     @PreAuthorize("hasRole('OWNER')")
-    public boolean haveNewMessagesInChat(@PathVariable(name = "senderId") long senderId,
+    public List<Message> haveNewMessagesInChat(@PathVariable(name = "senderId") long senderId,
                                          @PathVariable(name = "recipientId") long recipientId) throws ResourceNotFoundException {
         return messageService.haveNewMessagesInChat(senderId, recipientId);
     }

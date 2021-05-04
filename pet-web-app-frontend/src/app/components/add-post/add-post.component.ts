@@ -5,6 +5,7 @@ import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
 import {Post} from '../../models/post.model';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-add-post',
@@ -24,10 +25,11 @@ export class AddPostComponent implements OnInit {
   newPost: Post;
   selectedFile: File;
 
-  isSuccessful = false;
+  showError = false;
   errorMessage = '';
 
-  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService,
+              private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class AddPostComponent implements OnInit {
           },
           error => {
             console.log(error);
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);
@@ -58,7 +61,6 @@ export class AddPostComponent implements OnInit {
       data => {
         console.log(data);
         this.newPost = data;
-        this.isSuccessful = true;
         this.router.navigate(['/posts']);
       },
       err => {
@@ -67,7 +69,12 @@ export class AddPostComponent implements OnInit {
           window.location.reload();
           this.router.navigate(['/login']);
         }
+        if (err.status == 403) {
+          this.showError = true;
+          this.errorMessage = 'Please login as expert';
+        } else {
         this.errorMessage = err.error.message;
+          }
       }
     );
   }

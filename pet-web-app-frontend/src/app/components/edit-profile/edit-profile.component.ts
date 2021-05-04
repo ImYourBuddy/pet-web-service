@@ -3,6 +3,7 @@ import {UserService} from '../../services/user-service/user.service';
 import {TokenStorageService} from '../../services/token-storage/token-storage.service';
 import {Router} from '@angular/router';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -15,7 +16,8 @@ export class EditProfileComponent implements OnInit {
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private userService: UserService, private token: TokenStorageService, private router: Router) { }
+  constructor(private userService: UserService, private token: TokenStorageService, private router: Router,
+              private authService: AuthService) { }
 
   ngOnInit(): void {
     const tok = this.token.getToken();
@@ -36,6 +38,7 @@ export class EditProfileComponent implements OnInit {
       },
       error => {
         if (error.status == 401) {
+          this.authService.logoutUser().subscribe();
           this.token.signOut();
           window.location.reload();
           this.router.navigate(['/login']);

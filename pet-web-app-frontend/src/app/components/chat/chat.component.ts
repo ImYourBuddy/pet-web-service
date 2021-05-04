@@ -9,6 +9,7 @@ import {Stomp} from '@stomp/stompjs';
 import {AppComponent} from '../../app.component';
 import {NotifierService} from 'angular-notifier';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 
 const API_URL = 'http://localhost:8080';
@@ -24,7 +25,7 @@ export class ChatComponent {
 
   constructor(private chatService: ChatService, private token: TokenStorageService,
               private route: ActivatedRoute, private userService: UserService, notifier: NotifierService,
-              private app: AppComponent, private router: Router) {
+              private app: AppComponent, private router: Router, private authService: AuthService) {
     this.notifier = notifier;
   }
 
@@ -63,6 +64,7 @@ export class ChatComponent {
           },
           error => {
             if (error.status == 401) {
+              this.authService.logoutUser().subscribe();
               this.token.signOut();
               window.location.reload();
               this.router.navigate(['/login']);
@@ -99,18 +101,13 @@ export class ChatComponent {
     this.app.initializeWebSocketConnection(this.userId);
   }
 
-  // ngAfterViewChecked() {
-  //   this.container = document.getElementById('chat');
-  //   this.container.scrollTop = this.container.scrollHeight;
-  // }
-
   initializeWebSocketConnection(userId) {
-    const ws = new SockJS(API_URL + '/socket');
+    const ws = new SockJS(API_URL + '/socket?jwt=' + this.token.getToken());
     this.stompClient = Stomp.over(ws);
     const that = this;
     // tslint:disable-next-line:only-arrow-functions
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe('/chat/' + userId, (message) => {
+      that.stompClient.subscribe('/queue/message/' + userId, (message) => {
         if (message.body) {
           const parse = JSON.parse(message.body);
           if (that.to == parse.sender) {
@@ -136,7 +133,7 @@ export class ChatComponent {
         timestamp: new Date()
       };
       // AppComponent.stompClient.send('/rest/send/message/' + this.to, {}, JSON.stringify(newMessage));
-      this.stompClient.send('/rest/send/message/' + this.to, {}, JSON.stringify(newMessage));
+      this.stompClient.send('/chat/message/' + this.to, {}, JSON.stringify(newMessage));
       // this.sentMessages.push(newMessage);
       this.newMessages.push(newMessage);
       this.input = '';
@@ -155,7 +152,7 @@ export class ChatComponent {
         },
         error => {
           this.showErrorMessage = true;
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
         });
   }
 
@@ -168,7 +165,8 @@ export class ChatComponent {
     this.chatService.haveNewMessagesInChat(this.userId, this.to)
       .subscribe(
         data => {
-          if (data == true) {
+          const deliveredMessages: any[] = data;
+          if (deliveredMessages.length !== 0) {
             this.chatService.markAsDelivered(this.userId, this.to)
               .subscribe();
           }
@@ -176,7 +174,7 @@ export class ChatComponent {
         },
         error => {
           this.showErrorMessage = true;
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
         });
   }
 

@@ -14,9 +14,6 @@
   <div class="post-text">
     {{currentPost.text}}
   </div>
-  <!--  <div class="post-text">-->
-  <!--    {{currentPost.author}}-->
-  <!--  </div>-->
   <div class="rating" *ngIf="userId != undefined; else login">
     <div class="not-rated" *ngIf="userMark == null; else rated">
       <button type="button" class="btn btn-danger" (click)="ratePost(currentPost.id, userId, false)">Dislike</button>

@@ -5,6 +5,7 @@ import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
 import {Expert} from '../../models/expert.model';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-experts-list',
@@ -14,7 +15,8 @@ import {User} from '../../models/user.model';
 export class ExpertsListComponent {
   experts: Expert[];
   userId: bigint;
-  constructor(private expertService: ExpertService, private token: TokenStorageService, private userService: UserService, private router: Router) {
+  constructor(private expertService: ExpertService, private token: TokenStorageService, private userService: UserService,
+              private router: Router, private authService: AuthService) {
   }
 
   // tslint:disable-next-line:use-lifecycle-interface
@@ -37,6 +39,7 @@ export class ExpertsListComponent {
         },
         error => {
           if (error.status == 401) {
+            this.authService.logoutUser().subscribe();
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);

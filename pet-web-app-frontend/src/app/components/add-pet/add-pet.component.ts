@@ -3,6 +3,7 @@ import {TokenStorageService} from '../../services/token-storage/token-storage.se
 import {UserService} from '../../services/user-service/user.service';
 import {Router} from '@angular/router';
 import {Pet} from '../../models/pet.model';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-add-pet',
@@ -22,7 +23,8 @@ export class AddPetComponent {
   isSuccessful = false;
   errorMessage = '';
 
-  constructor(private userService: UserService, private token: TokenStorageService, private router: Router) {
+  constructor(private userService: UserService, private token: TokenStorageService,
+              private router: Router, private authService: AuthService) {
   }
 
   // tslint:disable-next-line:use-lifecycle-interface
@@ -44,6 +46,7 @@ export class AddPetComponent {
       },
       err => {
         if (err.status == 401) {
+          this.authService.logoutUser().subscribe();
           this.token.signOut();
           window.location.reload();
           this.router.navigate(['/login']);

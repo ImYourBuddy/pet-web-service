@@ -4,6 +4,7 @@ import {TokenStorageService} from '../../services/token-storage/token-storage.se
 import {UserService} from '../../services/user-service/user.service';
 import {Pet} from '../../models/pet.model';
 import {DatePipe} from '@angular/common';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-edit-pet',
@@ -15,7 +16,8 @@ export class EditPetComponent implements OnInit {
   showErrorMessage = false;
   errorMessage = '';
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private token: TokenStorageService, private router: Router) {
+  constructor(private userService: UserService, private route: ActivatedRoute, private token: TokenStorageService,
+              private router: Router, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -34,6 +36,7 @@ export class EditPetComponent implements OnInit {
       },
       error => {
         if (error.status == 401) {
+          this.authService.logoutUser().subscribe();
           this.token.signOut();
           window.location.reload();
           this.router.navigate(['/login']);
@@ -60,7 +63,7 @@ export class EditPetComponent implements OnInit {
             this.router.navigate(['/login']);
           }
           this.showErrorMessage = true;
-          this.errorMessage = error.error;
+          this.errorMessage = error.error.message;
         });
   }
 }

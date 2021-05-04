@@ -97,11 +97,11 @@ class MessageServiceTest {
         when(chatService.getChatId(1L, 2L, false)).thenReturn(1L);
         when(messageRepository.findAllReceived(1L, 1L)).thenReturn(chatMessages);
 
-        boolean result = messageService.haveNewMessagesInChat(1L, 2L);
+        List<Message> result = messageService.haveNewMessagesInChat(1L, 2L);
 
         verify(chatService).getChatId(1L, 2L, false);
         verify(messageRepository).findAllReceived(1L, 1L);
-        assertTrue(result);
+        assertTrue(result.size() != 0);
 
     }
 
@@ -110,11 +110,11 @@ class MessageServiceTest {
         when(chatService.getChatId(1L, 2L, false)).thenReturn(1L);
         when(messageRepository.findAllReceived(1L, 1L)).thenReturn(new ArrayList<>());
 
-        boolean result = messageService.haveNewMessagesInChat(1L, 2L);
+        List<Message> result = messageService.haveNewMessagesInChat(1L, 2L);
 
         verify(chatService).getChatId(1L, 2L, false);
         verify(messageRepository).findAllReceived(1L, 1L);
-        assertFalse(result);
+        assertTrue(result.size() == 0);
 
     }
 
