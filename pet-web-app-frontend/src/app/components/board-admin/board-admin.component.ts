@@ -16,7 +16,7 @@ export class BoardAdminComponent implements OnInit {
   userId: bigint;
   currentUser: User;
 
-  isSuccessful = false;
+  showError = false;
   errorMessage = '';
   hideUsers = true;
 
@@ -47,6 +47,10 @@ export class BoardAdminComponent implements OnInit {
             window.location.reload();
             this.router.navigate(['/login']);
           }
+          if (error.status == 403) {
+            this.showError = true;
+            this.errorMessage = 'Please login as administrator';
+          }
           console.log(error);
         });
   }
@@ -55,7 +59,6 @@ export class BoardAdminComponent implements OnInit {
     this.adminService.addModer(id).subscribe(
       data => {
         console.log(data);
-        this.isSuccessful = true;
         window.location.reload();
       },
       error => {
@@ -72,7 +75,6 @@ export class BoardAdminComponent implements OnInit {
     this.adminService.removeModer(id).subscribe(
       data => {
         console.log(data);
-        this.isSuccessful = true;
         window.location.reload();
       },
       error => {

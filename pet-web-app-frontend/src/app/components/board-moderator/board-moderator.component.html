@@ -1,114 +1,133 @@
-<div>
-  <button class="btn btn-info m-5" (click)="hidePosts = !hidePosts; hideUsers = true; hideExpertRequest = true; clearStorage()">
-    Show posts</button>
-  <button class="btn btn-info m-5" (click)="hideExpertRequest = !hideExpertRequest; hidePosts = true; hideUsers = true; clearStorage()">
-    Show expert's request</button>
-  <button class="btn btn-info m-5" (click)="hideUsers = !hideUsers; hidePosts = true; hideExpertRequest = true; clearStorage()">
-    Show users</button>
-</div>
-<div *ngIf="!hidePosts">
-  <div class="list"
-       *ngFor="let post of posts;"
-  >
-    <div class="list-group-item">
-      <a class="post-title" routerLink="/posts/{{ post.id }}">
-        {{ post.title}}
-      </a>
-      <div class="post-description">
-        {{post.description}}
-      </div>
-      <div class="info">
-        <p class="author">
-        </p>
-        <p class="date">
-          {{post.createdDate | date:'longDate'}}
-        </p>
-        <p *ngIf="post.deleted" class="deleted">Deleted</p>
-        <div class="buttons">
-          <button class="btn btn-info buttons" routerLink="/posts/{{ post.id }}/edit">Edit post</button>
-          <button *ngIf="!post.deleted" class="btn btn-warning buttons" (click)="removeFromPublicAccess(post.id)">Remove
-            from
-            public
-            access
-          </button>
-          <button *ngIf="post.deleted" class="btn btn-success buttons" (click)="restorePost(post.id)">
-            Restore
-          </button>
-          <button class="btn btn-danger buttons" (click)="deletePost(post.id)">Delete post</button>
+<div *ngIf="!showError">
+  <div>
+    <button class="btn btn-info m-5"
+            (click)="hidePosts = !hidePosts; hideUsers = true; hideExpertRequest = true; clearStorage()">
+      Show posts
+    </button>
+    <button class="btn btn-info m-5"
+            (click)="hideExpertRequest = !hideExpertRequest; hidePosts = true; hideUsers = true; clearStorage()">
+      Show expert's request
+    </button>
+    <button class="btn btn-info m-5"
+            (click)="hideUsers = !hideUsers; hidePosts = true; hideExpertRequest = true; clearStorage()">
+      Show users
+    </button>
+  </div>
+  <div *ngIf="!hidePosts">
+    <div class="list"
+         *ngFor="let post of posts;"
+    >
+      <div class="list-group-item">
+        <a class="post-title" routerLink="/posts/{{ post.id }}">
+          {{ post.title}}
+        </a>
+        <div class="post-description">
+          {{post.description}}
+        </div>
+        <div class="info">
+          <p class="author">
+          </p>
+          <p class="date">
+            {{post.createdDate | date:'longDate'}}
+          </p>
+          <p *ngIf="post.deleted" class="deleted">Deleted</p>
+          <div class="buttons">
+            <button class="btn btn-info buttons" routerLink="/posts/{{ post.id }}/edit">Edit post</button>
+            <button *ngIf="!post.deleted" class="btn btn-warning buttons" (click)="removeFromPublicAccess(post.id)">
+              Remove
+              from
+              public
+              access
+            </button>
+            <button *ngIf="post.deleted" class="btn btn-success buttons" (click)="restorePost(post.id)">
+              Restore
+            </button>
+            <button class="btn btn-danger buttons" (click)="deletePost(post.id)">Delete post</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="!hideExpertRequest">
-  <div *ngIf="experts.length == 0" class="notify">
-    There are no expert requests
-  </div>
-  <div class="list"
-       *ngFor="let expert of experts;"
-  >
-    <div class="list-group-item">
-      <div class="username">
-        {{expert.username}}
-      </div>
-      <div class="expert-name">
-        {{expert.name}}
-      </div>
-      <div class="expert-qualification">
-        {{expert.qualification}}
-      </div>
-      <div class="expert-online-help">
-        {{expert.onlineHelp}}
-      </div>
-      <div class="form-group">
-        <button class="btn btn-success buttons" (click)="confirmExpert(expert.user)">
-          Confirm expert
-        </button>
-        <button class="btn btn-danger buttons" (click)="rejectExpert(expert.user)">
-          Reject expert
-        </button>
-      </div>
+  <div *ngIf="!hideExpertRequest">
+    <div *ngIf="experts.length == 0" class="notify">
+      There are no expert requests
     </div>
-  </div>
-</div>
-
-<div *ngIf="!hideUsers">
-  <div *ngIf="users.length == 1" class="notify">
-    There are no users
-  </div>
-  <div class="list"
-       *ngFor="let user of users;"
-  >
-    <div *ngIf="userId != user.id">
+    <div class="list"
+         *ngFor="let expert of experts;"
+    >
       <div class="list-group-item">
         <div class="username">
-          Username: {{user.username}}
+          {{expert.username}}
         </div>
-        <div class="name">
-          {{user.firstName}} {{user.lastName}}
+        <div class="expert-name">
+          {{expert.name}}
         </div>
-        <div class="roles">
-          Roles: {{user.roles}}
+        <div class="expert-qualification">
+          {{expert.qualification}}
         </div>
-        <div *ngIf="user.banned == false && hideBanInput">
-          <button class="btn btn-danger m-2" (click)="hideBanInput = !hideBanInput; bannedUser = user.id">
-            Ban user</button>
-          <button *ngIf="user.roles.includes('EXPERT')"
-                  class="btn btn-warning" (click)="deleteExpert(user.id)">Remove expert role</button>
+        <div class="expert-online-help">
+          {{expert.onlineHelp}}
         </div>
-        <div *ngIf="user.banned == true">
-          <button class="btn btn-success m-2" (click)="unbanUser(user.id)">Unban user</button>
-          <button *ngIf="user.roles.includes('EXPERT')"
-                  class="btn btn-warning" (click)="deleteExpert(user.id)">Remove expert role</button>
-        </div>
-        <div *ngIf="!hideBanInput && bannedUser == user.id">
-          <label for="description">Description: </label>
-          <input type="text" id="description" [(ngModel)]="banDescription">
-          <button class="btn btn-danger btn-block" (click)="banUser(user.id)">Ban</button>
-          <button class="btn btn-warning btn-block" (click)="hideBanInput = !hideBanInput">Cancel</button>
+        <div class="form-group">
+          <button class="btn btn-success buttons" (click)="confirmExpert(expert.user)">
+            Confirm expert
+          </button>
+          <button class="btn btn-danger buttons" (click)="rejectExpert(expert.user)">
+            Reject expert
+          </button>
         </div>
       </div>
     </div>
   </div>
+
+  <div *ngIf="!hideUsers">
+    <div *ngIf="users.length == 1" class="notify">
+      There are no users
+    </div>
+    <div class="list"
+         *ngFor="let user of users;"
+    >
+      <div *ngIf="userId != user.id">
+        <div class="list-group-item">
+          <div class="username">
+            Username: {{user.username}}
+          </div>
+          <div class="name">
+            {{user.firstName}} {{user.lastName}}
+          </div>
+          <div class="roles">
+            Roles: {{user.roles}}
+          </div>
+          <div *ngIf="user.banned == false && hideBanInput">
+            <button class="btn btn-danger m-2" (click)="hideBanInput = !hideBanInput; bannedUser = user.id">
+              Ban user
+            </button>
+            <button *ngIf="user.roles.includes('EXPERT')"
+                    class="btn btn-warning" (click)="deleteExpert(user.id)">Remove expert role
+            </button>
+          </div>
+          <div *ngIf="user.banned == true">
+            <button class="btn btn-success m-2" (click)="unbanUser(user.id)">Unban user</button>
+            <button *ngIf="user.roles.includes('EXPERT')"
+                    class="btn btn-warning" (click)="deleteExpert(user.id)">Remove expert role
+            </button>
+          </div>
+          <div *ngIf="!hideBanInput && bannedUser == user.id">
+            <label for="description">Description: </label>
+            <input type="text" id="description" [(ngModel)]="banDescription">
+            <button class="btn btn-danger btn-block" (click)="banUser(user.id)">Ban</button>
+            <button class="btn btn-warning btn-block" (click)="hideBanInput = !hideBanInput">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showError"
+>
+  {{ errorMessage }}
 </div>

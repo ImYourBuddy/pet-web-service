@@ -22,7 +22,7 @@ export class BoardModeratorComponent implements OnInit {
   currentUser: any;
 
   banDescription: any;
-  isSuccessful = false;
+  showError = false;
   errorMessage = '';
   hidePosts = true;
   hideExpertRequest = true;
@@ -74,6 +74,10 @@ export class BoardModeratorComponent implements OnInit {
             this.reloadPage();
             this.router.navigate(['/login']);
           }
+          if (error.status == 403) {
+            this.showError = true;
+            this.errorMessage = 'Please login as moderator';
+          }
         });
   }
 
@@ -94,7 +98,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hidePosts', 'false');
       },
@@ -109,7 +112,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hidePosts', 'false');
       },
@@ -124,7 +126,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hidePosts', 'false');
       },
@@ -139,7 +140,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hideExpertRequest', 'false');
       },
@@ -154,7 +154,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hideExpertRequest', 'false');
       },
@@ -169,7 +168,6 @@ export class BoardModeratorComponent implements OnInit {
     (
       data => {
         console.log(data);
-        this.isSuccessful = true;
         this.reloadPage();
         window.sessionStorage.setItem('hideUsers', 'false');
       },

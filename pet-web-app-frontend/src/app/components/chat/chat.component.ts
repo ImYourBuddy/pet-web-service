@@ -102,12 +102,12 @@ export class ChatComponent {
   }
 
   initializeWebSocketConnection(userId) {
-    const ws = new SockJS(API_URL + '/socket');
+    const ws = new SockJS(API_URL + '/socket?jwt=' + this.token.getToken());
     this.stompClient = Stomp.over(ws);
     const that = this;
     // tslint:disable-next-line:only-arrow-functions
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe('/chat/' + userId, (message) => {
+      that.stompClient.subscribe('/queue/message/' + userId, (message) => {
         if (message.body) {
           const parse = JSON.parse(message.body);
           if (that.to == parse.sender) {
@@ -133,7 +133,7 @@ export class ChatComponent {
         timestamp: new Date()
       };
       // AppComponent.stompClient.send('/rest/send/message/' + this.to, {}, JSON.stringify(newMessage));
-      this.stompClient.send('/rest/send/message/' + this.to, {}, JSON.stringify(newMessage));
+      this.stompClient.send('/chat/message/' + this.to, {}, JSON.stringify(newMessage));
       // this.sentMessages.push(newMessage);
       this.newMessages.push(newMessage);
       this.input = '';

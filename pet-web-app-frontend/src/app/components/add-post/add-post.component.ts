@@ -25,7 +25,7 @@ export class AddPostComponent implements OnInit {
   newPost: Post;
   selectedFile: File;
 
-  isSuccessful = false;
+  showError = false;
   errorMessage = '';
 
   constructor(private postService: PostService, private token: TokenStorageService, private userService: UserService,
@@ -61,7 +61,6 @@ export class AddPostComponent implements OnInit {
       data => {
         console.log(data);
         this.newPost = data;
-        this.isSuccessful = true;
         this.router.navigate(['/posts']);
       },
       err => {
@@ -70,7 +69,12 @@ export class AddPostComponent implements OnInit {
           window.location.reload();
           this.router.navigate(['/login']);
         }
+        if (err.status == 403) {
+          this.showError = true;
+          this.errorMessage = 'Please login as expert';
+        } else {
         this.errorMessage = err.error.message;
+          }
       }
     );
   }

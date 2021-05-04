@@ -73,15 +73,15 @@ export class AppComponent {
   }
 
   initializeWebSocketConnection(userId) {
-    const ws = new SockJS(API_URL + '/socket');
+    const ws = new SockJS(API_URL + '/socket?jwt=' + this.tokenStorageService.getToken());
     this.stompClient = Stomp.over(ws);
     const that = this;
     // tslint:disable-next-line:only-arrow-functions
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe('/chat/' + userId, (message) => {
+      that.stompClient.subscribe('/queue/message/' + userId, (message) => {
         if (message.body) {
-          const parse = JSON.parse(message.body);
-          that.notifier.notify('success', 'You have a new message from ' + parse.senderName);
+          const parsedMessage = JSON.parse(message.body);
+          that.notifier.notify('success', 'You have a new message from ' + parsedMessage.senderName);
         }
       });
     });

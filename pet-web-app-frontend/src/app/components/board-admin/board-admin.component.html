@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="!showError">
   <div class="list"
        *ngFor="let user of users;"
   >
@@ -20,5 +20,12 @@
       </div>
     </div>
   </div>
+</div>
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showError"
+>
+  {{ errorMessage }}
 </div>
 

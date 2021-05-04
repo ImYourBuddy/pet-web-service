@@ -16,6 +16,7 @@ export class BoardExpertComponent implements OnInit {
   posts: Post[];
   pageOfItems: Post[];
 
+  showError = false;
   isSuccessful = false;
   errorMessage = '';
 
@@ -46,6 +47,10 @@ export class BoardExpertComponent implements OnInit {
             this.token.signOut();
             window.location.reload();
             this.router.navigate(['/login']);
+          }
+          if (error.status == 403) {
+            this.showError = true;
+            this.errorMessage = 'Please login as expert';
           }
           console.log(error);
         });

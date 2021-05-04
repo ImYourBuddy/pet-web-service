@@ -1,31 +1,40 @@
-<div *ngIf="posts.length == 0" class="notify">
-  You haven't posts yet.
-</div>
-<div class="list"
-     *ngFor="let post of pageOfItems;"
+<div
+  class="alert alert-danger"
+  role="alert"
+  *ngIf="showError"
 >
-  <div class="list-group-item">
-    <a class="post-title" routerLink="/posts/{{ post.id }}">
-      {{ post.title}}
-    </a>
-    <div class="post-description">
-      {{post.description}}
-    </div>
-    <div>
-      Rating: {{post.rating}}
-    </div>
-    <div class="info">
-      <p class="date">
-        {{post.createdDate | date:'medium'}}
-      </p>
-      <p *ngIf="post.deleted" class="deleted">Deleted</p>
-      <button class="btn btn-info buttons" routerLink="/posts/{{ post.id }}/edit">Edit post</button>
-      <button *ngIf="!post.deleted" class="btn btn-danger buttons" (click)="deletePost(post.id)">Delete post</button>
-      <button *ngIf="post.deleted" class="btn btn-success buttons" (click)="restorePost(post.id)">Restore</button>
+  {{ errorMessage }}
+</div>
+<div *ngIf="!showError">
+
+  <div *ngIf="posts.length == 0" class="notify">
+    You haven't posts yet.
+  </div>
+  <div class="list"
+       *ngFor="let post of pageOfItems;"
+  >
+    <div class="list-group-item">
+      <a class="post-title" routerLink="/posts/{{ post.id }}">
+        {{ post.title}}
+      </a>
+      <div class="post-description">
+        {{post.description}}
+      </div>
+      <div>
+        Rating: {{post.rating}}
+      </div>
+      <div class="info">
+        <p class="date">
+          {{post.createdDate | date:'medium'}}
+        </p>
+        <p *ngIf="post.deleted" class="deleted">Deleted</p>
+        <button class="btn btn-info buttons" routerLink="/posts/{{ post.id }}/edit">Edit post</button>
+        <button *ngIf="!post.deleted" class="btn btn-danger buttons" (click)="deletePost(post.id)">Delete post</button>
+        <button *ngIf="post.deleted" class="btn btn-success buttons" (click)="restorePost(post.id)">Restore</button>
+      </div>
     </div>
   </div>
+  <div class="pagination">
+    <jw-pagination [pageSize]="5" [items]="posts" (changePage)="onChangePage($event)"></jw-pagination>
+  </div>
 </div>
-<div class="pagination">
-  <jw-pagination [pageSize]="5" [items]="posts" (changePage)="onChangePage($event)"></jw-pagination>
-</div>
-
